@@ -3,11 +3,9 @@ import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import CssBaseLine from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import InputLabel from "@material-ui/core/InputLabel";
-import Input from "@material-ui/core/Input";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -18,11 +16,11 @@ import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import Person from "@material-ui/icons/Person";
-import Fingerprint from "@material-ui/icons/Fingerprint";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import Img from "../../assets/img/connor.jpg";
 
+// 下方版权标识，函数形式为ES6箭头函数
 const Copyright = () => {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -36,18 +34,21 @@ const Copyright = () => {
   )
 }
 
+// Material-Ui的样式解决方案，可以理解为一部分CSS,详见https://material-ui.com/zh/styles/basics
+// theme主题由index.js中的ThemeProvider提供
 const useStyles = makeStyles((theme) => ({
   root: {
     height: '100vh',
   },
   image: {
-    backgroundImage: require("../../assets/img/court.jpg"),
+    backgroundImage: "url(" + Img + ")",
     backgroundRepeat: "no-repeat",
     backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
     backgroundSize: 'cover',
     backgroundPosition: 'center'
   },
   paper: {
+    // 默认一个space是8px，详见https://material-ui.com/zh/customization/spacing/
     margin: theme.spacing(8, 4),
     display: 'flex',
     flexDirection: 'column',
@@ -55,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main
+    backgroundColor: theme.palette.warning.main
   },
   form: {
     width: '100%',
@@ -70,9 +71,11 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+// 函数式写法，无class
 export default function LoginView() {
   const classes = useStyles();
 
+  // React Hooks，相当于class式写法的state，详见https://zh-hans.reactjs.org/docs/hooks-intro.html
   const [values, setValues] = React.useState({
     username: "",
     password: "",
@@ -80,6 +83,7 @@ export default function LoginView() {
     remeber: true
   });
 
+  // event隐式传递
   const handleChange = prop => event => {
     setValues({ ...values, [prop]: event.target.value });
   };
@@ -94,7 +98,12 @@ export default function LoginView() {
 
   const handleClickRemeberMe = () => {
     setValues({ ...values, remeber: !values.remeber });
+    console.log("remebered" + values.remeber);
   };
+
+  const handleSubmit = () => {
+    console.log(values.username + values.password);
+  }
 
   return (
     <Grid container component='main' className={classes.root}>
@@ -109,15 +118,16 @@ export default function LoginView() {
             用户认证
           </Typography>
           <form className={classes.form} noValidate>
-            <FormControl className={classes.formControl} fullWidth variant="outlined">
+            <FormControl className={classes.formControl} fullWidth variant="outlined" required>
               <InputLabel htmlFor="username">用户名</InputLabel>
               <OutlinedInput
                 id="username"
                 onChange={handleChange("username")}
-                labelWidth={50}
+                labelWidth={57}
+                required
               />
             </FormControl>
-            <FormControl className={classes.formControl} fullWidth variant="outlined">
+            <FormControl className={classes.formControl} fullWidth variant="outlined" required>
               <InputLabel htmlFor="password">密码</InputLabel>
               <OutlinedInput
                 id="password"
@@ -135,11 +145,12 @@ export default function LoginView() {
                     </IconButton>
                   </InputAdornment>
                 }
-                labelWidth={35}
+                labelWidth={40}
+                required
               />
             </FormControl>
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              control={<Checkbox value="remember" color="primary" onChange={handleClickRemeberMe} />}
               label="记住我"
             />
             <Button
@@ -148,6 +159,7 @@ export default function LoginView() {
               variant="contained"
               color="primary"
               className={classes.submit}
+              onClick={handleSubmit}
             >
               登录
             </Button>

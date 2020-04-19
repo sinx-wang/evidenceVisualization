@@ -10,7 +10,7 @@ export default function Util() {
 
   const asyncHttpPost = (url, param, succ, err, contentType) => {
     if (!contentType) contentType = "application/json";
-    
+
     const headers = {};
     headers["content-type"] = contentType;
     headers["charset"] = "UTF-8";
@@ -22,14 +22,14 @@ export default function Util() {
     };
 
     fetch(getUrl(url), params)
-    .then(response => {
-      if (!response.ok) {
-        throw Error(response.statusText);
-      }
-      return response.json();
-    })
-    .then(succ)
-    .catch(err);
+      .then(response => {
+        if (!response.ok) {
+          throw Error(response.statusText);
+        }
+        return response.json();
+      })
+      .then(succ)
+      .catch(err);
   };
   Util.asyncHttpPost = asyncHttpPost;
 
@@ -45,14 +45,14 @@ export default function Util() {
     };
 
     fetch(getUrl(url), params)
-    .then(response => {
-      if (!response.ok) {
-        throw Error(response.statusText);
-      }
-      return response.json();
-    })
-    .then(succ)
-    .catch(err);
+      .then(response => {
+        if (!response.ok) {
+          throw Error(response.statusText);
+        }
+        return response.json();
+      })
+      .then(succ)
+      .catch(err);
   };
   Util.asyncHttpGet = asyncHttpGet;
 }

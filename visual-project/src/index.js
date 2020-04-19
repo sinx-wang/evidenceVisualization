@@ -9,8 +9,10 @@ import './index.css';
 import LoginView from './views/LoginView/LoginView';
 import * as serviceWorker from './serviceWorker';
 
+// https://www.cnblogs.com/nangezi/p/11490778.html
 const hist = createBrowserHistory();
 
+// 对theme的自定义，详见https://material-ui.com/zh/customization/theming/
 const theme = createMuiTheme({
   palette: {
     primary: {
