@@ -54,6 +54,7 @@ export default function TitleBar(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const handleClickDrawer = () => {
+    props.handleClickMenuButton();
     setOpen(!open);
   };
 
