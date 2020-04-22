@@ -63,9 +63,11 @@ export default function SideBar(props) {
         </IconButton>
       </div>
       <Divider />
-      <List></List>
+      <List>
+        {props.list}
+      </List>
       <Divider />
-      <List></List>
+      {/* <List></List> */}
     </Drawer>
   )
 };
