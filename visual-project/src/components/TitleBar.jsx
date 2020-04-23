@@ -58,30 +58,28 @@ export default function TitleBar(props) {
     // setOpen(!open);
   };
 
-   return (
-     <AppBar position="absolute" className={clsx(classes.appBar, props.open && classes.appBarShift)}>
-       <Toobar className={classes.toolBar}>
-         <IconButton className={classes.toolBar}>
-           <IconButton
-            edge="start"
-            color="inherit"
-            onClick={handleClickDrawer}
-            className={clsx(classes.menuButton, props.open && classes.menuButtonHidden)}
-           >
-             <MenuIcon />
-           </IconButton>
-           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-             {props.content}
-           </Typography>
-           <IconButton color="inherit">
-             <Badge badgeContent={4} color="secondary">
-               <NotificationIcon />
-             </Badge>
-           </IconButton>
-         </IconButton>
-       </Toobar>
-     </AppBar>
-   )
+  return (
+    <AppBar position="absolute" className={clsx(classes.appBar, props.open && classes.appBarShift)}>
+      <Toobar className={classes.toolBar}>
+        <IconButton
+          edge="start"
+          color="inherit"
+          onClick={handleClickDrawer}
+          className={clsx(classes.menuButton, props.open && classes.menuButtonHidden)}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+          {props.content}
+        </Typography>
+        <IconButton color="inherit">
+          <Badge badgeContent={4} color="secondary">
+            <NotificationIcon />
+          </Badge>
+        </IconButton>
+      </Toobar>
+    </AppBar>
+  )
 };
 
 TitleBar.propType = {
