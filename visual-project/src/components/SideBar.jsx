@@ -53,6 +53,7 @@ export default function SideBar(props) {
   };
 
   const array = props.list;
+  console.log(array);
 
   return (
     <Drawer
@@ -71,9 +72,9 @@ export default function SideBar(props) {
       <List>
         {array.map(item => (
           <ListItem button key={item.path}>
-            {/* <ListItemIcon>
-              {item.icon}
-            </ListItemIcon> */}
+            <ListItemIcon>
+              <item.icon />
+            </ListItemIcon>
             <ListItemText primary={item.name} />
           </ListItem>
         ))}
