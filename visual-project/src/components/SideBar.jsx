@@ -1,11 +1,14 @@
 import React from "react";
-// import PropTypes from "prop-types";
+import PropTypes from "prop-types";
 import clsx from "clsx";
 import IconButton from "@material-ui/core/IconButton";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import Drawer from "@material-ui/core/Drawer";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import { makeStyles } from "@material-ui/core";
 
 const drawerWidth = 240;
@@ -42,20 +45,22 @@ const useStyles = makeStyles(theme => ({
 
 export default function SideBar(props) {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
+  // const [open, setOpen] = React.useState(true);
 
   const handleClickIcon = () => {
     props.handleClickMenuButton();
-    setOpen(!open);
+    // setOpen(!open);
   };
+
+  const array = props.list;
 
   return (
     <Drawer
       variant="permanent"
       classes={{
-        paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose)
+        paper: clsx(classes.drawerPaper, !props.open && classes.drawerPaperClose)
       }}
-      open={open}
+      open={props.open}
     >
       <div className={classes.toolbarIcon}>
         <IconButton onClick={handleClickIcon}>
@@ -64,10 +69,23 @@ export default function SideBar(props) {
       </div>
       <Divider />
       <List>
-        {props.list}
+        {array.map(item => (
+          <ListItem button key={item.path}>
+            {/* <ListItemIcon>
+              {item.icon}
+            </ListItemIcon> */}
+            <ListItemText primary={item.name} />
+          </ListItem>
+        ))}
       </List>
       <Divider />
       {/* <List></List> */}
     </Drawer>
   )
 };
+
+SideBar.propType = {
+  open: PropTypes.bool,
+  list: PropTypes.array,
+  handleClickMenuButton: PropTypes.func
+}

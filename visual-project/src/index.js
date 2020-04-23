@@ -7,6 +7,7 @@ import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import './index.css';
 // import App from './App';
 import LoginView from './views/LoginView/LoginView';
+import CaseListLayout from "./layouts/CaseListLayout";
 import * as serviceWorker from './serviceWorker';
 
 // https://www.cnblogs.com/nangezi/p/11490778.html
@@ -35,6 +36,7 @@ ReactDOM.render(
     <Router history={hist}>
       <Switch>
         <Route exact path="/login" component={LoginView} />
+        <Route exact path="/cases" component={CaseListLayout} />
         <Redirect from="/" to="/login" />
       </Switch>
     </Router>

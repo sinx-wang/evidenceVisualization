@@ -52,21 +52,21 @@ const useStyles = makeStyles(theme => ({
 
 export default function TitleBar(props) {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
+  // const [open, setOpen] = React.useState(true);
   const handleClickDrawer = () => {
     props.handleClickMenuButton();
-    setOpen(!open);
+    // setOpen(!open);
   };
 
    return (
-     <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+     <AppBar position="absolute" className={clsx(classes.appBar, props.open && classes.appBarShift)}>
        <Toobar className={classes.toolBar}>
          <IconButton className={classes.toolBar}>
            <IconButton
             edge="start"
             color="inherit"
             onClick={handleClickDrawer}
-            className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
+            className={clsx(classes.menuButton, props.open && classes.menuButtonHidden)}
            >
              <MenuIcon />
            </IconButton>
@@ -85,5 +85,7 @@ export default function TitleBar(props) {
 };
 
 TitleBar.propType = {
-  content: PropTypes.string
+  open: PropTypes.bool,
+  content: PropTypes.string,
+  handleClickMenuButton: PropTypes.func
 }
