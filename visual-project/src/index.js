@@ -36,7 +36,7 @@ ReactDOM.render(
     <Router history={hist}>
       <Switch>
         <Route exact path="/login" component={LoginView} />
-        <Route exact path="/cases" component={CaseListLayout} />
+        <Route path="/cases" component={CaseListLayout} />
         <Redirect from="/" to="/login" />
       </Switch>
     </Router>

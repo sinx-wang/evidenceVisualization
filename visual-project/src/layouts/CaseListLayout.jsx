@@ -1,23 +1,11 @@
 import React from 'react';
-import clsx from 'clsx';
+// import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-// import Drawer from '@material-ui/core/Drawer';
-// import Box from '@material-ui/core/Box';
-// import AppBar from '@material-ui/core/AppBar';
-// import Toolbar from '@material-ui/core/Toolbar';
-// import List from '@material-ui/core/List';
-// import Typography from '@material-ui/core/Typography';
-// import Divider from '@material-ui/core/Divider';
-// import IconButton from '@material-ui/core/IconButton';
-// import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-// import Link from '@material-ui/core/Link';
-// import MenuIcon from '@material-ui/icons/Menu';
-// import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-// import NotificationsIcon from '@material-ui/icons/Notifications';
+import { Switch, Route, Redirect } from "react-router-dom";
+// import Grid from '@material-ui/core/Grid';
+// import Paper from '@material-ui/core/Paper';
 import TitleBar from "../components/TitleBar";
 import SideBar from "../components/SideBar";
 import Routes from "../routes";
@@ -92,16 +80,25 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
   },
-  paper: {
-    padding: theme.spacing(2),
-    display: 'flex',
-    overflow: 'auto',
-    flexDirection: 'column',
-  },
-  fixedHeight: {
-    height: 240,
-  },
 }));
+
+const switchRoutes = (
+  <Switch>
+    {Routes.map(item => {
+      if (item.layout === "/cases") {
+        return (
+          <Route
+            path={item.layout + item.path}
+            component={item.component}
+            key={item.path}
+          />
+        );
+      } else {
+        return null;
+      }
+    })}
+  </Switch>
+)
 
 export default function CaseListLayout() {
   const classes = useStyles();
@@ -111,8 +108,6 @@ export default function CaseListLayout() {
     setOpen(!open);
   };
 
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -121,23 +116,8 @@ export default function CaseListLayout() {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={8} lg={9}>
-              <Paper className={fixedHeightPaper}>
-                {/* <Chart /> */}
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={4} lg={3}>
-              <Paper className={fixedHeightPaper}>
-                {/* <Deposits /> */}
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                {/* <Orders /> */}
-              </Paper>
-            </Grid>
-          </Grid>
+          {/* views部分，需抽离 */}
+          {switchRoutes}
         </Container>
       </main>
     </div>

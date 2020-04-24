@@ -9,6 +9,7 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import { NavLink } from "react-router-dom";
 import { makeStyles } from "@material-ui/core";
 
 const drawerWidth = 240;
@@ -40,6 +41,11 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-end',
     padding: '0 8px',
     ...theme.mixins.toolbar,
+  },
+  navLink: {
+    textDecoration: "none",
+    display: "block",
+    color: "black",
   }
 }));
 
@@ -71,12 +77,18 @@ export default function SideBar(props) {
       <Divider />
       <List>
         {array.map(item => (
-          <ListItem button key={item.path}>
-            <ListItemIcon>
-              <item.icon />
-            </ListItemIcon>
-            <ListItemText primary={item.name} />
-          </ListItem>
+          <NavLink
+            to={item.layout + item.path}
+            className={classes.navLink}
+            key={item.path}
+          >
+            <ListItem button>
+              <ListItemIcon>
+                <item.icon />
+              </ListItemIcon>
+              <ListItemText primary={item.name} />
+            </ListItem>
+          </NavLink>
         ))}
       </List>
       <Divider />
