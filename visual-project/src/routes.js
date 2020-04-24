@@ -2,6 +2,7 @@ import CheckBoxOutlined from "@material-ui/icons/CheckBoxOutlined";
 import CheckBox from "@material-ui/icons/CheckBox";
 import CollectionsBookmark from "@material-ui/icons/CollectionsBookmark";
 import DealingCasesView from "./views/cases/DealingCasesView";
+import WaitToDealCasesView from "./views/cases/WaitToDealCasesView";
 
 let casesRoutes = [
   {
@@ -9,7 +10,7 @@ let casesRoutes = [
     name: "待处理案件",
     icon: CheckBoxOutlined,
     layout: "/cases",
-    component: DealingCasesView
+    component: WaitToDealCasesView
   },
   {
     path: "/alreadyDealed",

@@ -1,11 +1,8 @@
 import React from 'react';
-// import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
-import { Switch, Route, Redirect } from "react-router-dom";
-// import Grid from '@material-ui/core/Grid';
-// import Paper from '@material-ui/core/Paper';
+import { Switch, Route } from "react-router-dom";
 import TitleBar from "../components/TitleBar";
 import SideBar from "../components/SideBar";
 import Routes from "../routes";
@@ -111,12 +108,14 @@ export default function CaseListLayout() {
   return (
     <div className={classes.root}>
       <CssBaseline />
+      {/* 顶部状态栏 */}
       <TitleBar open={open} content={"案件列表"} handleClickMenuButton={handleClickMenuButton} />
+      {/* 左侧侧边栏 */}
       <SideBar open={open} list={Routes} handleClickMenuButton={handleClickMenuButton} />
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          {/* views部分，需抽离 */}
+          {/* 通过switchRoutes将Routes.js中所有项展开，当页面地址与Routes.js中某项元素的layout + path符合时，加载该元素的component */}
           {switchRoutes}
         </Container>
       </main>

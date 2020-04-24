@@ -76,6 +76,7 @@ export default function SideBar(props) {
       </div>
       <Divider />
       <List>
+        {/* 使用NavLink/Link组件对listItem进行包裹，点击item时就会跳转到相应链接 */}
         {array.map(item => (
           <NavLink
             to={item.layout + item.path}
