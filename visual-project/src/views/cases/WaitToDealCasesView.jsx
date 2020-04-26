@@ -41,7 +41,7 @@ export default function WaitToDealCasesView(props) {
   const handleTableClick = index =>event=>{
 
     alert(index)
-      
+
   };
 
   return (
