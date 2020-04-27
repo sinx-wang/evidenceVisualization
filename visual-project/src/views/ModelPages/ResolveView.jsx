@@ -1,9 +1,33 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import Card from "components/Card/Card.js";
+import CardBody from "components/Card/CardBody.js";
+import CardHeader from "components/Card/CardHeader.js";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
+import CustomButton from "components/CustomButtons/Button.js";
+import CustomTabs from "components/CustomTabs/CustomTabs.js";
 import TextField from "@material-ui/core/TextField";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+// import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import InputLabel from "@material-ui/core/InputLabel";
+import CropIcon from "@material-ui/icons/Crop";
+import EditIcon from "@material-ui/icons/Edit";
+import PersonIcon from "@material-ui/icons/Person";
+import PersonOutlineIcon from "@material-ui/icons/PersonOutline";
+import Check from "@material-ui/icons/Check";
+import Close from "@material-ui/icons/Close";
+// import { CardTitle } from "assets/jss/material-kit-react.js";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -11,9 +35,9 @@ const useStyles = makeStyles(theme => ({
   },
   paper: {
     padding: theme.spacing(2),
-    textAlign: "center",
-    color: theme.palette.text.secondary,
-    height: 120
+    // textAlign: "center",
+    color: theme.palette.text.secondary
+    // height: 120
   },
   paper2: {
     padding: theme.spacing(1),
@@ -32,8 +56,10 @@ const useStyles = makeStyles(theme => ({
     display: "block"
   },
   textarea: {
-    width: "100%",
     height: "80%"
+  },
+  textFieldBlock: {
+    marginBottom: 10
   },
   evidenceItem: {
     marginTop: "10px",
@@ -71,55 +97,161 @@ export default function ResolveView() {
     alert(values.defendantEvidence);
   };
 
+  const [type, setType] = React.useState(0);
+
+  const handleSelectChange = event => {
+    setType(event.target.value);
+  };
+
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={3}>
+      <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Paper className={classes.paper}>
-            <p className={classes.text}>
-              案号：xxx <br />
-              &nbsp;&nbsp;&nbsp;&nbsp;案件名称：xxx <br />
-              承办人：xxx{" "}
-            </p>
-          </Paper>
+          <Card>
+            <CardHeader color="primary">案件信息</CardHeader>
+            <CardBody>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>案件号</TableCell>
+                    <TableCell>（2015）浦刑初字第2978号</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>案件名称</TableCell>
+                    <TableCell>
+                      上海市浦东新区人民检察院以沪浦检刑诉（2015）2315号起诉书指控被告人王某某犯危险驾驶罪案
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>承办人</TableCell>
+                    <TableCell>孙志刚</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </CardBody>
+          </Card>
         </Grid>
         <Grid item xs={6}>
-          <label>原告证据:</label>
-          <Paper className={classes.paper2}>
-            <textarea
-              className={classes.textarea}
-              placeholder="请在此处输入原告证据"
-              onChange={handleFieldChange("complainantEvidence")}
-            ></textarea>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleComplainantResolve}
-            >
-              分解证据
-            </Button>
-          </Paper>
+          <Card>
+            <CardHeader color="warning">原告证据</CardHeader>
+            <CardBody>
+              <TextField
+                fullWidth
+                label="请在此输入"
+                multiline
+                rows={7}
+                variant="outlined"
+                className={classes.textFieldBlock}
+              />
+              <CustomButton
+                type="button"
+                color="success"
+                style={{ marginRight: 10 }}
+                round
+              >
+                <CropIcon />
+                分解证据
+              </CustomButton>
+              <CustomButton type="button" color="info" round>
+                <EditIcon />
+                编辑证据
+              </CustomButton>
+            </CardBody>
+          </Card>
         </Grid>
         <Grid item xs={6}>
-          <label>被告证据:</label>
-          <Paper className={classes.paper2}>
-            <textarea
-              className={classes.textarea}
-              placeholder="请在此处输入被告证据"
-              onChange={handleFieldChange("defendantEvidence")}
-            ></textarea>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleDefendantResolve}
-            >
-              分解证据
-            </Button>
-          </Paper>
+          <Card>
+            <CardHeader color="warning">被告证据</CardHeader>
+            <CardBody>
+              <TextField
+                fullWidth
+                label="请在此输入"
+                multiline
+                rows={7}
+                variant="outlined"
+                className={classes.textFieldBlock}
+              />
+              <CustomButton
+                type="button"
+                color="success"
+                style={{ marginRight: 10 }}
+                round
+              >
+                <CropIcon />
+                分解证据
+              </CustomButton>
+              <CustomButton type="button" color="info" round>
+                <EditIcon />
+                编辑证据
+              </CustomButton>
+            </CardBody>
+          </Card>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12}>
+          <CustomTabs
+            title="非矛盾证据"
+            headerColor="success"
+            tabs={[
+              {
+                tabName: "原告",
+                tabIcon: PersonIcon,
+                tabContent: (
+                  <List>
+                    <ListItem>
+                      <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                          <TextField
+                            label="单条证据"
+                            value="酒后驾驶其本人的荣威沪ARXXXX轿车驶离车库，并沿路途经本市南北高架西侧徐汇路上匝道、南北高架西侧鲁班路出口匝道、外滩人民路隧道等地并进入本区区域"
+                            fullWidth
+                          />
+                        </Grid>
+                        <Grid item xs={3}>
+                          <FormControl fullWidth>
+                            <InputLabel>类型</InputLabel>
+                            <Select value={type} onChange={handleSelectChange}>
+                              <MenuItem value={0}>书证</MenuItem>
+                              <MenuItem value={1}>物证</MenuItem>
+                              <MenuItem value={2}>证言</MenuItem>
+                            </Select>
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={3} justify="center">
+                          <CustomButton color="danger">
+                            <Close />
+                            不认定
+                          </CustomButton>
+                        </Grid>
+                        <Grid item xs={12}></Grid>
+                      </Grid>
+                    </ListItem>
+                  </List>
+                )
+              },
+              {
+                tabName: "被告",
+                tabIcon: PersonOutlineIcon,
+                tabContent: (
+                  <List>
+                    <ListItem>
+                      <Grid container>
+                        <Grid item xs={6}></Grid>
+                        <Grid item xs={3}></Grid>
+                        <Grid item xs={3}></Grid>
+                        <Grid item xs={12}></Grid>
+                      </Grid>
+                    </ListItem>
+                  </List>
+                )
+              }
+            ]}
+          />
+        </Grid>
+        {/* <Grid item xs={6}>
           <Paper className={classes.paper3}>
             <form noValidate autoComplete="off">
               {values.complainantEvidenceList.map((evidenceItem, index) => (
@@ -152,7 +284,7 @@ export default function ResolveView() {
               ))}
             </form>
           </Paper>
-        </Grid>
+        </Grid> */}
       </Grid>
     </div>
   );
