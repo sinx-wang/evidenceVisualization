@@ -3,9 +3,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
 import { Switch, Route } from "react-router-dom";
-import TitleBar from "../components/TitleBar";
-import SideBar from "../components/SideBar";
-import Routes from "./modelroutes";
+import TitleBar from "../components/TitleBar/TitleBar";
+import SideBar from "../components/SideBar/SideBar";
+import Routes from "../routes/ModelRoutes";
 
 const drawerWidth = 240;
 
