@@ -32,13 +32,13 @@ const useStyles = makeStyles(theme => ({
 export default function WaitToDealCasesView(props) {
   const classes = useStyles();
 
-    const [values, setValues] = React.useState({
-        cases:[{id:1, caseName:'xxx法院', judgeName:'xxx', time:'2012-5-8' }]
-    });
+  const [values, setValues] = React.useState({
+    cases: [{ id: 1, caseName: 'xxx法院', judgeName: 'xxx', time: '2012-5-8' }]
+  });
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   //点击案件待处理表格
-  const handleTableClick = index =>event=>{
+  const handleTableClick = index => event => {
 
     alert(index)
 
@@ -51,39 +51,39 @@ export default function WaitToDealCasesView(props) {
         <Grid item xs={12} md={12} lg={12}>
           <Paper className={fixedHeightPaper}>
             {/* <Chart /> */}
-              <TableContainer component={Paper} style={{float:'left'}}>
-                  <Table style={{ minWidth: 650}} aria-label="simple table">
-                      <TableHead>
-                          <TableRow>
-                              <TableCell>序号&nbsp;</TableCell>
-                              <TableCell >案号&nbsp;</TableCell>
-                              <TableCell >名称&nbsp;</TableCell>
-                              <TableCell >立案日期&nbsp;</TableCell>
-                              <TableCell >承办人&nbsp;</TableCell>
-                              <TableCell >操作&nbsp;</TableCell>
-                          </TableRow>
-                      </TableHead>
-                      <TableBody>
-                          {values.cases.map((row,index) => (
-                              <TableRow key={row.id}>
-                                  <TableCell component="th" scope="row">{row.id}</TableCell>
-                                  <TableCell >{row.id}</TableCell>
-                                  <TableCell >{row.caseName}</TableCell>
-                                  <TableCell >{row.time}</TableCell>
-                                  <TableCell >{row.judgeName}</TableCell>
-                                  <TableCell >
-                                      <Button
-                                          variant="contained"
-                                          color="primary"
-                                          onClick={handleTableClick(index)}>
-                                          证据链建模
-                                      </Button>
-                                  </TableCell>
-                              </TableRow>
-                          ))}
-                      </TableBody>
-                  </Table>
-              </TableContainer>
+            <TableContainer component={Paper} style={{ float: 'left' }}>
+              <Table style={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>序号&nbsp;</TableCell>
+                    <TableCell >案号&nbsp;</TableCell>
+                    <TableCell >名称&nbsp;</TableCell>
+                    <TableCell >立案日期&nbsp;</TableCell>
+                    <TableCell >承办人&nbsp;</TableCell>
+                    <TableCell >操作&nbsp;</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {values.cases.map((row, index) => (
+                    <TableRow key={row.id}>
+                      <TableCell component="th" scope="row">{row.id}</TableCell>
+                      <TableCell >{row.id}</TableCell>
+                      <TableCell >{row.caseName}</TableCell>
+                      <TableCell >{row.time}</TableCell>
+                      <TableCell >{row.judgeName}</TableCell>
+                      <TableCell >
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={handleTableClick(index)}>
+                          证据链建模
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </Paper>
         </Grid>
       </Grid>
