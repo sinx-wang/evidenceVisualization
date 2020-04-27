@@ -82,7 +82,7 @@ export default function TitleBar(props) {
   )
 };
 
-TitleBar.propType = {
+TitleBar.propTypes = {
   open: PropTypes.bool,
   content: PropTypes.string,
   handleClickMenuButton: PropTypes.func

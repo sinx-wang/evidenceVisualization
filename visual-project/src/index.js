@@ -1,15 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { createBrowserHistory } from 'history';
+import React from "react";
+import ReactDOM from "react-dom";
+import { createBrowserHistory } from "history";
 import { Router, Route, Switch, Redirect } from "react-router-dom";
-import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 
-import './index.css';
 // import App from './App';
-import LoginView from './views/LoginView/LoginView';
+import LoginView from "./views/LoginPages/LoginView";
 import CaseListLayout from "./layouts/CaseListLayout";
-import ModelLayout from './layouts/ModelLayout';
-import * as serviceWorker from './serviceWorker';
+import ModelLayout from "./layouts/ModelLayout";
 
 // https://www.cnblogs.com/nangezi/p/11490778.html
 const hist = createBrowserHistory();
@@ -33,7 +31,7 @@ ReactDOM.render(
   // <React.StrictMode>
   //   <App />
   // </React.StrictMode>,
-  <ThemeProvider theme={theme}>
+  <MuiThemeProvider theme={theme}>
     <Router history={hist}>
       <Switch>
         <Route exact path="/login" component={LoginView} />
@@ -42,11 +40,10 @@ ReactDOM.render(
         <Redirect from="/" to="/login" />
       </Switch>
     </Router>
-  </ThemeProvider>,
-  document.getElementById('root')
+  </MuiThemeProvider>,
+  document.getElementById("root")
 );
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();

@@ -106,7 +106,7 @@ export default function SideBar(props) {
   )
 };
 
-SideBar.propType = {
+SideBar.propTypes = {
   open: PropTypes.bool,
   list: PropTypes.array,
   handleClickMenuButton: PropTypes.func
