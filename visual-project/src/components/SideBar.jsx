@@ -46,12 +46,16 @@ const useStyles = makeStyles(theme => ({
     textDecoration: "none",
     display: "block",
     color: "black",
-  }
+  },
 }));
 
 export default function SideBar(props) {
   const classes = useStyles();
-  // const [open, setOpen] = React.useState(true);
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+  const handleListItemClick = index => event => {
+    setSelectedIndex(index);
+  };
 
   const handleClickIcon = () => {
     props.handleClickMenuButton();
@@ -77,13 +81,17 @@ export default function SideBar(props) {
       <Divider />
       <List>
         {/* 使用NavLink/Link组件对listItem进行包裹，点击item时就会跳转到相应链接 */}
-        {array.map(item => (
+        {array.map((item, index) => (
           <NavLink
             to={item.layout + item.path}
             className={classes.navLink}
             key={item.path}
           >
-            <ListItem button>
+            <ListItem 
+              button 
+              selected={selectedIndex === index} 
+              onClick={handleListItemClick(index)}
+            >
               <ListItemIcon>
                 <item.icon />
               </ListItemIcon>
