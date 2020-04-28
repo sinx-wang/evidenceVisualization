@@ -69,20 +69,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // 证据类型选择
-function SelectEvidenceType(props) {
-  const [type, setType] = React.useState(props.evidenceType)
+// function SelectEvidenceType(props) {
+//   const [type, setType] = React.useState(props.evidenceType)
 
-  return (
-    <FormControl fullWidth>
-      <InputLabel>类型</InputLabel>
-      <Select value={type} onChange={handleSelectChange}>
-        <MenuItem value={0}>书证</MenuItem>
-        <MenuItem value={1}>物证</MenuItem>
-        <MenuItem value={2}>证言</MenuItem>
-      </Select>
-    </FormControl>
-  );
-}
+//   return (
+//     <FormControl fullWidth>
+//       <InputLabel>类型</InputLabel>
+//       <Select value={type} onChange={handleSelectChange}>
+//         <MenuItem value={0}>书证</MenuItem>
+//         <MenuItem value={1}>物证</MenuItem>
+//         <MenuItem value={2}>证言</MenuItem>
+//       </Select>
+//     </FormControl>
+//   );
+// }
 
 // 函数式写法，无class
 export default function ResolveView() {
