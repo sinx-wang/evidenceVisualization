@@ -18,7 +18,12 @@ module.exports = {
     "plugin:react/recommended",
     "plugin:prettier/recommended",
   ],
-  prettier: [{
-    "endOfLine": "auto"
-  }]
+  rules: {
+    "prettier/prettier": [
+      1,
+      {
+        endOfLine: "auto",
+      }
+    ]
+  }
 };
