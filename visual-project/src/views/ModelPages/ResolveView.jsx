@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
@@ -66,23 +67,30 @@ const useStyles = makeStyles((theme) => ({
     height: "40",
     width: "80%",
   },
+  buttonAlign: {
+    textAlign: "center",
+  },
 }));
 
 // 证据类型选择
-// function SelectEvidenceType(props) {
-//   const [type, setType] = React.useState(props.evidenceType)
+function SelectEvidenceType(props) {
+  const [type, setType] = React.useState(props.evidenceType);
 
-//   return (
-//     <FormControl fullWidth>
-//       <InputLabel>类型</InputLabel>
-//       <Select value={type} onChange={handleSelectChange}>
-//         <MenuItem value={0}>书证</MenuItem>
-//         <MenuItem value={1}>物证</MenuItem>
-//         <MenuItem value={2}>证言</MenuItem>
-//       </Select>
-//     </FormControl>
-//   );
-// }
+  const handleSelectType = (event) => {
+    setType(event.target.value);
+  };
+
+  return (
+    <FormControl fullWidth>
+      <InputLabel>类型</InputLabel>
+      <Select value={type} onChange={handleSelectType}>
+        <MenuItem value="document">书证</MenuItem>
+        <MenuItem value="physical">物证</MenuItem>
+        <MenuItem value="testimony">证言</MenuItem>
+      </Select>
+    </FormControl>
+  );
+}
 
 // 函数式写法，无class
 export default function ResolveView() {
@@ -220,7 +228,7 @@ export default function ResolveView() {
                   <List>
                     <ListItem>
                       <Grid container spacing={2}>
-                        <Grid item xs={6}>
+                        <Grid item xs={7}>
                           <TextField
                             label="单条证据"
                             value="酒后驾驶其本人的荣威沪ARXXXX轿车驶离车库，并沿路途经本市南北高架西侧徐汇路上匝道、南北高架西侧鲁班路出口匝道、外滩人民路隧道等地并进入本区区域"
@@ -228,16 +236,9 @@ export default function ResolveView() {
                           />
                         </Grid>
                         <Grid item xs={3}>
-                          <FormControl fullWidth>
-                            <InputLabel>类型</InputLabel>
-                            <Select value={type} onChange={handleSelectChange}>
-                              <MenuItem value={0}>书证</MenuItem>
-                              <MenuItem value={1}>物证</MenuItem>
-                              <MenuItem value={2}>证言</MenuItem>
-                            </Select>
-                          </FormControl>
+                          <SelectEvidenceType evidenceType="document" />
                         </Grid>
-                        <Grid item xs={3} justify="center">
+                        <Grid item xs={2} className={classes.buttonAlign}>
                           <CustomButton color="danger">
                             <Close />
                             不认定
@@ -306,3 +307,7 @@ export default function ResolveView() {
     </div>
   );
 }
+
+SelectEvidenceType.propTypes = {
+  evidenceType: PropTypes.string,
+};

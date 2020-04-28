@@ -14,46 +14,46 @@ import { makeStyles } from "@material-ui/core";
 
 const drawerWidth = 240;
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   drawerPaper: {
     position: "relative",
     whiteSpace: "nowrap",
     width: drawerWidth,
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen
-    })
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
   drawerPaperClose: {
     overflowX: "hidden",
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
+      duration: theme.transitions.duration.leavingScreen,
     }),
     width: theme.spacing(7),
     [theme.breakpoints.up("sm")]: {
-      width: theme.spacing(9)
-    }
+      width: theme.spacing(9),
+    },
   },
   toolbarIcon: {
     display: "flex",
     alignItems: "center",
     justifyContent: "flex-end",
     padding: "0 8px",
-    ...theme.mixins.toolbar
+    ...theme.mixins.toolbar,
   },
   navLink: {
     textDecoration: "none",
     display: "block",
-    color: "black"
-  }
+    color: "black",
+  },
 }));
 
 export default function SideBar(props) {
   const classes = useStyles();
   const [selectedIndex, setSelectedIndex] = React.useState(0);
 
-  const handleListItemClick = index => () => {
+  const handleListItemClick = (index) => () => {
     setSelectedIndex(index);
   };
 
@@ -72,7 +72,7 @@ export default function SideBar(props) {
         paper: clsx(
           classes.drawerPaper,
           !props.open && classes.drawerPaperClose
-        )
+        ),
       }}
       open={props.open}
     >
@@ -112,5 +112,5 @@ export default function SideBar(props) {
 SideBar.propTypes = {
   open: PropTypes.bool,
   list: PropTypes.array,
-  handleClickMenuButton: PropTypes.func
+  handleClickMenuButton: PropTypes.func,
 };
