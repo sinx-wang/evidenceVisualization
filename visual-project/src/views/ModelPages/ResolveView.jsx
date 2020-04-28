@@ -29,44 +29,61 @@ import Check from "@material-ui/icons/Check";
 import Close from "@material-ui/icons/Close";
 // import { CardTitle } from "assets/jss/material-kit-react.js";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   paper: {
     padding: theme.spacing(2),
     // textAlign: "center",
-    color: theme.palette.text.secondary
+    color: theme.palette.text.secondary,
     // height: 120
   },
   paper2: {
     padding: theme.spacing(1),
     textAlign: "center",
     color: theme.palette.text.secondary,
-    height: 200
+    height: 200,
   },
   paper3: {
     padding: theme.spacing(1),
     textAlign: "center",
     color: theme.palette.text.secondary,
-    height: 500
+    height: 500,
   },
   text: {
     float: "left",
-    display: "block"
+    display: "block",
   },
   textarea: {
-    height: "80%"
+    height: "80%",
   },
   textFieldBlock: {
-    marginBottom: 10
+    marginBottom: 10,
   },
   evidenceItem: {
     marginTop: "10px",
     height: "40",
-    width: "80%"
-  }
+    width: "80%",
+  },
 }));
+
+// 证据类型选择
+function SelectEvidenceType(props) {
+  const [type, setType] = React.useState(props.evidenceType)
+
+  return (
+    <FormControl fullWidth>
+      <InputLabel>类型</InputLabel>
+      <Select value={type} onChange={handleSelectChange}>
+        <MenuItem value={0}>书证</MenuItem>
+        <MenuItem value={1}>物证</MenuItem>
+        <MenuItem value={2}>证言</MenuItem>
+      </Select>
+    </FormControl>
+  );
+}
+
 // 函数式写法，无class
 export default function ResolveView() {
   // React Hooks，详见https://zh-hans.reactjs.org/docs/hooks-effect.html
@@ -80,12 +97,12 @@ export default function ResolveView() {
     defendantEvidence: "", //被告证据文本
     complainantEvidenceList: [
       { id: 1, content: "evidence1" },
-      { id: 2, content: "evidence2" }
+      { id: 2, content: "evidence2" },
     ], //原告分解完的证据集合
-    defendantEvidenceList: [] //被告分解完的证据集合
+    defendantEvidenceList: [], //被告分解完的证据集合
   });
 
-  const handleFieldChange = prop => event => {
+  const handleFieldChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
   };
 
@@ -99,7 +116,7 @@ export default function ResolveView() {
 
   const [type, setType] = React.useState(0);
 
-  const handleSelectChange = event => {
+  const handleSelectChange = (event) => {
     setType(event.target.value);
   };
 
@@ -230,7 +247,7 @@ export default function ResolveView() {
                       </Grid>
                     </ListItem>
                   </List>
-                )
+                ),
               },
               {
                 tabName: "被告",
@@ -246,8 +263,8 @@ export default function ResolveView() {
                       </Grid>
                     </ListItem>
                   </List>
-                )
-              }
+                ),
+              },
             ]}
           />
         </Grid>
