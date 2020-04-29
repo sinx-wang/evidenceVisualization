@@ -269,40 +269,6 @@ export default function ResolveView() {
             ]}
           />
         </Grid>
-        {/* <Grid item xs={6}>
-          <Paper className={classes.paper3}>
-            <form noValidate autoComplete="off">
-              {values.complainantEvidenceList.map((evidenceItem, index) => (
-                <div key={index}>
-                  <TextField
-                    className={classes.evidenceItem}
-                    id="outlined-basic"
-                    variant="outlined"
-                    value={evidenceItem.content}
-                  ></TextField>
-                  <br />
-                </div>
-              ))}
-            </form>
-          </Paper>
-        </Grid>
-        <Grid item xs={6}>
-          <Paper className={classes.paper3}>
-            <form noValidate autoComplete="off">
-              {values.defendantEvidenceList.map((evidenceItem, index) => (
-                <div key={index}>
-                  <TextField
-                    className={classes.evidenceItem}
-                    id="outlined-basic"
-                    variant="outlined"
-                    value={evidenceItem.content}
-                  ></TextField>
-                  <br />
-                </div>
-              ))}
-            </form>
-          </Paper>
-        </Grid> */}
       </Grid>
     </div>
   );

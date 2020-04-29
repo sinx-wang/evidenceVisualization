@@ -1,8 +1,7 @@
 export default function Util() {
-
   const commonUrl = "http://127.0.0.1:8080";
 
-  const getUrl = url => {
+  const getUrl = (url) => {
     let uri = commonUrl + url;
     return uri;
   };
@@ -18,11 +17,11 @@ export default function Util() {
     const params = {
       method: "post",
       headers,
-      body: param
+      body: param,
     };
 
     fetch(getUrl(url), params)
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
           throw Error(response.statusText);
         }
@@ -40,12 +39,12 @@ export default function Util() {
       method: "get",
       headers: {
         "content-type": contentType,
-        charset: "UTF-8"
-      }
+        charset: "UTF-8",
+      },
     };
 
     fetch(getUrl(url), params)
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
           throw Error(response.statusText);
         }

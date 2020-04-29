@@ -62,6 +62,14 @@ data = {
     "type": 0,
     "text": "string"
 }
+getData = [
+    {
+        "documentId": 0,
+        "type": 0,
+        "body": "string"
+    },
+    ...
+]
 ```
 
 2.提取链头
