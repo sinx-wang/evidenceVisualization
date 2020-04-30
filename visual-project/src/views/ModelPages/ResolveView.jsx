@@ -1,14 +1,10 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
 import CardHeader from "components/Card/CardHeader.js";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
 import CustomButton from "components/CustomButtons/Button.js";
-import CustomTabs from "components/CustomTabs/CustomTabs.js";
 import TextField from "@material-ui/core/TextField";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -16,18 +12,8 @@ import TableCell from "@material-ui/core/TableCell";
 // import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import InputLabel from "@material-ui/core/InputLabel";
 import CropIcon from "@material-ui/icons/Crop";
 import EditIcon from "@material-ui/icons/Edit";
-import PersonIcon from "@material-ui/icons/Person";
-import PersonOutlineIcon from "@material-ui/icons/PersonOutline";
-import Check from "@material-ui/icons/Check";
-import Close from "@material-ui/icons/Close";
 // import { CardTitle } from "assets/jss/material-kit-react.js";
 
 const useStyles = makeStyles((theme) => ({
@@ -67,30 +53,7 @@ const useStyles = makeStyles((theme) => ({
     height: "40",
     width: "80%",
   },
-  buttonAlign: {
-    textAlign: "center",
-  },
 }));
-
-// 证据类型选择
-function SelectEvidenceType(props) {
-  const [type, setType] = React.useState(props.evidenceType);
-
-  const handleSelectType = (event) => {
-    setType(event.target.value);
-  };
-
-  return (
-    <FormControl fullWidth>
-      <InputLabel>类型</InputLabel>
-      <Select value={type} onChange={handleSelectType}>
-        <MenuItem value="document">书证</MenuItem>
-        <MenuItem value="physical">物证</MenuItem>
-        <MenuItem value="testimony">证言</MenuItem>
-      </Select>
-    </FormControl>
-  );
-}
 
 // 函数式写法，无class
 export default function ResolveView() {
@@ -110,23 +73,8 @@ export default function ResolveView() {
     defendantEvidenceList: [], //被告分解完的证据集合
   });
 
-  const handleFieldChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
-  };
 
-  const handleComplainantResolve = () => {
-    alert(values.complainantEvidence);
-  };
 
-  const handleDefendantResolve = () => {
-    alert(values.defendantEvidence);
-  };
-
-  const [type, setType] = React.useState(0);
-
-  const handleSelectChange = (event) => {
-    setType(event.target.value);
-  };
 
   const classes = useStyles();
 
@@ -216,64 +164,7 @@ export default function ResolveView() {
             </CardBody>
           </Card>
         </Grid>
-        <Grid item xs={12}>
-          <CustomTabs
-            title="非矛盾证据"
-            headerColor="success"
-            tabs={[
-              {
-                tabName: "原告",
-                tabIcon: PersonIcon,
-                tabContent: (
-                  <List>
-                    <ListItem>
-                      <Grid container spacing={2}>
-                        <Grid item xs={7}>
-                          <TextField
-                            label="单条证据"
-                            value="酒后驾驶其本人的荣威沪ARXXXX轿车驶离车库，并沿路途经本市南北高架西侧徐汇路上匝道、南北高架西侧鲁班路出口匝道、外滩人民路隧道等地并进入本区区域"
-                            fullWidth
-                          />
-                        </Grid>
-                        <Grid item xs={3}>
-                          <SelectEvidenceType evidenceType="document" />
-                        </Grid>
-                        <Grid item xs={2} className={classes.buttonAlign}>
-                          <CustomButton color="danger">
-                            <Close />
-                            不认定
-                          </CustomButton>
-                        </Grid>
-                        <Grid item xs={12}></Grid>
-                      </Grid>
-                    </ListItem>
-                  </List>
-                ),
-              },
-              {
-                tabName: "被告",
-                tabIcon: PersonOutlineIcon,
-                tabContent: (
-                  <List>
-                    <ListItem>
-                      <Grid container>
-                        <Grid item xs={6}></Grid>
-                        <Grid item xs={3}></Grid>
-                        <Grid item xs={3}></Grid>
-                        <Grid item xs={12}></Grid>
-                      </Grid>
-                    </ListItem>
-                  </List>
-                ),
-              },
-            ]}
-          />
-        </Grid>
       </Grid>
     </div>
   );
 }
-
-SelectEvidenceType.propTypes = {
-  evidenceType: PropTypes.string,
-};

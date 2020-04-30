@@ -9,13 +9,13 @@ import InputLabel from "@material-ui/core/InputLabel";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Checkbox from "@material-ui/core/Checkbox";
-import Link from '@material-ui/core/Link';
-import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import Link from "@material-ui/core/Link";
+import Paper from "@material-ui/core/Paper";
+import Box from "@material-ui/core/Box";
+import Grid from "@material-ui/core/Grid";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import Img from "../../assets/img/connor.jpg";
@@ -24,51 +24,54 @@ import Img from "../../assets/img/connor.jpg";
 const Copyright = () => {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
+      {"Copyright © "}
       <Link color="inherit" href="">
         evidenceVisualization
-      </Link>{' '}
+      </Link>{" "}
       {new Date().getFullYear()}
-      {'.'}
+      {"."}
     </Typography>
-  )
-}
+  );
+};
 
 // Material-Ui的样式解决方案，可以理解为一部分CSS,详见https://material-ui.com/zh/styles/basics
 // theme主题由index.js中的ThemeProvider提供
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: '100vh',
+    height: "100vh",
   },
   image: {
     backgroundImage: "url(" + Img + ")",
     backgroundRepeat: "no-repeat",
-    backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
-    backgroundSize: 'cover',
-    backgroundPosition: 'center'
+    backgroundColor:
+      theme.palette.type === "light"
+        ? theme.palette.grey[50]
+        : theme.palette.grey[900],
+    backgroundSize: "cover",
+    backgroundPosition: "center",
   },
   paper: {
     // 默认一个space是8px，详见https://material-ui.com/zh/customization/spacing/
     margin: theme.spacing(8, 4),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center'
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.warning.main
+    backgroundColor: theme.palette.warning.main,
   },
   form: {
-    width: '100%',
-    marginTop: theme.spacing(1)
+    width: "100%",
+    marginTop: theme.spacing(1),
   },
   formControl: {
     margin: theme.spacing(1),
-    marginLeft: 0
+    marginLeft: 0,
   },
   submit: {
-    margin: theme.spacing(3, 0, 2)
-  }
+    margin: theme.spacing(3, 0, 2),
+  },
 }));
 
 // 函数式写法，无class
@@ -85,11 +88,11 @@ export default function LoginView() {
     username: "",
     password: "",
     showPassword: false,
-    remeber: true
+    remeber: true,
   });
 
   // event隐式传递
-  const handleChange = prop => event => {
+  const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
   };
 
@@ -97,9 +100,9 @@ export default function LoginView() {
     setValues({ ...values, showPassword: !values.showPassword });
   };
 
-  const handleMouseDownPassword = event => {
+  const handleMouseDownPassword = (event) => {
     event.preventDefault();
-  }
+  };
 
   const handleClickRemeberMe = () => {
     setValues({ ...values, remeber: !values.remeber });
@@ -108,10 +111,10 @@ export default function LoginView() {
 
   const handleSubmit = () => {
     console.log(values.username + values.password);
-  }
+  };
 
   return (
-    <Grid container component='main' className={classes.root}>
+    <Grid container component="main" className={classes.root}>
       <CssBaseLine />
       <Grid item xs={false} sm={4} md={7} className={classes.image} />
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
@@ -119,11 +122,16 @@ export default function LoginView() {
           <Avatar className={classes.avatar}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography component='h1' variant='h5'>
+          <Typography component="h1" variant="h5">
             用户认证
           </Typography>
           <form className={classes.form} noValidate>
-            <FormControl className={classes.formControl} fullWidth variant="outlined" required>
+            <FormControl
+              className={classes.formControl}
+              fullWidth
+              variant="outlined"
+              required
+            >
               <InputLabel htmlFor="username">用户名</InputLabel>
               <OutlinedInput
                 id="username"
@@ -132,7 +140,12 @@ export default function LoginView() {
                 required
               />
             </FormControl>
-            <FormControl className={classes.formControl} fullWidth variant="outlined" required>
+            <FormControl
+              className={classes.formControl}
+              fullWidth
+              variant="outlined"
+              required
+            >
               <InputLabel htmlFor="password">密码</InputLabel>
               <OutlinedInput
                 id="password"
@@ -155,7 +168,13 @@ export default function LoginView() {
               />
             </FormControl>
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" onChange={handleClickRemeberMe} />}
+              control={
+                <Checkbox
+                  value="remember"
+                  color="primary"
+                  onChange={handleClickRemeberMe}
+                />
+              }
               label="记住我"
             />
             <Button
@@ -182,5 +201,5 @@ export default function LoginView() {
         </div>
       </Grid>
     </Grid>
-  )
+  );
 }

@@ -29,6 +29,7 @@ let modelRoutes = [
     path: "/developing",
     name: "测试界面",
     icon: DeveloperMode,
+    layout: "/model",
     component: Develop,
   },
 ];
