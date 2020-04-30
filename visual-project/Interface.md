@@ -52,6 +52,9 @@ data = {
 ```
 
 ## 证据分解
+```json
+baseUrl = "/cases"
+```
 
 1.分解证据
 
@@ -66,7 +69,8 @@ getData = [
     {
         "documentId": 0,
         "type": 0,
-        "body": "string"
+        "body": "string",
+        "agree": 0
     },
     ...
 ]

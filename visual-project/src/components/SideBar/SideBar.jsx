@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SideBar(props) {
   const classes = useStyles();
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [selectedIndex, setSelectedIndex] = React.useState(-1);
 
   const handleListItemClick = (index) => () => {
     setSelectedIndex(index);

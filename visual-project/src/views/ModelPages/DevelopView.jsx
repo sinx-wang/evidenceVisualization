@@ -12,6 +12,8 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import PersonIcon from "@material-ui/icons/Person";
 import PersonOutlineIcon from "@material-ui/icons/PersonOutline";
+import Edit from "@material-ui/icons/Edit";
+import Save from "@material-ui/icons/Save";
 import Check from "@material-ui/icons/Check";
 import Close from "@material-ui/icons/Close";
 import { makeStyles } from "@material-ui/core/styles";
@@ -34,7 +36,7 @@ function SelectEvidenceType(props) {
   };
 
   return (
-    <FormControl fullWidth>
+    <FormControl fullWidth disabled={props.disabled}>
       <InputLabel>类型</InputLabel>
       <Select value={type} onChange={handleSelectType}>
         <MenuItem value={0}>书证</MenuItem>
@@ -45,6 +47,53 @@ function SelectEvidenceType(props) {
   );
 }
 
+function EvidenceTabContent(props) {
+  const classes = useStyles();
+
+  const item = props.item;
+
+  const notEditing = item.documentId !== props.editing;
+
+  return (
+    <ListItem>
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
+          <TextField
+            label="单条证据"
+            value={item.body}
+            fullWidth
+            disabled={notEditing}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <SelectEvidenceType evidenceType={item.type} disabled={notEditing} />
+        </Grid>
+        <Grid item xs={1} className={classes.buttonAlign}>
+          <CustomButton
+            color="info"
+            simple
+            onClick={() => props.handleClickEdit(item.documentId)}
+          >
+            {notEditing ? <Edit /> : <Save />}
+          </CustomButton>
+        </Grid>
+        <Grid item xs={2} className={classes.buttonAlign}>
+          <CustomButton
+            color={props.agree ? "success" : "danger"}
+            onClick={() =>
+              props.handleClickAgree(props.position, props.prosecutor)
+            }
+          >
+            {props.agree ? <Check /> : <Close />}
+            {props.agree ? "认定" : "不认定"}
+          </CustomButton>
+        </Grid>
+        <Grid item xs={12}></Grid>
+      </Grid>
+    </ListItem>
+  );
+}
+
 export default function DevelopView() {
   const classes = useStyles();
 
@@ -52,6 +101,32 @@ export default function DevelopView() {
   const [prosecutorDoc, setProsecutorDoc] = React.useState([]);
   // 被告证据
   const [defendantDoc, setDefendantDoc] = React.useState([]);
+
+  const [editing, setEditing] = React.useState(-1);
+
+  const handleClickEdit = (id) => {
+    if (id === editing) {
+      setEditing(-1);
+    } else {
+      setEditing(id);
+    }
+  };
+
+  const handleClickAgree = (index, isProsecutor) => {
+    console.log(index);
+    let array = [];
+    if (isProsecutor) {
+      array = [...prosecutorDoc];
+      array[index].agree = !prosecutorDoc[index].agree;
+      console.log(array);
+      setProsecutorDoc(array);
+    } else {
+      array = [...defendantDoc];
+      array[index].agree = !defendantDoc[index].agree;
+      setDefendantDoc(array);
+    }
+  };
+  // const handleProDocChange =
 
   React.useEffect(() => {
     setProsecutorDoc(JSON.parse(DocumentData.documents));
@@ -71,28 +146,16 @@ export default function DevelopView() {
                 tabIcon: PersonIcon,
                 tabContent: (
                   <List>
-                    {prosecutorDoc.map((item) => (
-                      <ListItem key={item.documentId}>
-                        <Grid container spacing={2}>
-                          <Grid item xs={7}>
-                            <TextField
-                              label="单条证据"
-                              value={item.body}
-                              fullWidth
-                            />
-                          </Grid>
-                          <Grid item xs={3}>
-                            <SelectEvidenceType evidenceType={item.type} />
-                          </Grid>
-                          <Grid item xs={2} className={classes.buttonAlign}>
-                            <CustomButton color="danger">
-                              <Close />
-                              不认定
-                            </CustomButton>
-                          </Grid>
-                          <Grid item xs={12}></Grid>
-                        </Grid>
-                      </ListItem>
+                    {prosecutorDoc.map((item, index) => (
+                      <EvidenceTabContent
+                        key={index}
+                        position={index}
+                        item={item}
+                        editing={editing}
+                        prosecutor
+                        handleClickEdit={handleClickEdit}
+                        handleClickAgree={handleClickAgree}
+                      />
                     ))}
                   </List>
                 ),
@@ -102,28 +165,16 @@ export default function DevelopView() {
                 tabIcon: PersonOutlineIcon,
                 tabContent: (
                   <List>
-                    {defendantDoc.map((item) => (
-                      <ListItem key={item.documentId}>
-                        <Grid container spacing={2}>
-                          <Grid item xs={7}>
-                            <TextField
-                              label="单条证据"
-                              value={item.body}
-                              fullWidth
-                            />
-                          </Grid>
-                          <Grid item xs={3}>
-                            <SelectEvidenceType evidenceType={item.type} />
-                          </Grid>
-                          <Grid item xs={2} className={classes.buttonAlign}>
-                            <CustomButton color="danger">
-                              <Close />
-                              不认定
-                            </CustomButton>
-                          </Grid>
-                          <Grid item xs={12}></Grid>
-                        </Grid>
-                      </ListItem>
+                    {defendantDoc.map((item, index) => (
+                      <EvidenceTabContent
+                        key={index}
+                        position={index}
+                        item={item}
+                        editing={editing}
+                        prosecutor={false}
+                        handleClickEdit={handleClickEdit}
+                        handleClickAgree={handleClickAgree}
+                      />
                     ))}
                   </List>
                 ),
@@ -137,5 +188,16 @@ export default function DevelopView() {
 }
 
 SelectEvidenceType.propTypes = {
+  disabled: PropTypes.bool,
   evidenceType: PropTypes.number,
+};
+
+EvidenceTabContent.propTypes = {
+  position: PropTypes.number,
+  item: PropTypes.object,
+  agree: PropTypes.bool,
+  editing: PropTypes.number,
+  prosecutor: PropTypes.bool,
+  handleClickEdit: PropTypes.func,
+  handleClickAgree: PropTypes.func,
 };

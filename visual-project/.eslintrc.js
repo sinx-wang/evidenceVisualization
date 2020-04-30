@@ -23,7 +23,7 @@ module.exports = {
       1,
       {
         endOfLine: "auto",
-      }
-    ]
-  }
+      },
+    ],
+  },
 };
