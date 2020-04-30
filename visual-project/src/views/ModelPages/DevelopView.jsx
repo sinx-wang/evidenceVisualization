@@ -10,6 +10,8 @@ import CustomTabs from "components/CustomTabs/CustomTabs.js";
 import TextField from "@material-ui/core/TextField";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
+import Chip from "@material-ui/core/Chip";
+import Paper from "@material-ui/core/Paper";
 import PersonIcon from "@material-ui/icons/Person";
 import PersonOutlineIcon from "@material-ui/icons/PersonOutline";
 import Edit from "@material-ui/icons/Edit";
@@ -25,6 +27,16 @@ const useStyles = makeStyles((theme) => ({
   },
   buttonAlign: {
     textAlign: "center",
+  },
+  headPaper: {
+    display: "flex",
+    flexWrap: "wrap",
+    listStyle: "none",
+    padding: theme.spacing(0.5),
+    margin: 0,
+  },
+  chip: {
+    margin: theme.spacing(0.5),
   },
 }));
 
@@ -47,12 +59,39 @@ function SelectEvidenceType(props) {
   );
 }
 
+function EvidenceHeads(props) {
+  const classes = useStyles();
+
+  const array = props.heads;
+
+  return (
+    <Paper component="ul" variant="outlined" className={classes.headPaper}>
+      {array.map((data) => (
+        <li key={data.key}>
+          <Chip
+            label={data.label}
+            variant="outlined"
+            color="primary"
+            className={classes.chip}
+          />
+        </li>
+      ))}
+    </Paper>
+  );
+}
+
 function EvidenceTabContent(props) {
   const classes = useStyles();
 
   const item = props.item;
 
   const notEditing = item.documentId !== props.editing;
+
+  const [heads, setHeads] = React.useState([]);
+
+  React.useEffect(() => {
+    setHeads(JSON.parse(DocumentData.heads));
+  }, []);
 
   return (
     <ListItem>
@@ -88,7 +127,9 @@ function EvidenceTabContent(props) {
             {props.agree ? "认定" : "不认定"}
           </CustomButton>
         </Grid>
-        <Grid item xs={12}></Grid>
+        <Grid item xs={12}>
+          <EvidenceHeads heads={heads} />
+        </Grid>
       </Grid>
     </ListItem>
   );
@@ -190,6 +231,10 @@ export default function DevelopView() {
 SelectEvidenceType.propTypes = {
   disabled: PropTypes.bool,
   evidenceType: PropTypes.number,
+};
+
+EvidenceHeads.propTypes = {
+  heads: PropTypes.array,
 };
 
 EvidenceTabContent.propTypes = {
