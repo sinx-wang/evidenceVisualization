@@ -12,6 +12,9 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Chip from "@material-ui/core/Chip";
 import Paper from "@material-ui/core/Paper";
+import Card from "components/Card/Card.js";
+import CardBody from "components/Card/CardBody.js";
+import CardHeader from "components/Card/CardHeader.js";
 import PersonIcon from "@material-ui/icons/Person";
 import PersonOutlineIcon from "@material-ui/icons/PersonOutline";
 import Edit from "@material-ui/icons/Edit";
@@ -40,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// 证据类型选择
 function SelectEvidenceType(props) {
   const [type, setType] = React.useState(props.evidenceType);
 
@@ -59,6 +63,7 @@ function SelectEvidenceType(props) {
   );
 }
 
+// 链头，使用paper与chips实现
 function EvidenceHeads(props) {
   const classes = useStyles();
 
@@ -80,6 +85,7 @@ function EvidenceHeads(props) {
   );
 }
 
+// 非矛盾证据
 function EvidenceTabContent(props) {
   const classes = useStyles();
 
@@ -135,6 +141,7 @@ function EvidenceTabContent(props) {
   );
 }
 
+// 主界面
 export default function DevelopView() {
   const classes = useStyles();
 
@@ -222,6 +229,13 @@ export default function DevelopView() {
               },
             ]}
           />
+        </Grid>
+        <Grid item xs={12}>
+          <Card>
+            <CardHeader color="danger">矛盾证据</CardHeader>
+            <CardBody>
+            </CardBody>
+          </Card>
         </Grid>
       </Grid>
     </div>

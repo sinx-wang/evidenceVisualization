@@ -14,6 +14,24 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import CropIcon from "@material-ui/icons/Crop";
 import EditIcon from "@material-ui/icons/Edit";
+import DocumentData from "../../util/data/DocumentData";
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import PropTypes from "prop-types";
+import Paper from "@material-ui/core/Paper";
+import Chip from "@material-ui/core/Chip";
+import ListItem from "@material-ui/core/ListItem";
+import Edit from "@material-ui/icons/Edit";
+import Save from "@material-ui/icons/Save";
+import Check from "@material-ui/icons/Check";
+import Close from "@material-ui/icons/Close";
+import DeleteIcon from "@material-ui/icons/HighlightOff";
+import PersonIcon from "@material-ui/icons/Person";
+import List from "@material-ui/core/List";
+import PersonOutlineIcon from "@material-ui/icons/PersonOutline";
+import CustomTabs from "../../components/CustomTabs/CustomTabs";
 // import { CardTitle } from "assets/jss/material-kit-react.js";
 
 const useStyles = makeStyles((theme) => ({
@@ -53,28 +71,161 @@ const useStyles = makeStyles((theme) => ({
     height: "40",
     width: "80%",
   },
+  buttonAlign: {
+    textAlign: "center",
+  },
+  headPaper: {
+    display: "flex",
+    flexWrap: "wrap",
+    listStyle: "none",
+    padding: theme.spacing(0.5),
+    margin: 0,
+  },
+  chip: {
+    margin: theme.spacing(0.5),
+  },
 }));
+
+function SelectEvidenceType(props) {
+  const [type, setType] = React.useState(props.evidenceType);
+
+  const handleSelectType = (event) => {
+    setType(event.target.value);
+  };
+
+  return (
+    <FormControl fullWidth disabled={props.disabled}>
+      <InputLabel>类型</InputLabel>
+      <Select value={type} onChange={handleSelectType}>
+        <MenuItem value={0}>书证</MenuItem>
+        <MenuItem value={1}>物证</MenuItem>
+        <MenuItem value={2}>证言</MenuItem>
+      </Select>
+    </FormControl>
+  );
+}
+
+// 链头，使用paper与chips实现
+function EvidenceHeads(props) {
+  const classes = useStyles();
+
+  const array = props.heads;
+
+  return (
+    <Paper component="ul" variant="outlined" className={classes.headPaper}>
+      {array.map((data) => (
+        <li key={data.key}>
+          <Chip
+            label={data.label}
+            variant="outlined"
+            color="primary"
+            className={classes.chip}
+          />
+        </li>
+      ))}
+    </Paper>
+  );
+}
+
+function EvidenceTabContent(props) {
+  const classes = useStyles();
+
+  const item = props.item;
+
+  const notEditing = item.documentId !== props.editing;
+
+  const [heads, setHeads] = React.useState([]);
+
+  React.useEffect(() => {
+    setHeads(JSON.parse(DocumentData.heads));
+  }, []);
+
+  return (
+    <ListItem>
+      <Grid container spacing={2}>
+        <Grid item xs={7}>
+          <TextField
+            label="单条证据"
+            value={item.body}
+            fullWidth
+            disabled={notEditing}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <SelectEvidenceType evidenceType={item.type} disabled={notEditing} />
+        </Grid>
+        <Grid item xs={1} className={classes.buttonAlign}>
+          <CustomButton
+            color={notEditing ? "info" : "success"}
+            simple
+            onClick={() => props.handleClickEdit(item.documentId)}
+          >
+            {notEditing ? <Edit /> : <Save />}
+          </CustomButton>
+        </Grid>
+        <Grid item xs={1} className={classes.buttonAlign}>
+          <CustomButton
+            color="danger"
+            simple
+            onClick={() =>
+              props.handleClickDelete(item.documentId, props.prosecutor)
+            }
+          >
+            <DeleteIcon />
+          </CustomButton>
+        </Grid>
+        <Grid item xs={12}>
+          <EvidenceHeads heads={heads} />
+        </Grid>
+      </Grid>
+    </ListItem>
+  );
+}
 
 // 函数式写法，无class
 export default function ResolveView() {
-  // React Hooks，详见https://zh-hans.reactjs.org/docs/hooks-effect.html
+  // 原告证据
+  const [prosecutorDoc, setProsecutorDoc] = React.useState([]);
+  // 被告证据
+  const [defendantDoc, setDefendantDoc] = React.useState([]);
+
   React.useEffect(() => {
     document.title = "证据分解";
-  });
+    setProsecutorDoc(JSON.parse(DocumentData.documents));
+    setDefendantDoc(JSON.parse(DocumentData.documents));
+  }, []);
 
+  const [editing, setEditing] = React.useState(-1);
+
+  const handleClickEdit = (id) => {
+    console.log(id);
+    if (id === editing) {
+      setEditing(-1);
+    } else {
+      setEditing(id);
+    }
+  };
+
+  const handleClickDelete = (id, prosecutor) => {
+    console.log(id);
+    console.log(prosecutor);
+    if (prosecutor) {
+      setProsecutorDoc((list) => list.filter((item) => item.documentId !== id));
+      console.log(prosecutorDoc);
+    } else {
+      setDefendantDoc((list) => list.filter((item) => item.documentId !== id));
+    }
+  };
   // React Hooks，相当于class式写法的state，详见https://zh-hans.reactjs.org/docs/hooks-intro.html
-  const [values, setValues] = React.useState({
-    complainantEvidence: "", //原告证据文本
-    defendantEvidence: "", //被告证据文本
-    complainantEvidenceList: [
-      { id: 1, content: "evidence1" },
-      { id: 2, content: "evidence2" },
-    ], //原告分解完的证据集合
-    defendantEvidenceList: [], //被告分解完的证据集合
-  });
-
-
-
+  // const [values, setValues] = React.useState({
+  //   complainantEvidence: "", //原告证据文本
+  //   defendantEvidence: "", //被告证据文本
+  //   complainantEvidenceList: [
+  //     { id: 1, content: "evidence1" },
+  //     { id: 2, content: "evidence2" },
+  //   ], //原告分解完的证据集合
+  //   defendantEvidenceList: [], //被告分解完的证据集合
+  // });
 
   const classes = useStyles();
 
@@ -164,7 +315,72 @@ export default function ResolveView() {
             </CardBody>
           </Card>
         </Grid>
+        <Grid item xs={12}>
+          <CustomTabs
+            title="证据分解结果"
+            headerColor="info"
+            tabs={[
+              {
+                tabName: "原告",
+                tabIcon: PersonIcon,
+                tabContent: (
+                  <List>
+                    {prosecutorDoc.map((item, index) => (
+                      <EvidenceTabContent
+                        key={index}
+                        position={index}
+                        item={item}
+                        editing={editing}
+                        prosecutor={true}
+                        handleClickEdit={handleClickEdit}
+                        handleClickDelete={handleClickDelete}
+                      />
+                    ))}
+                  </List>
+                ),
+              },
+              {
+                tabName: "被告",
+                tabIcon: PersonOutlineIcon,
+                tabContent: (
+                  <List>
+                    {defendantDoc.map((item, index) => (
+                      <EvidenceTabContent
+                        key={index}
+                        position={index}
+                        item={item}
+                        editing={editing}
+                        prosecutor={false}
+                        handleClickEdit={handleClickEdit}
+                        handleClickDelete={handleClickDelete}
+                      />
+                    ))}
+                  </List>
+                ),
+              },
+            ]}
+          />
+        </Grid>
       </Grid>
     </div>
   );
 }
+
+SelectEvidenceType.propTypes = {
+  disabled: PropTypes.bool,
+  evidenceType: PropTypes.number,
+};
+
+EvidenceHeads.propTypes = {
+  heads: PropTypes.array,
+};
+
+EvidenceTabContent.propTypes = {
+  position: PropTypes.number,
+  item: PropTypes.object,
+  agree: PropTypes.bool,
+  editing: PropTypes.number,
+  prosecutor: PropTypes.bool,
+  handleClickEdit: PropTypes.func,
+  handleClickDelete: PropTypes.func,
+};

@@ -28,4 +28,17 @@ const heads = JSON.stringify(headData);
 
 DocumentData.heads = heads;
 
+const createContradictDocs = (documentId, type, body, agree, role) => {
+  return { documentId, type, body, agree, role };
+};
+
+const contradictDocsArray = [
+  createContradictDocs(0, 0, "矛盾证据第一", false, 0),
+  createContradictDocs(1, 1, "矛盾证据第二", true, 1),
+];
+
+const contradictDocs = JSON.stringify(contradictDocsArray);
+
+DocumentData.contradictDocs = contradictDocs;
+
 export default DocumentData;
