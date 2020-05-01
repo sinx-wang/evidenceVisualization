@@ -27,13 +27,13 @@ let modelRoutes = [
     layout: "/model",
     component: Question,
   },
-  {
-    path: "/developing",
-    name: "测试界面",
-    icon: DeveloperMode,
-    layout: "/model",
-    component: Develop,
-  },
+  // {
+  //   path: "/developing",
+  //   name: "测试界面",
+  //   icon: DeveloperMode,
+  //   layout: "/model",
+  //   component: Develop,
+  // },
   {
       path: "/fact",
       name: "事实认定",

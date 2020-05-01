@@ -57,7 +57,7 @@ export default function ModelView() {
       var stage =  new Jtopo.Stage(canvas)
       stage.eagleEye.visible = null;
 
-      var scene = new JTopo.Scene(stage);
+      var scene = new Jtopo.Scene(stage);
       scene.mode='select'
       //scene.background= '1.png';
       //

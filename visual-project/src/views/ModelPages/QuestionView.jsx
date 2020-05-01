@@ -1,282 +1,341 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
+import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormLabel from "@material-ui/core/FormLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import InputLabel from "@material-ui/core/InputLabel";
+import CustomButton from "components/CustomButtons/Button.js";
+import CustomTabs from "components/CustomTabs/CustomTabs.js";
+import TextField from "@material-ui/core/TextField";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import Chip from "@material-ui/core/Chip";
+import Paper from "@material-ui/core/Paper";
+import Card from "components/Card/Card.js";
+import CardBody from "components/Card/CardBody.js";
+import CardHeader from "components/Card/CardHeader.js";
+import PersonIcon from "@material-ui/icons/Person";
+import PersonOutlineIcon from "@material-ui/icons/PersonOutline";
+import Check from "@material-ui/icons/Check";
+import Close from "@material-ui/icons/Close";
+import { makeStyles } from "@material-ui/core/styles";
+import DocumentData from "../../util/data/DocumentData";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
-  paper: {
-    padding: theme.spacing(2),
+  buttonAlign: {
     textAlign: "center",
-    color: theme.palette.text.secondary,
-    height: "100%",
   },
-  paper2: {
-    padding: theme.spacing(1),
-    textAlign: "center",
-    color: theme.palette.text.secondary,
-    height: 150,
+  headPaper: {
+    display: "flex",
+    flexWrap: "wrap",
+    listStyle: "none",
+    padding: theme.spacing(0.5),
+    margin: 0,
   },
-
-  label: {
-    fontSize: 15,
-    float: "left",
+  chip: {
+    margin: theme.spacing(0.5),
   },
-  textField: {
-    width: "90%",
-    float: "left",
-    marginTop: 5,
-    //border:'solid red 2px',
-    maxHeight: "40%",
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(1),
-  },
-  button: {
-    height: 50,
-    marginTop: theme.spacing(1),
-    marginLeft: 60,
-    minWidth: 120,
-  },
-  leftDiv: {
-    width: "50%",
-    //border:'solid red 2px',
-    height: 70,
-    float: "left",
-  },
-  conflictDiv: {
-    height: 60,
-  },
-
-  bottomTextField: {
-    width: "50%",
-    float: "left",
-    marginTop: 5,
-    //border:'solid red 2px',
-    maxHeight: 50,
-  },
-  border: {
-    height: "100%",
+  contradictPaper: {
+    display: "flex",
+    flexWrap: "wrap",
+    listStyle: "none",
+    padding: theme.spacing(0.5),
   },
 }));
 
-// 函数式写法，无class
-export default function QuestionView() {
-  // React Hooks，详见https://zh-hans.reactjs.org/docs/hooks-effect.html
-  React.useEffect(() => {
-    document.title = "质证采信";
-  });
+// 证据类型选择
+function SelectEvidenceType(props) {
+  const [type, setType] = React.useState(props.evidenceType);
 
-  // React Hooks，相当于class式写法的state，详见https://zh-hans.reactjs.org/docs/hooks-intro.html
-  const [values, setValues] = React.useState({
-    evidenceList: [
-      { id: 1, content: "xxxx", type: 1 },
-      { id: 2, content: "xxxxxxx", type: 1 },
-    ], //非矛盾证据
-    evidenceFlags: [false, false], //采信与否集合 需要在加载数据的时候进行初始化
-    conflictEvidenceList: [
-      {
-        complainant: { id: 1, content: "xxxx", type: 1 },
-        defendant: { id: 2, content: "xxxxxxx", type: 1 },
-      },
-    ],
-  });
-  const classes = useStyles();
-
-  //矛盾证据选择radio
-  const handleRadioChange = (event) => {
-    alert(event.target.value);
-  };
-
-  //更改证据的类型
-  const handleTypeChange = (index) => (event) => {
-    let newEvidenceList = values.evidenceList;
-    newEvidenceList[index].type = event.target.value;
-    setValues({ ...values, evidenceList: newEvidenceList });
-  };
-
-  const handleButtonClick = (index) => (event) => {
-    let flags = values.evidenceFlags;
-    flags[index] = !flags[index];
-    setValues({ ...values, evidenceFlags: flags });
+  const handleSelectType = (event) => {
+    setType(event.target.value);
   };
 
   return (
-    <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Paper className={classes.paper}>
-            <label className={classes.label}>非矛盾证据:</label>
-            <br />
-            <br />
-            {values.evidenceList.map((evidenceItem, index) => (
-              <div key={evidenceItem.id}>
-                <div className={classes.leftDiv}>
-                  <TextField
-                    id="outlined-basic"
-                    variant="outlined"
-                    className={classes.textField}
-                    value={evidenceItem.content}
-                  />
-                </div>
+    <FormControl fullWidth disabled={props.disabled}>
+      <InputLabel>类型</InputLabel>
+      <Select value={type} onChange={handleSelectType}>
+        <MenuItem value={0}>书证</MenuItem>
+        <MenuItem value={1}>物证</MenuItem>
+        <MenuItem value={2}>证言</MenuItem>
+      </Select>
+    </FormControl>
+  );
+}
 
-                <FormControl variant="outlined" className={classes.formControl}>
-                  <InputLabel htmlFor="outlined-age-native-simple">
-                    证据类型
-                  </InputLabel>
-                  <Select
-                    native
-                    onChange={handleTypeChange(index)}
-                    label="类型"
-                    inputProps={{
-                      name: "证据类型",
-                      id: "outlined-age-native-simple",
-                    }}
-                  >
-                    <option value={1}>书证</option>
-                    <option value={2}>类型2</option>
-                  </Select>
-                </FormControl>
+// 链头，使用paper与chips实现
+function EvidenceHeads(props) {
+  const classes = useStyles();
 
-                <Button
-                  variant="contained"
-                  className={classes.button}
-                  onClick={handleButtonClick(index)}
-                  color={
-                    values.evidenceFlags[index] === true
-                      ? "secondary"
-                      : "primary"
-                  }
-                >
-                  {values.evidenceFlags[index] === true ? "不采信" : "采信"}
-                </Button>
-              </div>
-            ))}
-          </Paper>
+  const array = props.heads;
+
+  return (
+    <Paper component="ul" variant="outlined" className={classes.headPaper}>
+      {array.map((data) => (
+        <li key={data.key}>
+          <Chip
+            label={data.label}
+            variant="outlined"
+            color="primary"
+            className={classes.chip}
+          />
+        </li>
+      ))}
+    </Paper>
+  );
+}
+
+// 非矛盾证据
+function EvidenceTabContent(props) {
+  const classes = useStyles();
+
+  const item = props.item;
+
+  const [heads, setHeads] = React.useState([]);
+
+  React.useEffect(() => {
+    setHeads(JSON.parse(DocumentData.heads));
+  }, []);
+
+  React.useEffect(() => {
+    console.log(item.body);
+    console.log(props.agree);
+  });
+
+  return (
+    <ListItem>
+      <Grid container spacing={2}>
+        <Grid item xs={7}>
+          <TextField label="单条证据" value={item.body} fullWidth disabled />
         </Grid>
-
+        <Grid item xs={3}>
+          <SelectEvidenceType evidenceType={item.type} disabled />
+        </Grid>
+        <Grid item xs={2} className={classes.buttonAlign}>
+          <CustomButton
+            color={item.agree ? "success" : "danger"}
+            onClick={() =>
+              props.handleClickAgree(props.position, props.prosecutor)
+            }
+          >
+            {item.agree ? <Check /> : <Close />}
+            {item.agree ? "已认定" : "未认定"}
+          </CustomButton>
+        </Grid>
         <Grid item xs={12}>
-          <Paper className={classes.paper}>
-            <label className={classes.label}>矛盾证据:</label>
-            <br />
-            {values.conflictEvidenceList.map((item) => (
-              <Grid style={{ margin: "0 auto" }} item xs={10}>
-                <Paper className={classes.paper2}>
-                  <div style={{ width: "50%", float: "left" }}>
-                    <div className={classes.conflictDiv}>
-                      <label style={{ float: "left" }}>原告方：</label>
-                      <TextField
-                        id="outlined-basic"
-                        variant="outlined"
-                        className={classes.bottomTextField}
-                        value={item.complainant.content}
+          <EvidenceHeads heads={heads} />
+        </Grid>
+      </Grid>
+    </ListItem>
+  );
+}
+
+// item.body, item.type, item.agree
+function ContradictItem(props) {
+  const classes = useStyles();
+
+  const item = props.item;
+
+  const [agree, setAgree] = React.useState(item.agree);
+
+  const [heads, setHeads] = React.useState([]);
+
+  let label;
+  if (item.role) {
+    label = "被告证据";
+  } else {
+    label = "原告证据";
+  }
+
+  const handleClickAgree = () => {
+    setAgree(!agree);
+  };
+
+  React.useEffect(() => {
+    setHeads(JSON.parse(DocumentData.heads));
+  }, []);
+
+  return (
+    <Grid container spacing={2}>
+      <Grid item xs={7}>
+        <TextField label={label} value={item.body} fullWidth disabled />
+      </Grid>
+      <Grid item xs={3}>
+        <SelectEvidenceType evidenceType={item.type} disabled />
+      </Grid>
+      <Grid item xs={2} className={classes.buttonAlign}>
+        <CustomButton
+          color={agree ? "success" : "danger"}
+          onClick={handleClickAgree}
+        >
+          {agree ? <Check /> : <Close />}
+          {agree ? "已认定" : "未认定"}
+        </CustomButton>
+      </Grid>
+      <Grid item xs={12}>
+        <EvidenceHeads heads={heads} />
+      </Grid>
+    </Grid>
+  );
+}
+
+function ContradictGroup(props) {
+  const classes = useStyles();
+
+  const itemArray = props.item;
+
+  return (
+    <ListItem>
+      <Paper className={classes.contradictPaper} elevation={5}>
+        <Grid container spacing={1}>
+          {itemArray.map((item, index) => (
+            <Grid item xs={12} key={index}>
+              <ContradictItem item={item} />
+            </Grid>
+          ))}
+        </Grid>
+      </Paper>
+    </ListItem>
+  );
+}
+
+// 主界面
+export default function QuestionView() {
+  const classes = useStyles();
+  // 原告证据
+  const [prosecutorDoc, setProsecutorDoc] = React.useState([]);
+  // 被告证据
+  const [defendantDoc, setDefendantDoc] = React.useState([]);
+
+  const [contradiction, setContradiction] = React.useState([]);
+
+  const [editing, setEditing] = React.useState(-1);
+
+  const handleClickEdit = (id) => {
+    if (id === editing) {
+      setEditing(-1);
+    } else {
+      setEditing(id);
+    }
+  };
+
+  const handleClickAgree = (index, isProsecutor) => {
+    let array;
+    if (isProsecutor) {
+      array = [...prosecutorDoc];
+      array[index].agree = !prosecutorDoc[index].agree;
+      console.log(array);
+      setProsecutorDoc(array);
+    } else {
+      array = [...defendantDoc];
+      array[index].agree = !defendantDoc[index].agree;
+      setDefendantDoc(array);
+    }
+  };
+  // const handleProDocChange =
+
+  React.useEffect(() => {
+    setProsecutorDoc(JSON.parse(DocumentData.documents));
+    setDefendantDoc(JSON.parse(DocumentData.documents));
+    setContradiction(JSON.parse(DocumentData.contradictDocs));
+  }, []);
+
+  return (
+    <div className={classes.root}>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <CustomTabs
+            title="非矛盾证据"
+            headerColor="success"
+            tabs={[
+              {
+                tabName: "原告",
+                tabIcon: PersonIcon,
+                tabContent: (
+                  <List>
+                    {prosecutorDoc.map((item, index) => (
+                      <EvidenceTabContent
+                        key={index}
+                        position={index}
+                        item={item}
+                        editing={editing}
+                        prosecutor
+                        handleClickEdit={handleClickEdit}
+                        handleClickAgree={handleClickAgree}
                       />
-                    </div>
-                    <div className={classes.conflictDiv}>
-                      <label style={{ float: "left" }}>被告方：</label>
-                      <TextField
-                        id="outlined-basic"
-                        variant="outlined"
-                        className={classes.bottomTextField}
-                        value={item.defendant.content}
+                    ))}
+                  </List>
+                ),
+              },
+              {
+                tabName: "被告",
+                tabIcon: PersonOutlineIcon,
+                tabContent: (
+                  <List>
+                    {defendantDoc.map((item, index) => (
+                      <EvidenceTabContent
+                        key={index}
+                        position={index}
+                        item={item}
+                        editing={editing}
+                        prosecutor={false}
+                        handleClickEdit={handleClickEdit}
+                        handleClickAgree={handleClickAgree}
                       />
-                    </div>
-                  </div>
-
-                  <div style={{ width: "20%", float: "left" }}>
-                    <FormControl
-                      variant="outlined"
-                      className={classes.formControl}
-                    >
-                      <InputLabel htmlFor="outlined-age-native-simple">
-                        证据类型
-                      </InputLabel>
-                      <Select
-                        native
-                        label="类型"
-                        inputProps={{
-                          name: "证据类型",
-                          id: "outlined-age-native-simple",
-                        }}
-                      >
-                        <option value={1}>书证</option>
-                        <option value={2}>类型2</option>
-                      </Select>
-                      <Select
-                        native
-                        label="类型"
-                        inputProps={{
-                          name: "证据类型",
-                          id: "outlined-age-native-simple",
-                        }}
-                      >
-                        <option value={1}>书证</option>
-                        <option value={2}>类型2</option>
-                      </Select>
-                    </FormControl>
-                  </div>
-
-                  <div
-                    className={classes.border}
-                    style={{ float: "left", width: "20%", marginTop: 10 }}
-                  >
-                    <FormControl component="fieldset">
-                      <FormLabel component="legend"></FormLabel>
-                      <RadioGroup
-                        aria-label="gender"
-                        onChange={handleRadioChange}
-                      >
-                        <FormControlLabel
-                          value="原告"
-                          control={<Radio />}
-                          label="采信"
-                        />
-                        <FormControlLabel
-                          value="被告"
-                          control={<Radio />}
-                          label="采信"
-                        />
-                      </RadioGroup>
-                    </FormControl>
-                  </div>
-
-                  {/*<div className={classes.conflictDiv}>*/}
-                  {/*<label style={{float:'left'}}>原告方：</label>*/}
-                  {/*<TextField id="outlined-basic"*/}
-                  {/*variant="outlined"*/}
-                  {/*className={classes.bottomTextField}*/}
-                  {/*value={item.complainant.content}/>*/}
-                  {/*</div>*/}
-
-                  {/*<div className={classes.conflictDiv}>*/}
-                  {/*<label style={{float:'left'}}>被告方：</label>*/}
-                  {/*<TextField id="outlined-basic"*/}
-                  {/*variant="outlined"*/}
-                  {/*className={classes.bottomTextField}*/}
-                  {/*value={item.defendant.content}/>*/}
-                  {/*</div>*/}
-                </Paper>
-              </Grid>
-            ))}
-          </Paper>
+                    ))}
+                  </List>
+                ),
+              },
+            ]}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Card>
+            <CardHeader color="danger">矛盾证据</CardHeader>
+            <CardBody>
+              <List>
+                {contradiction.map((item) => (
+                  <ContradictGroup
+                    item={item.documents}
+                    key={item.contradictId}
+                  />
+                ))}
+              </List>
+            </CardBody>
+          </Card>
         </Grid>
       </Grid>
     </div>
   );
 }
+
+SelectEvidenceType.propTypes = {
+  disabled: PropTypes.bool,
+  evidenceType: PropTypes.number,
+};
+
+EvidenceHeads.propTypes = {
+  heads: PropTypes.array,
+};
+
+EvidenceTabContent.propTypes = {
+  position: PropTypes.number,
+  item: PropTypes.object,
+  agree: PropTypes.bool,
+  editing: PropTypes.number,
+  prosecutor: PropTypes.bool,
+  handleClickEdit: PropTypes.func,
+  handleClickAgree: PropTypes.func,
+};
+
+ContradictItem.propTypes = {
+  item: PropTypes.object,
+};
+
+ContradictGroup.propTypes = {
+  item: PropTypes.array,
+};

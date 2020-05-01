@@ -25,12 +25,13 @@ import Chip from "@material-ui/core/Chip";
 import ListItem from "@material-ui/core/ListItem";
 import Edit from "@material-ui/icons/Edit";
 import Save from "@material-ui/icons/Save";
-import Check from "@material-ui/icons/Check";
-import Close from "@material-ui/icons/Close";
+// import Check from "@material-ui/icons/Check";
+// import Close from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/HighlightOff";
 import PersonIcon from "@material-ui/icons/Person";
 import List from "@material-ui/core/List";
 import PersonOutlineIcon from "@material-ui/icons/PersonOutline";
+import Add from "@material-ui/icons/Add";
 import CustomTabs from "../../components/CustomTabs/CustomTabs";
 // import { CardTitle } from "assets/jss/material-kit-react.js";
 
@@ -84,6 +85,10 @@ const useStyles = makeStyles((theme) => ({
   chip: {
     margin: theme.spacing(0.5),
   },
+  addButton: {
+    padding: theme.spacing(2),
+    textAlign: "right",
+  },
 }));
 
 function SelectEvidenceType(props) {
@@ -111,6 +116,10 @@ function EvidenceHeads(props) {
 
   const array = props.heads;
 
+  const handleDeleteChip = (chip) => {
+    console.log(chip.label);
+  };
+
   return (
     <Paper component="ul" variant="outlined" className={classes.headPaper}>
       {array.map((data) => (
@@ -120,6 +129,7 @@ function EvidenceHeads(props) {
             variant="outlined"
             color="primary"
             className={classes.chip}
+            onDelete={() => handleDeleteChip(data)}
           />
         </li>
       ))}
@@ -216,16 +226,6 @@ export default function ResolveView() {
       setDefendantDoc((list) => list.filter((item) => item.documentId !== id));
     }
   };
-  // React Hooks，相当于class式写法的state，详见https://zh-hans.reactjs.org/docs/hooks-intro.html
-  // const [values, setValues] = React.useState({
-  //   complainantEvidence: "", //原告证据文本
-  //   defendantEvidence: "", //被告证据文本
-  //   complainantEvidenceList: [
-  //     { id: 1, content: "evidence1" },
-  //     { id: 2, content: "evidence2" },
-  //   ], //原告分解完的证据集合
-  //   defendantEvidenceList: [], //被告分解完的证据集合
-  // });
 
   const classes = useStyles();
 
@@ -324,38 +324,54 @@ export default function ResolveView() {
                 tabName: "原告",
                 tabIcon: PersonIcon,
                 tabContent: (
-                  <List>
-                    {prosecutorDoc.map((item, index) => (
-                      <EvidenceTabContent
-                        key={index}
-                        position={index}
-                        item={item}
-                        editing={editing}
-                        prosecutor={true}
-                        handleClickEdit={handleClickEdit}
-                        handleClickDelete={handleClickDelete}
-                      />
-                    ))}
-                  </List>
+                  <div className={classes.root}>
+                    <List>
+                      {prosecutorDoc.map((item, index) => (
+                        <EvidenceTabContent
+                          key={index}
+                          position={index}
+                          item={item}
+                          editing={editing}
+                          prosecutor={true}
+                          handleClickEdit={handleClickEdit}
+                          handleClickDelete={handleClickDelete}
+                        />
+                      ))}
+                    </List>
+                    <Paper elevation={0} className={classes.addButton}>
+                      <CustomButton color="success">
+                        <Add />
+                        添加
+                      </CustomButton>
+                    </Paper>
+                  </div>
                 ),
               },
               {
                 tabName: "被告",
                 tabIcon: PersonOutlineIcon,
                 tabContent: (
-                  <List>
-                    {defendantDoc.map((item, index) => (
-                      <EvidenceTabContent
-                        key={index}
-                        position={index}
-                        item={item}
-                        editing={editing}
-                        prosecutor={false}
-                        handleClickEdit={handleClickEdit}
-                        handleClickDelete={handleClickDelete}
-                      />
-                    ))}
-                  </List>
+                  <div className={classes.root}>
+                    <List>
+                      {defendantDoc.map((item, index) => (
+                        <EvidenceTabContent
+                          key={index}
+                          position={index}
+                          item={item}
+                          editing={editing}
+                          prosecutor={false}
+                          handleClickEdit={handleClickEdit}
+                          handleClickDelete={handleClickDelete}
+                        />
+                      ))}
+                    </List>
+                    <Paper elevation={0} className={classes.addButton}>
+                      <CustomButton color="success">
+                        <Add />
+                        添加
+                      </CustomButton>
+                    </Paper>
+                  </div>
                 ),
               },
             ]}
