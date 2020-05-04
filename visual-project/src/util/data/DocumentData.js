@@ -62,4 +62,18 @@ const contradictDocs = JSON.stringify(contradictDocsArray);
 
 DocumentData.contradictDocs = contradictDocs;
 
+const createFactsData = (factId, body, agree) => {
+  return { factId, body, agree };
+};
+
+const factsDataArray = [
+  createFactsData(0, "事实文本第一条", true),
+  createFactsData(1, "事实文本第二条", true),
+  createFactsData(2, "事实文本第三条", true),
+];
+
+const facts = JSON.stringify(factsDataArray);
+
+DocumentData.facts = facts;
+
 export default DocumentData;

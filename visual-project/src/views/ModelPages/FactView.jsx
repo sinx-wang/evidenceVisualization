@@ -1,144 +1,199 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
+import PropTypes from "prop-types";
+import Card from "components/Card/Card.js";
+import CardBody from "components/Card/CardBody.js";
+import CardHeader from "components/Card/CardHeader.js";
 import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
+import CustomButton from "components/CustomButtons/Button.js";
 import TextField from "@material-ui/core/TextField";
+import CropIcon from "@material-ui/icons/Crop";
+import EditIcon from "@material-ui/icons/Edit";
+import List from "@material-ui/core/List";
+import Paper from "@material-ui/core/Paper";
+import Chip from "@material-ui/core/Chip";
+import ListItem from "@material-ui/core/ListItem";
+import Edit from "@material-ui/icons/Edit";
+import Save from "@material-ui/icons/Save";
+import DeleteIcon from "@material-ui/icons/HighlightOff";
+import { makeStyles } from "@material-ui/core/styles";
+import DocumentData from "../../util/data/DocumentData";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
-  form: {
-    height: 20,
+  textFieldBlock: {
+    marginBottom: 10,
   },
-  paper: {
-    padding: theme.spacing(2),
+  buttonAlign: {
     textAlign: "center",
-    color: theme.palette.text.secondary,
-    height: "100%",
   },
-  paper2: {
-    padding: theme.spacing(1),
-    textAlign: "center",
-    color: theme.palette.text.secondary,
-    height: 150,
+  headPaper: {
+    display: "flex",
+    flexWrap: "wrap",
+    listStyle: "none",
+    padding: theme.spacing(0.5),
+    margin: 0,
   },
-  div2: {
-    width: "60%",
-    height: 145,
-    border: "solid red 1px",
-    float: "left",
-  },
-  div3: {
-    width: "30%",
-    height: "100%",
-    border: "solid red 1px",
-    float: "left",
-  },
-  textField: {
-    width: "80%",
-  },
-  textField2: {
-    width: "15%",
-    marginLeft: 20,
-  },
-  label: {
-    fontSize: 15,
-    float: "left",
-  },
-  button: {
-    height: 50,
-    marginTop: theme.spacing(3),
-    marginLeft: 60,
-    minWidth: 120,
+  chip: {
+    margin: theme.spacing(0.5),
   },
 }));
-// 函数式写法，无class
-export default function FactView() {
-  // React Hooks，详见https://zh-hans.reactjs.org/docs/hooks-effect.html
-  React.useEffect(() => {
-    document.title = "事实认定";
-  });
 
-  // React Hooks，相当于class式写法的state，详见https://zh-hans.reactjs.org/docs/hooks-intro.html
-  const [values, setValues] = React.useState({});
-
-  const handleFieldChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
-  };
-
-  const handleComplainantResolve = () => {
-    alert(values.complainantEvidence);
-  };
-
-  const handleDefendantResolve = () => {
-    alert(values.defendantEvidence);
-  };
-
+function FactHeads(props) {
   const classes = useStyles();
+
+  const array = props.heads;
+
+  const handleDeleteChip = (chip) => {
+    console.log(chip.label);
+  };
+
+  return (
+    <Paper component="ul" variant="outlined" className={classes.headPaper}>
+      {array.map((data) => (
+        <li key={data.key}>
+          <Chip
+            label={data.label}
+            variant="outlined"
+            color="primary"
+            className={classes.chip}
+            onDelete={() => handleDeleteChip(data)}
+          />
+        </li>
+      ))}
+    </Paper>
+  );
+}
+
+function FactsCardContent(props) {
+  const classes = useStyles();
+  const item = props.item;
+  const notEditing = item.factId !== props.editing;
+  const [heads, setHeads] = React.useState([]);
+
+  React.useEffect(() => {
+    setHeads(JSON.parse(DocumentData.heads));
+  }, []);
+
+  return (
+    <ListItem>
+      <Grid container spacing={2}>
+        <Grid item xs={10}>
+          <TextField
+            label="单条事实"
+            value={item.body}
+            fullWidth
+            disabled={notEditing}
+          />
+        </Grid>
+        <Grid item xs={1} className={classes.buttonAlign}>
+          <CustomButton
+            color={notEditing ? "info" : "success"}
+            simple
+            onClick={() => props.handleClickEdit(item.factId)}
+          >
+            {notEditing ? <Edit /> : <Save />}
+          </CustomButton>
+        </Grid>
+        <Grid item xs={1} className={classes.buttonAlign}>
+          <CustomButton
+            color="danger"
+            simple
+            onClick={() => props.handleClickDelete(item.factId)}
+          >
+            <DeleteIcon />
+          </CustomButton>
+        </Grid>
+        <Grid item xs={12}>
+          <FactHeads heads={heads} />
+        </Grid>
+      </Grid>
+    </ListItem>
+  );
+}
+
+export default function FactView() {
+  const classes = useStyles();
+
+  const [facts, setFacts] = React.useState([]);
+  const [editing, setEditing] = React.useState(-1);
+
+  const handleClickSingleEdit = (id) => {
+    console.log(id);
+    if (id === editing) {
+      setEditing(-1);
+    } else {
+      setEditing(id);
+    }
+  };
+
+  const handleClickDelete = (id) => {
+    setFacts((list) => list.filter((item) => item.factId !== id));
+  };
+
+  React.useEffect(() => {
+    document.title = "开发测试界面";
+    setFacts(JSON.parse(DocumentData.facts));
+  }, []);
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={3}>
+      <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Paper className={classes.paper}>
-            <label className={classes.label}>事实:</label>
-            <br />
-            <br />
-            <Grid style={{ margin: "0 auto" }} item xs={8}>
-              <Paper className={classes.paper2}>
-                <div>
-                  <div className={classes.div2}>
-                    <form
-                      className={classes.form}
-                      noValidate
-                      autoComplete="off"
-                    >
-                      <TextField
-                        id="outlined-basic"
-                        variant="outlined"
-                        className={classes.textField}
-                        value="xxx"
-                      />
-                      <br />
-                      <br />
-                      <TextField
-                        id="outlined-basic"
-                        variant="outlined"
-                        className={classes.textField2}
-                        value="xxx"
-                      />
-                      <TextField
-                        id="outlined-basic"
-                        variant="outlined"
-                        className={classes.textField2}
-                        value="xxx"
-                      />
-                      <TextField
-                        id="outlined-basic"
-                        variant="outlined"
-                        className={classes.textField2}
-                        value="xxx"
-                      />
-                    </form>
-                  </div>
-                  <div className={classes.div3}>
-                    <Button
-                      variant="contained"
-                      className={classes.button}
-                      //onClick={handleButtonClick(index)}
-                      color="secondary"
-                    >
-                      采信
-                    </Button>
-                  </div>
-                </div>
-              </Paper>
-            </Grid>
-          </Paper>
+          <Card>
+            <CardHeader color="warning">事实文本</CardHeader>
+            <CardBody>
+              <TextField
+                fullWidth
+                label="请在此输入"
+                multiline
+                rows={7}
+                variant="outlined"
+                className={classes.textFieldBlock}
+              />
+              <CustomButton color="success" style={{ marginRight: 10 }} round>
+                <CropIcon />
+                分解事实
+              </CustomButton>
+              <CustomButton color="info" round>
+                <EditIcon />
+                编辑事实
+              </CustomButton>
+            </CardBody>
+          </Card>
+        </Grid>
+        <Grid item xs={12}>
+          <Card>
+            <CardHeader color="info">事实分解结果</CardHeader>
+            <CardBody>
+              <List>
+                {facts.map((item, index) => (
+                  <FactsCardContent
+                    key={index}
+                    item={item}
+                    editing={editing}
+                    handleClickEdit={handleClickSingleEdit}
+                    handleClickDelete={handleClickDelete}
+                  />
+                ))}
+              </List>
+            </CardBody>
+          </Card>
         </Grid>
       </Grid>
     </div>
   );
 }
+
+FactHeads.propTypes = {
+  heads: PropTypes.array,
+};
+
+FactsCardContent.propTypes = {
+  heads: PropTypes.array,
+  item: PropTypes.object,
+  editing: PropTypes.number,
+  handleClickEdit: PropTypes.func,
+  handleClickDelete: PropTypes.func,
+};
