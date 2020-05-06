@@ -15,6 +15,8 @@ import ListItem from "@material-ui/core/ListItem";
 import Edit from "@material-ui/icons/Edit";
 import Save from "@material-ui/icons/Save";
 import DeleteIcon from "@material-ui/icons/HighlightOff";
+import Check from "@material-ui/icons/Check";
+import Close from "@material-ui/icons/Close";
 import { makeStyles } from "@material-ui/core/styles";
 import DocumentData from "../../util/data/DocumentData";
 
@@ -58,7 +60,7 @@ function FactHeads(props) {
             variant="outlined"
             color="primary"
             className={classes.chip}
-            onDelete={() => handleDeleteChip(data)}
+            onDelete={props.noDelete ? undefined : () => handleDeleteChip(data)}
           />
         </li>
       ))}
@@ -113,6 +115,44 @@ function FactsCardContent(props) {
   );
 }
 
+function FactsJudgeContent(props) {
+  const classes = useStyles();
+  const item = props.item;
+  const [heads, setHeads] = React.useState([]);
+
+  React.useEffect(() => {
+    setHeads(JSON.parse(DocumentData.heads));
+  }, []);
+
+  return (
+    <ListItem>
+      <Grid container spacing={2}>
+        <Grid item xs={10}>
+          <TextField label="单条事实" value={item.body} fullWidth disabled />
+        </Grid>
+        <Grid item xs={2} className={classes.buttonAlign}>
+          <CustomButton
+            color={item.agree ? "success" : "danger"}
+            onClick={() => props.handleClickAgree(props.position)}
+          >
+            {item.agree ? <Check /> : <Close />}
+            {item.agree ? "已认定" : "未认定"}
+          </CustomButton>
+        </Grid>
+        <Grid item xs={12}>
+          <FactHeads heads={heads} noDelete />
+        </Grid>
+      </Grid>
+    </ListItem>
+  );
+}
+
+FactsJudgeContent.propTypes = {
+  item: PropTypes.object,
+  position: PropTypes.number,
+  handleClickAgree: PropTypes.func,
+};
+
 export default function FactView() {
   const classes = useStyles();
 
@@ -132,8 +172,14 @@ export default function FactView() {
     setFacts((list) => list.filter((item) => item.factId !== id));
   };
 
+  const handleClickAgree = (index) => {
+    let array = [...facts];
+    array[index].agree = !array[index].agree;
+    setFacts(array);
+  };
+
   React.useEffect(() => {
-    document.title = "开发测试界面";
+    document.title = "事实分解与认定";
     setFacts(JSON.parse(DocumentData.facts));
   }, []);
 
@@ -181,6 +227,23 @@ export default function FactView() {
             </CardBody>
           </Card>
         </Grid>
+        <Grid item xs={12}>
+          <Card>
+            <CardHeader color="danger">事实认定</CardHeader>
+            <CardBody>
+              <List>
+                {facts.map((item, index) => (
+                  <FactsJudgeContent
+                    key={index}
+                    item={item}
+                    position={index}
+                    handleClickAgree={handleClickAgree}
+                  />
+                ))}
+              </List>
+            </CardBody>
+          </Card>
+        </Grid>
       </Grid>
     </div>
   );
@@ -188,6 +251,7 @@ export default function FactView() {
 
 FactHeads.propTypes = {
   heads: PropTypes.array,
+  noDelete: PropTypes.bool,
 };
 
 FactsCardContent.propTypes = {

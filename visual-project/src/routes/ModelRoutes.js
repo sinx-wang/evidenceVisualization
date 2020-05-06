@@ -36,7 +36,7 @@ let modelRoutes = [
   },
   {
     path: "/fact",
-    name: "事实认定",
+    name: "事实分解与认定",
     icon: Looks3Icon,
     layout: "/model",
     component: Fact,

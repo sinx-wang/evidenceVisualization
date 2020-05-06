@@ -239,6 +239,7 @@ export default function QuestionView() {
   // const handleProDocChange =
 
   React.useEffect(() => {
+    document.title = "质证采信";
     setProsecutorDoc(JSON.parse(DocumentData.documents));
     setDefendantDoc(JSON.parse(DocumentData.documents));
     setContradiction(JSON.parse(DocumentData.contradictDocs));

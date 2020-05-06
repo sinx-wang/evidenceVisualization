@@ -16,15 +16,15 @@ const hist = createBrowserHistory();
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: "#2196F3"
+      main: "#2196F3",
     },
     secondary: {
-      main: "#F50057"
+      main: "#F50057",
     },
     error: {
-      main: "#F44336"
-    }
-  }
+      main: "#F44336",
+    },
+  },
 });
 
 ReactDOM.render(
