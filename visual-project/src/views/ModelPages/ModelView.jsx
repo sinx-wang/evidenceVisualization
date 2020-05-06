@@ -135,6 +135,32 @@ export default function ModelView() {
         return node
     }
 
+    var _fixType = function(type) {
+        type = type.toLowerCase().replace(/jpg/i, 'jpeg');
+        var r = type.match(/png|jpeg|bmp|gif/)[0];
+        return 'image/' + r;
+
+    };
+
+    var saveFile = function(data, filename){
+        var save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
+        save_link.href = data;
+        save_link.download = filename;
+        var event = document.createEvent('MouseEvents');
+        event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        save_link.dispatchEvent(event);
+    };
+
+
+
+    const exportToPng = ()=>{
+        var canvas = document.getElementById('canvas');
+        var type = 'png';
+        var imgData = canvas.toDataURL(type);
+        imgData = imgData.replace(_fixType(type),'image/octet-stream');
+        var filename =  'picture.' + type;
+        saveFile(imgData, filename)
+    }
 
   const classes = useStyles();
 
@@ -143,9 +169,10 @@ export default function ModelView() {
         <Grid container spacing={3} >
             <Button color="primary" onClick={initCanvas}>初始化Canvas</Button>
             <Button color="primary"  onClick={drawCanvas}>显示节点</Button>
+            <Button color="primary"  onClick={exportToPng}>导出图片</Button>
             <Grid item xs={12} >
                 <Paper className={classes.paper}>
-                    <canvas id='canvas'  className={classes.canvas}  />
+                    <canvas id='canvas'  className={classes.canvas}   />
                     <div className={classes.rightDiv}>
                         <TextField id="standard-basic" label="节点信息:" value={text} />
                     </div>
