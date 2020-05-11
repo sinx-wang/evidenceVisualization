@@ -4,28 +4,29 @@ import Paper from "@material-ui/core/Paper";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
-
+import Tooltip from "@material-ui/core/Tooltip";
+import IconButton from "@material-ui/core/IconButton";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Button from "@material-ui/core/Button";
+import AccountTree from "@material-ui/icons/AccountTree";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    display: "flex"
+    display: "flex",
   },
   paper: {
     padding: theme.spacing(2),
     display: "flex",
     overflow: "auto",
-    flexDirection: "column"
+    flexDirection: "column",
   },
   fixedHeight: {
-    height: 240
-  }
+    height: 240,
+  },
 }));
 
 export default function WaitToDealCasesView() {
@@ -33,12 +34,12 @@ export default function WaitToDealCasesView() {
 
   // eslint-disable-next-line no-unused-vars
   const [values, setValues] = React.useState({
-    cases: [{ id: 1, caseName: "xxx法院", judgeName: "xxx", time: "2012-5-8" }]
+    cases: [{ id: 1, caseName: "xxx法院", judgeName: "xxx", time: "2012-5-8" }],
   });
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   //点击案件待处理表格
-  const handleTableClick = index => () => {
+  const handleTableClick = (index) => () => {
     alert(index);
   };
 
@@ -72,13 +73,21 @@ export default function WaitToDealCasesView() {
                       <TableCell>{row.time}</TableCell>
                       <TableCell>{row.judgeName}</TableCell>
                       <TableCell>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={handleTableClick(index)}
-                        >
-                          证据链建模
-                        </Button>
+                        {/*<Button*/}
+                        {/*  variant="contained"*/}
+                        {/*  color="primary"*/}
+                        {/*  onClick={handleTableClick(index)}*/}
+                        {/*>*/}
+                        {/*  证据链建模*/}
+                        {/*</Button>*/}
+                        <Tooltip title="证据链建模">
+                          <IconButton
+                            color="primary"
+                            onClick={handleTableClick(index)}
+                          >
+                            <AccountTree />
+                          </IconButton>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))}
