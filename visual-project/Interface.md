@@ -14,7 +14,7 @@ data = {
 
 ## 案件列表
 ```json
-baseUrl = "/list"
+baseUrl = "/case"
 ```
 
 1.得到所有案件
@@ -56,7 +56,7 @@ data = {
 
 ## 证据分解
 ```json
-baseUrl = "/cases"
+baseUrl = "/evidence"
 ```
 
 1.分解证据
@@ -73,7 +73,7 @@ getData = [
         "documentId": 0,
         "type": 0,
         "body": "string",
-        "agree": 0
+        "confirm": 0
     },
     ...
 ]
@@ -92,10 +92,12 @@ data = {
 
 ```json
 path = "/addBody"
-data = {
+param = {
     "caseId": 0,
     "type": 0,
-    "body": "string",
+    "body": "string"
+}
+return = {
     "documentId": 0
 }
 ```
@@ -104,7 +106,7 @@ data = {
 
 ```json
 path = "/addHead"
-data = {
+param = {
     "caseId": 0,
     "head": "string",
     "documentId": 0,
@@ -132,10 +134,157 @@ data = {
 }
 ```
 
-## 质证与采信
+7. 获取非矛盾证据
+
+```json
+path = "/getNoContradictByCaseId"
+param = {
+    "caseId": 0
+}
+return = [
+    {
+        "role": 0,
+        "documents": [
+            {
+                "documentId": 0,
+                "type": 0,
+                "body": "string",
+                "confirm": 0
+            },
+            ...
+        ]
+    },...
+]
+```
+
+8. 获取矛盾证据
+
+```json
+path = "/getContradictByCaseId"
+param = {
+    "caseId": 0
+}
+return = [
+    {
+        "contradictId": 0,
+        "documents": [
+            {
+                "documentId": 0,
+                "type": 0,
+                "body": "string",
+                "confirm": 0,
+                "role": 0
+            }
+        ]
+    },...
+]
+```
+
+9. 认定证据
+```json
+path = "/updateTrustById"
+data = {
+    "documentId": 0,
+    "confirm": 0
+}
+```
 
 ## 事实认定
+```json
+baseUrl = "/facts"
+```
+
+1.分解事实
+```json
+path = "/resolve"
+param = {
+    "caseId": 0,
+    "text": "string"
+}
+return = [
+    {
+        "factId": 0,
+        "body": "string",
+        "confirm": 0
+    },
+    ...
+]
+```
+
+2.提取联结点
+
+```json
+path = "/createJoint"
+param = {
+    "factId": 0
+}
+```
+
+3.新增单条事实
+
+```json
+path = "/addFact"
+param = {
+    "caseId": 0,
+    "body": "string"
+}
+return = {
+    "factId": 0
+}
+```
+
+4.新增联结点
+
+```json
+path = "/addJoint"
+param = {
+    "caseId": 0,
+    "joint": "string",
+    "factId": 0,
+    "bodyId": 0
+}
+```
+
+5.更新整段事实
+
+```json
+path = "/updateBodyById"
+param = {
+    "bodyId": 0,
+    "body": "string"
+}
+```
+
+6. 认定事实
+```json
+path = "/updateTrustById"
+data = {
+    "factId": 0,
+    "confirm": 0
+}
+```
+
+7. 获取待认定事实
+
+```json
+path = "/getToConfirmByCaseId"
+param = {
+    "caseId": 0
+}
+return = [
+    {
+         "caseId": 0,
+         "body": "string",
+         "confirm": 0
+     },
+]
+```
 
 ## 证据链建模
+```json
+baseUrl = "/model"
+```
+
+1.
 
 ## 说理逻辑
