@@ -1,10 +1,13 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Jtopo from "jtopo-in-node";
+import JTopo from "jtopo-in-node";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import AddToQueue from "@material-ui/icons/AddToQueue";
+import Adjust from "@material-ui/icons/Adjust";
+import ImageIcon from "@material-ui/icons/Image";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,16 +27,21 @@ const useStyles = makeStyles((theme) => ({
     border: "solid red 1px",
     float: "right",
   },
+  button: {
+    margin: theme.spacing(1),
+  },
 }));
 
 // 函数式写法，无class
 export default function ModelView() {
-  // React Hooks，详见https://zh-hans.reactjs.org/docs/hooks-effect.html
+  const classes = useStyles();
+
   React.useEffect(() => {
     document.title = "建模";
   });
 
-  // React Hooks，相当于class式写法的state，详见https://zh-hans.reactjs.org/docs/hooks-intro.html
+  const canvasRef = React.useRef(null);
+
   const [values, setValues] = React.useState({
     nodeText: "", //点击节点信息
   });
@@ -41,41 +49,41 @@ export default function ModelView() {
   const [text, setText] = React.useState("空");
 
   const initCanvas = () => {
-    var canvas = document.getElementById("canvas");
-    canvas.width = window.innerWidth * 0.6;
+    let canvas = canvasRef.current;
+    canvas.width = window.innerWidth * 0.55;
     canvas.height = window.innerHeight * 0.5;
   };
 
   const drawCanvas = () => {
-    var canvas = document.getElementById("canvas");
-    var stage = new Jtopo.Stage(canvas);
+    let canvas = canvasRef.current;
+    let stage = new JTopo.Stage(canvas);
     stage.eagleEye.visible = null;
 
-    var scene = new Jtopo.Scene(stage);
+    let scene = new JTopo.Scene(stage);
     scene.mode = "select";
     //scene.background= '1.png';
     //
-    var node = createEvidenceNode("证据1", 20, 20);
+    let node = createEvidenceNode("证据1", 20, 20);
     scene.add(node);
 
-    var node1 = createEvidenceLinkNode("链头", 200, 100);
+    let node1 = createEvidenceLinkNode("链头", 200, 100);
     scene.add(node1);
 
-    var node2 = createFactLinkNode("链接点", 400, 100);
+    let node2 = createFactLinkNode("链接点", 400, 100);
     scene.add(node2);
 
-    var node3 = createFactNode("事实", 600, 100);
+    let node3 = createFactNode("事实", 600, 100);
     scene.add(node3);
 
-    var link = new Jtopo.Link(node, node1);
+    let link = new JTopo.Link(node, node1);
     scene.add(link);
 
-    var link2 = new Jtopo.Link(node2, node3);
+    let link2 = new JTopo.Link(node2, node3);
     scene.add(link2);
   };
 
   const createEvidenceNode = (text, x, y) => {
-    var node = new Jtopo.Node();
+    let node = new JTopo.Node();
     node.text = text;
     node.setLocation(x, y);
     node.dragable = false;
@@ -88,7 +96,7 @@ export default function ModelView() {
   };
 
   const createEvidenceLinkNode = (text, x, y) => {
-    var node = new Jtopo.CircleNode();
+    let node = new JTopo.CircleNode();
     node.text = text;
     node.setLocation(x, y);
     node.dragable = false;
@@ -102,7 +110,7 @@ export default function ModelView() {
   };
 
   const createFactNode = (text, x, y) => {
-    var node = new Jtopo.Node();
+    let node = new JTopo.Node();
     node.text = text;
     node.setLocation(x, y);
     node.dragable = false;
@@ -115,7 +123,7 @@ export default function ModelView() {
   };
 
   const createFactLinkNode = (text, x, y) => {
-    var node = new Jtopo.CircleNode();
+    let node = new JTopo.CircleNode();
     node.text = text;
     node.setLocation(x, y);
     node.dragable = false;
@@ -128,20 +136,20 @@ export default function ModelView() {
     return node;
   };
 
-  var _fixType = function (type) {
+  const _fixType = (type) => {
     type = type.toLowerCase().replace(/jpg/i, "jpeg");
-    var r = type.match(/png|jpeg|bmp|gif/)[0];
+    const r = type.match(/png|jpeg|bmp|gif/)[0];
     return "image/" + r;
   };
 
-  var saveFile = function (data, filename) {
-    var save_link = document.createElementNS(
+  const saveFile = (data, filename) => {
+    let save_link = document.createElementNS(
       "http://www.w3.org/1999/xhtml",
       "a"
     );
     save_link.href = data;
     save_link.download = filename;
-    var event = document.createEvent("MouseEvents");
+    let event = document.createEvent("MouseEvents");
     event.initMouseEvent(
       "click",
       true,
@@ -163,34 +171,60 @@ export default function ModelView() {
   };
 
   const exportToPng = () => {
-    var canvas = document.getElementById("canvas");
-    var type = "png";
-    var imgData = canvas.toDataURL(type);
+    // var canvas = document.getElementById("canvas");
+    let canvas = canvasRef.current;
+    const type = "png";
+    let imgData = canvas.toDataURL(type);
     imgData = imgData.replace(_fixType(type), "image/octet-stream");
-    var filename = "picture." + type;
+    let filename = "picture." + type;
     saveFile(imgData, filename);
   };
 
-  const classes = useStyles();
-
   return (
     <div>
-      <Grid container spacing={3}>
-        <Button color="primary" onClick={initCanvas}>
-          初始化Canvas
-        </Button>
-        <Button color="primary" onClick={drawCanvas}>
-          显示节点
-        </Button>
-        <Button color="primary" onClick={exportToPng}>
-          导出图片
-        </Button>
+      <Grid container spacing={2}>
         <Grid item xs={12}>
+          <Paper className={classes.paper} elevation={0}>
+            <Button
+              variant="contained"
+              className={classes.button}
+              startIcon={<AddToQueue />}
+              style={{
+                backgroundColor: "#4caf50",
+                color: "#fff",
+              }}
+              onClick={initCanvas}
+            >
+              初始化Canvas
+            </Button>
+            <Button
+              variant="contained"
+              className={classes.button}
+              startIcon={<Adjust />}
+              color="primary"
+              onClick={drawCanvas}
+            >
+              显示节点
+            </Button>
+            <Button
+              variant="contained"
+              className={classes.button}
+              startIcon={<ImageIcon />}
+              color="default"
+              onClick={exportToPng}
+            >
+              导出图片
+            </Button>
+          </Paper>
+        </Grid>
+        <Grid item xs={9}>
           <Paper className={classes.paper}>
-            <canvas id="canvas" className={classes.canvas} />
-            <div className={classes.rightDiv}>
-              <TextField id="standard-basic" label="节点信息:" value={text} />
-            </div>
+            <canvas id="canvas" ref={canvasRef} className={classes.canvas} />
+          </Paper>
+        </Grid>
+        <Grid item xs={3}>
+          <Paper className={classes.paper}>
+            <TextField id="standard-basic" label="节点信息:" value={text} />
           </Paper>
         </Grid>
       </Grid>

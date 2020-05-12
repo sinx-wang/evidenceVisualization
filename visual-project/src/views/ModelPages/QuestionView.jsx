@@ -103,7 +103,7 @@ function EvidenceTabContent(props) {
 
   React.useEffect(() => {
     console.log(item.body);
-    console.log(props.agree);
+    console.log(item.agree);
   });
 
   return (
