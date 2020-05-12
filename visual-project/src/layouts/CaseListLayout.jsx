@@ -97,7 +97,7 @@ const switchRoutes = (
   </Switch>
 );
 
-export default function CaseListLayout() {
+export default function CaseListLayout(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
 
@@ -113,6 +113,7 @@ export default function CaseListLayout() {
         open={open}
         content={"案件列表"}
         handleClickMenuButton={handleClickMenuButton}
+        history={props.history}
       />
       {/* 左侧侧边栏 */}
       <SideBar

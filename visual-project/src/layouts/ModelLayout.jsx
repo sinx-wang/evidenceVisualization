@@ -97,9 +97,13 @@ const switchRoutes = (
   </Switch>
 );
 
-export default function ModelLayout() {
+export default function ModelLayout(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+
+  React.useEffect(() => {
+    console.log(props.history);
+  }, []);
 
   const handleClickMenuButton = () => {
     setOpen(!open);
@@ -113,6 +117,7 @@ export default function ModelLayout() {
         open={open}
         content={"证据链建模"}
         handleClickMenuButton={handleClickMenuButton}
+        history={props.history}
       />
       {/* 左侧侧边栏 */}
       <SideBar

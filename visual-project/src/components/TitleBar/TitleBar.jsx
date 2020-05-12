@@ -59,12 +59,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function TitleBar(props) {
+function TitleBar(props) {
   const classes = useStyles();
   // const [open, setOpen] = React.useState(true);
   const handleClickDrawer = () => {
     props.handleClickMenuButton();
     // setOpen(!open);
+  };
+
+  const handleClickExit = () => {
+    props.history.push("/login");
   };
 
   return (
@@ -101,7 +105,7 @@ export default function TitleBar(props) {
             <NotificationIcon />
           </Badge>
         </IconButton>
-        <IconButton color="inherit">
+        <IconButton color="inherit" onClick={handleClickExit}>
           <ExitToApp />
         </IconButton>
       </Toolbar>
@@ -114,3 +118,5 @@ TitleBar.propTypes = {
   content: PropTypes.string,
   handleClickMenuButton: PropTypes.func,
 };
+
+export default TitleBar;
