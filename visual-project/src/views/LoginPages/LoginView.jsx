@@ -36,9 +36,9 @@ const Copyright = () => {
 
 // Material-Ui的样式解决方案，可以理解为一部分CSS,详见https://material-ui.com/zh/styles/basics
 // theme主题由index.js中的ThemeProvider提供
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    height: "100vh"
+    height: "100vh",
   },
   image: {
     backgroundImage: "url(" + Img + ")",
@@ -48,34 +48,34 @@ const useStyles = makeStyles(theme => ({
         ? theme.palette.grey[50]
         : theme.palette.grey[900],
     backgroundSize: "cover",
-    backgroundPosition: "center"
+    backgroundPosition: "center",
   },
   paper: {
     // 默认一个space是8px，详见https://material-ui.com/zh/customization/spacing/
     margin: theme.spacing(8, 4),
     display: "flex",
     flexDirection: "column",
-    alignItems: "center"
+    alignItems: "center",
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.warning.main
+    backgroundColor: theme.palette.warning.main,
   },
   form: {
     width: "100%",
-    marginTop: theme.spacing(1)
+    marginTop: theme.spacing(1),
   },
   formControl: {
     margin: theme.spacing(1),
-    marginLeft: 0
+    marginLeft: 0,
   },
   submit: {
-    margin: theme.spacing(3, 0, 2)
-  }
+    margin: theme.spacing(3, 0, 2),
+  },
 }));
 
 // 函数式写法，无class
-export default function LoginView() {
+export default function LoginView(props) {
   const classes = useStyles();
 
   // React Hooks，详见https://zh-hans.reactjs.org/docs/hooks-effect.html
@@ -88,11 +88,11 @@ export default function LoginView() {
     username: "",
     password: "",
     showPassword: false,
-    remeber: true
+    remember: true,
   });
 
   // event隐式传递
-  const handleChange = prop => event => {
+  const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
   };
 
@@ -100,17 +100,19 @@ export default function LoginView() {
     setValues({ ...values, showPassword: !values.showPassword });
   };
 
-  const handleMouseDownPassword = event => {
+  const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
 
-  const handleClickRemeberMe = () => {
-    setValues({ ...values, remeber: !values.remeber });
-    console.log("remebered" + values.remeber);
+  const handleClickRememberMe = () => {
+    setValues({ ...values, remember: !values.remember });
+    console.log("remembered" + values.remember);
   };
 
   const handleSubmit = () => {
     console.log(values.username + values.password);
+    sessionStorage.setItem("username", values.username);
+    props.history.push("/cases/waitToDeal");
   };
 
   return (
@@ -172,13 +174,12 @@ export default function LoginView() {
                 <Checkbox
                   value="remember"
                   color="primary"
-                  onChange={handleClickRemeberMe}
+                  onChange={handleClickRememberMe}
                 />
               }
               label="记住我"
             />
             <Button
-              type="submit"
               fullWidth
               variant="contained"
               color="primary"

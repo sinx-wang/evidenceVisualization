@@ -117,7 +117,7 @@ export default function ModelLayout(props) {
         open={open}
         content={"证据链建模"}
         handleClickMenuButton={handleClickMenuButton}
-        history={props.history}
+        {...props}
       />
       {/* 左侧侧边栏 */}
       <SideBar

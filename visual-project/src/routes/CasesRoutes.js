@@ -10,22 +10,22 @@ let casesRoutes = [
     name: "待处理案件",
     icon: CheckBoxOutlined,
     layout: "/cases",
-    component: WaitToDealCasesView
+    component: WaitToDealCasesView,
   },
   {
     path: "/alreadyDealed",
     name: "已结案件",
     icon: CheckBox,
     layout: "/cases",
-    component: DealingCasesView
+    component: DealingCasesView,
   },
   {
     path: "/dealing",
     name: "待结案件",
     icon: CollectionsBookmark,
     layout: "/cases",
-    component: DealingCasesView
-  }
+    component: DealingCasesView,
+  },
 ];
 
 export default casesRoutes;

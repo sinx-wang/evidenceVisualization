@@ -113,7 +113,7 @@ export default function CaseListLayout(props) {
         open={open}
         content={"案件列表"}
         handleClickMenuButton={handleClickMenuButton}
-        history={props.history}
+        {...props}
       />
       {/* 左侧侧边栏 */}
       <SideBar

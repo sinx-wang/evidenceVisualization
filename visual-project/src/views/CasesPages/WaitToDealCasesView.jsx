@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function WaitToDealCasesView() {
+export default function WaitToDealCasesView(props) {
   const classes = useStyles();
 
   // eslint-disable-next-line no-unused-vars
@@ -39,8 +39,9 @@ export default function WaitToDealCasesView() {
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   //点击案件待处理表格
-  const handleTableClick = (index) => () => {
-    alert(index);
+  const handleTableClick = (id) => () => {
+    sessionStorage.setItem("caseId", id);
+    props.history.push("/model/resolve");
   };
 
   return (
@@ -63,7 +64,7 @@ export default function WaitToDealCasesView() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {values.cases.map((row, index) => (
+                  {values.cases.map((row) => (
                     <TableRow key={row.id}>
                       <TableCell component="th" scope="row">
                         {row.id}
@@ -73,17 +74,10 @@ export default function WaitToDealCasesView() {
                       <TableCell>{row.time}</TableCell>
                       <TableCell>{row.judgeName}</TableCell>
                       <TableCell>
-                        {/*<Button*/}
-                        {/*  variant="contained"*/}
-                        {/*  color="primary"*/}
-                        {/*  onClick={handleTableClick(index)}*/}
-                        {/*>*/}
-                        {/*  证据链建模*/}
-                        {/*</Button>*/}
-                        <Tooltip title="证据链建模">
+                        <Tooltip title="证据链建模" placement="right">
                           <IconButton
                             color="primary"
-                            onClick={handleTableClick(index)}
+                            onClick={handleTableClick(row.id)}
                           >
                             <AccountTree />
                           </IconButton>
