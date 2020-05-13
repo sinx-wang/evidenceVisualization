@@ -101,10 +101,6 @@ export default function ModelLayout(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
 
-  React.useEffect(() => {
-    console.log(props.history);
-  }, []);
-
   const handleClickMenuButton = () => {
     setOpen(!open);
   };
