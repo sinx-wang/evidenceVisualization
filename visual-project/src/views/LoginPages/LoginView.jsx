@@ -19,6 +19,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import Img from "../../assets/img/connor.jpg";
+import * as Util from "../../util/Util";
 
 // 下方版权标识，函数形式为ES6箭头函数
 const Copyright = () => {
@@ -78,11 +79,6 @@ const useStyles = makeStyles((theme) => ({
 export default function LoginView(props) {
   const classes = useStyles();
 
-  // React Hooks，详见https://zh-hans.reactjs.org/docs/hooks-effect.html
-  React.useEffect(() => {
-    document.title = "登录";
-  });
-
   // React Hooks，相当于class式写法的state，详见https://zh-hans.reactjs.org/docs/hooks-intro.html
   const [values, setValues] = React.useState({
     username: "",
@@ -90,6 +86,11 @@ export default function LoginView(props) {
     showPassword: false,
     remember: true,
   });
+
+  // React Hooks，详见https://zh-hans.reactjs.org/docs/hooks-effect.html
+  React.useEffect(() => {
+    document.title = "登录";
+  }, []);
 
   // event隐式传递
   const handleChange = (prop) => (event) => {
@@ -112,7 +113,18 @@ export default function LoginView(props) {
   const handleSubmit = () => {
     console.log(values.username + values.password);
     sessionStorage.setItem("username", values.username);
-    props.history.push("/cases/waitToDeal");
+    let url = "/checkLogin";
+    let param = JSON.stringify({
+      username: values.username,
+      password: values.password,
+    });
+    let succ = () => {
+      props.history.push("/cases/waitToDeal");
+    };
+    let err = () => {
+      console.log("login failed");
+    };
+    Util.asyncHttpPost(url, param, succ, err);
   };
 
   return (
