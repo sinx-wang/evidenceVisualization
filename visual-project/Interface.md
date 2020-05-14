@@ -70,7 +70,8 @@ data = {
 }
 getData = [
     {
-        "evidenceId": 0,
+        "documentId": 0,//这是要分解id
+        "evidenceId": 0,//这是单个证据的id
         "type": 0,
         "body": "string",
         "confirm": 0
@@ -84,8 +85,19 @@ getData = [
 ```json
 path = "/createHead"
 data = {
-    "evidenceId": 0
+    "documentId": 0
 }
+return = [
+    {
+        "evidenceId": 0,
+        "headList": {
+            "headId": 0,
+            "head": "string"
+            },
+            ...
+    }
+    ...
+]
 ```
 
 3.新增单条证据document
