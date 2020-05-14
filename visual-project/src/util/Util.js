@@ -1,4 +1,4 @@
-const commonUrl = "http://118.178.19.149:8099";
+const commonUrl = "http://118.178.19.149:8099/ecm";
 
 const getUrl = (url) => {
   let uri = commonUrl + url;
@@ -23,10 +23,11 @@ const asyncHttpPost = (url, param, succ, err, contentType) => {
       if (!response.ok) {
         throw Error(response.statusText);
       }
+      console.log("succeed");
       return response.json();
     })
-    .then(succ)
-    .catch(err);
+    .catch((error) => console.error("Error:", error))
+    .then(succ);
 };
 
 const asyncHttpGet = (url, succ, err, contentType) => {
