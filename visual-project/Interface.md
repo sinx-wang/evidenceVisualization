@@ -70,7 +70,7 @@ data = {
 }
 getData = [
     {
-        "documentId": 0,
+        "evidenceId": 0,
         "type": 0,
         "body": "string",
         "confirm": 0
@@ -84,7 +84,7 @@ getData = [
 ```json
 path = "/createHead"
 data = {
-    "documentId": 0
+    "evidenceId": 0
 }
 ```
 
@@ -98,7 +98,7 @@ param = {
     "body": "string"
 }
 return = {
-    "documentId": 0
+    "evidenceId": 0
 }
 ```
 
@@ -109,7 +109,7 @@ path = "/addHead"
 param = {
     "caseId": 0,
     "head": "string",
-    "documentId": 0,
+    "evidenceId": 0,
     "bodyId": 0
 }
 ```
@@ -129,7 +129,7 @@ data = {
 ```json
 path = "/updateTypeById"
 data = {
-    "documentId": 0,
+    "evidenceId": 0,
     "type": 0
 }
 ```
@@ -146,7 +146,7 @@ return = [
         "role": 0,
         "documents": [
             {
-                "documentId": 0,
+                "evidenceId": 0,
                 "type": 0,
                 "body": "string",
                 "confirm": 0
@@ -169,7 +169,7 @@ return = [
         "contradictId": 0,
         "documents": [
             {
-                "documentId": 0,
+                "evidenceId": 0,
                 "type": 0,
                 "body": "string",
                 "confirm": 0,
@@ -184,7 +184,7 @@ return = [
 ```json
 path = "/updateTrustById"
 data = {
-    "documentId": 0,
+    "evidenceId": 0,
     "confirm": 0
 }
 ```
