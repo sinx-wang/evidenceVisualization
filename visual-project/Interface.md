@@ -90,10 +90,10 @@ data = {
 return = [
     {
         "bodyId": 0,
-        "headList": {
+        "headList": [
             "headId": 0,
             "head": "string"
-            },
+            ],
             ...
     }
     ...
@@ -229,8 +229,19 @@ return = [
 ```json
 path = "/createJoint"
 param = {
-    "factId": 0
+    "caseId": 0
 }
+return = [
+    {
+        "factId": 0,
+        "jointList": [
+            "jointId": 0,
+            "content": "string"
+            ],
+            ...
+    }
+    ...
+]
 ```
 
 3.新增单条事实
@@ -253,15 +264,18 @@ path = "/addJoint"
 param = {
     "caseId": 0,
     "joint": "string",
-    "factId": 0,
+    "factId": 0
     "bodyId": 0
+}
+return = {
+    "jointId": 0
 }
 ```
 
 5.更新整段事实
 
 ```json
-path = "/updateBodyById"
+path = "/updateFactById"
 param = {
     "bodyId": 0,
     "body": "string"
@@ -286,7 +300,7 @@ param = {
 }
 return = [
     {
-         "caseId": 0,
+         "factId": 0,
          "body": "string",
          "confirm": 0
      },
