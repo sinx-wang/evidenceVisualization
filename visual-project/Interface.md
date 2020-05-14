@@ -71,7 +71,7 @@ data = {
 getData = [
     {
         "documentId": 0,//这是要分解id
-        "evidenceId": 0,//这是单个证据的id
+        "bodyId": 0,//这是单个证据的id
         "type": 0,
         "body": "string",
         "confirm": 0
@@ -89,7 +89,7 @@ data = {
 }
 return = [
     {
-        "evidenceId": 0,
+        "bodyId": 0,
         "headList": {
             "headId": 0,
             "head": "string"
@@ -107,10 +107,11 @@ path = "/addBody"
 param = {
     "caseId": 0,
     "type": 0,
-    "body": "string"
+    "body": "string",
+    "documentId": 0
 }
 return = {
-    "evidenceId": 0
+     0  //bodyId
 }
 ```
 
@@ -121,7 +122,7 @@ path = "/addHead"
 param = {
     "caseId": 0,
     "head": "string",
-    "evidenceId": 0,
+    "documentId": 0,
     "bodyId": 0
 }
 ```
@@ -141,7 +142,7 @@ data = {
 ```json
 path = "/updateTypeById"
 data = {
-    "evidenceId": 0,
+    "bodyId": 0,
     "type": 0
 }
 ```
@@ -149,16 +150,16 @@ data = {
 7. 获取非矛盾证据
 
 ```json
-path = "/getNoContradictByCaseId"
+path = "/getNoContradictByDocumentId"
 param = {
-    "caseId": 0
+    "documentId": 0
 }
 return = [
     {
         "role": 0,
-        "documents": [
+        "bodys": [
             {
-                "evidenceId": 0,
+                "bodyId": 0,
                 "type": 0,
                 "body": "string",
                 "confirm": 0
@@ -172,16 +173,16 @@ return = [
 8. 获取矛盾证据
 
 ```json
-path = "/getContradictByCaseId"
+path = "/getContradictByDocumentId"
 param = {
-    "caseId": 0
+    "documentId": 0
 }
 return = [
     {
         "contradictId": 0,
-        "documents": [
+        "bodys": [
             {
-                "evidenceId": 0,
+                "bodyId": 0,
                 "type": 0,
                 "body": "string",
                 "confirm": 0,
@@ -196,7 +197,7 @@ return = [
 ```json
 path = "/updateTrustById"
 data = {
-    "evidenceId": 0,
+    "bodyId": 0,
     "confirm": 0
 }
 ```
