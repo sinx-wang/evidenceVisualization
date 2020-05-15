@@ -5,7 +5,7 @@ const getUrl = (url) => {
   return uri;
 };
 
-const asyncHttpPost = (url, param, succ, err, contentType) => {
+const asyncHttpPost = (url, param, succ, errFunc, contentType) => {
   if (!contentType) contentType = "application/json";
 
   const headers = {};
@@ -23,11 +23,13 @@ const asyncHttpPost = (url, param, succ, err, contentType) => {
       if (!response.ok) {
         throw Error(response.statusText);
       }
-      console.log("succeed");
       return response.json();
     })
-    .catch((error) => console.error("Error:", error))
-    .then(succ);
+    .then((response) => succ(response))
+    .catch((error) => {
+      console.error("Error:", error);
+      errFunc();
+    });
 };
 
 const asyncHttpGet = (url, succ, err, contentType) => {
@@ -48,8 +50,11 @@ const asyncHttpGet = (url, succ, err, contentType) => {
       }
       return response.json();
     })
-    .then(succ)
-    .catch(err);
+    .then((response) => succ(response))
+    .catch((error) => {
+      console.error("Error:", error);
+      err();
+    });
 };
 
 export { getUrl, asyncHttpGet, asyncHttpPost };

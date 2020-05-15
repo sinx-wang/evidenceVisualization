@@ -13,6 +13,7 @@ import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
+import Notification from "../../components/Notification/Notification";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -87,6 +88,14 @@ export default function LoginView(props) {
     remember: true,
   });
 
+  const [note, setNote] = React.useState({
+    show: false,
+    color: "",
+    content: "",
+  });
+
+  const [buttonDisabled, setButtonDisabled] = React.useState(false);
+
   // React Hooks，详见https://zh-hans.reactjs.org/docs/hooks-effect.html
   React.useEffect(() => {
     document.title = "登录";
@@ -105,6 +114,13 @@ export default function LoginView(props) {
     event.preventDefault();
   };
 
+  const handleCloseNote = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setNote({ ...note, show: false });
+  };
+
   const handleClickRememberMe = () => {
     setValues({ ...values, remember: !values.remember });
     console.log("remembered" + values.remember);
@@ -113,15 +129,37 @@ export default function LoginView(props) {
   const handleSubmit = () => {
     console.log(values.username + values.password);
     sessionStorage.setItem("username", values.username);
-    let url = "/checkLogin";
+    const url = "/checkLogin";
     let param = JSON.stringify({
       username: values.username,
       password: values.password,
     });
-    let succ = () => {
-      props.history.push("/cases/waitToDeal");
+    let succ = (response) => {
+      let realName = response.realName;
+      if (realName !== "null" && realName !== "error") {
+        setNote({
+          show: true,
+          color: "success",
+          content: "登录成功: 用户" + realName + "认证成功!",
+        });
+        setButtonDisabled(true);
+        setTimeout(() => {
+          props.history.push("/cases/waitToDeal");
+        }, 1500);
+      } else {
+        setNote({
+          show: true,
+          color: "error",
+          content: "登录失败: 用户名或密码错误!",
+        });
+      }
     };
     let err = () => {
+      setNote({
+        show: true,
+        color: "error",
+        content: "登录失败: 用户名或密码错误!",
+      });
       console.log("login failed");
     };
     Util.asyncHttpPost(url, param, succ, err);
@@ -130,6 +168,13 @@ export default function LoginView(props) {
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseLine />
+      <Notification
+        color={note.color}
+        content={note.content}
+        open={note.show}
+        autoHide={3000}
+        onClose={handleCloseNote}
+      />
       <Grid item xs={false} sm={4} md={7} className={classes.image} />
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
         <div className={classes.paper}>
@@ -197,6 +242,7 @@ export default function LoginView(props) {
               color="primary"
               className={classes.submit}
               onClick={handleSubmit}
+              disabled={buttonDisabled}
             >
               登录
             </Button>

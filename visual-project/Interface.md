@@ -39,9 +39,18 @@ data = {
 
 ```json
 path = "/getProcessingCases"
-data = {
+param = {
     "username": "username"
 }
+return = [
+  {
+    "cid": 0,
+    "cname": "string",
+    "type": "string",
+    "fillingDate": "string",
+    "manageJudge": "string"
+  }
+]
 ```
 
 4.搜索

@@ -13,6 +13,8 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import AccountTree from "@material-ui/icons/AccountTree";
+import Notification from "../../components/Notification/Notification";
+import * as Util from "../../util/Util";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,7 +38,29 @@ export default function WaitToDealCasesView(props) {
   const [values, setValues] = React.useState({
     cases: [{ id: 1, caseName: "xxx法院", judgeName: "xxx", time: "2012-5-8" }],
   });
+  const [note, setNote] = React.useState({
+    show: false,
+    color: "",
+    content: "",
+  });
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+  React.useEffect(() => {
+    const url = "/cases/getProcessingCases";
+    let param = JSON.stringify({
+      username: sessionStorage.getItem("username"),
+    });
+    const succ = (response) => {
+      setValues({
+        cases: response,
+      });
+      showNote(true);
+    };
+    const err = () => {
+      showNote(false);
+    };
+    Util.asyncHttpPost(url, param, succ, err);
+  }, []);
 
   //点击案件待处理表格
   const handleTableClick = (id) => () => {
@@ -44,9 +68,39 @@ export default function WaitToDealCasesView(props) {
     props.history.push("/model/resolve");
   };
 
+  const showNote = (success) => {
+    if (success) {
+      setNote({
+        show: true,
+        color: "success",
+        content: "加载待处理案件列表成功",
+      });
+    } else {
+      setNote({
+        show: true,
+        color: "error",
+        content: "获取数据失败, 请稍后再试!",
+      });
+    }
+  };
+
+  const handleCloseNote = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setNote({ ...note, show: false });
+  };
+
   return (
     <div className={classes.root}>
       <CssBaseline />
+      <Notification
+        color={note.color}
+        content={note.content}
+        open={note.show}
+        autoHide={3000}
+        onClose={handleCloseNote}
+      />
       <Grid container spacing={3}>
         <Grid item xs={12} md={12} lg={12}>
           <Paper className={fixedHeightPaper}>
