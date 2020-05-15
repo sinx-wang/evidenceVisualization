@@ -21,6 +21,8 @@ import Check from "@material-ui/icons/Check";
 import Close from "@material-ui/icons/Close";
 import { makeStyles } from "@material-ui/core/styles";
 import DocumentData from "../../util/data/DocumentData";
+import Notification from "../../components/Notification/Notification";
+import * as Util from "../../util/Util";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -76,9 +78,9 @@ function EvidenceHeads(props) {
   return (
     <Paper component="ul" variant="outlined" className={classes.headPaper}>
       {array.map((data) => (
-        <li key={data.key}>
+        <li key={data.headId}>
           <Chip
-            label={data.label}
+            label={data.head}
             variant="outlined"
             color="primary"
             className={classes.chip}
@@ -98,13 +100,14 @@ function EvidenceTabContent(props) {
   const [heads, setHeads] = React.useState([]);
 
   React.useEffect(() => {
-    setHeads(JSON.parse(DocumentData.heads));
+    // setHeads(JSON.parse(DocumentData.heads));
+    const url = "/evidence/createHeadByBodyId";
+    const succ = (response) => {
+      setHeads(response);
+    };
+    const err = () => {};
+    Util.asyncHttpPost(url, succ, err);
   }, []);
-
-  React.useEffect(() => {
-    console.log(item.body);
-    console.log(item.agree);
-  });
 
   return (
     <ListItem>
@@ -140,7 +143,7 @@ function ContradictItem(props) {
 
   const item = props.item;
 
-  const [agree, setAgree] = React.useState(item.agree);
+  const [confirm, setConfirm] = React.useState(item.confirm);
 
   const [heads, setHeads] = React.useState([]);
 
@@ -152,7 +155,19 @@ function ContradictItem(props) {
   }
 
   const handleClickAgree = () => {
-    setAgree(!agree);
+    setConfirm(!confirm);
+    const url = "/evidence/updateTrustById";
+    let param = JSON.stringify({
+      bodyId: item.bodyId,
+      confirm: confirm,
+    });
+    const succ = (response) => {
+      console.log(response);
+    };
+    const err = () => {
+      console.log("bodyId: " + item.bodyId);
+    };
+    Util.asyncHttpPost(url, param, succ, err);
   };
 
   React.useEffect(() => {
@@ -169,11 +184,11 @@ function ContradictItem(props) {
       </Grid>
       <Grid item xs={2} className={classes.buttonAlign}>
         <CustomButton
-          color={agree ? "success" : "danger"}
+          color={confirm ? "success" : "danger"}
           onClick={handleClickAgree}
         >
-          {agree ? <Check /> : <Close />}
-          {agree ? "已认定" : "未认定"}
+          {confirm ? <Check /> : <Close />}
+          {confirm ? "已认定" : "未认定"}
         </CustomButton>
       </Grid>
       <Grid item xs={12}>
@@ -215,6 +230,19 @@ export default function QuestionView() {
 
   const [editing, setEditing] = React.useState(-1);
 
+  const [note, setNote] = React.useState({
+    show: false,
+    color: "",
+    content: "",
+  });
+
+  const handleCloseNote = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setNote({ ...note, show: false });
+  };
+
   const handleClickEdit = (id) => {
     if (id === editing) {
       setEditing(-1);
@@ -238,15 +266,66 @@ export default function QuestionView() {
   };
   // const handleProDocChange =
 
+  // 加载非矛盾证据
+  const setNoContradictData = () => {
+    const url = "/evidence/getNoContradictByDocumentId";
+    let param = JSON.stringify({
+      documentId: sessionStorage.getItem("documentId"),
+    });
+    const succ = (response) => {
+      let document0 = { ...response[0] };
+      let document1 = { ...response[1] };
+      // role=0
+      if (!document0.role) {
+        setProsecutorDoc(document0.bodys);
+        setDefendantDoc(document1.bodys);
+      } else {
+        // role=1
+        setDefendantDoc(document0.bodys);
+        setProsecutorDoc(document1.bodys);
+      }
+      setNote({ show: true, color: "success", content: "非矛盾证据加载成功" });
+    };
+    const err = () => {
+      setNote({ show: true, color: "error", content: "非矛盾证据加载失败" });
+    };
+    Util.asyncHttpPost(url, param, succ, err);
+  };
+
+  // 加载矛盾证据
+  const setContradictData = () => {
+    const url = "/evidence/getContradictByDocumentId";
+    let param = JSON.stringify({
+      documentId: sessionStorage.getItem("documentId"),
+    });
+    const succ = (response) => {
+      setContradiction(response);
+      setNote({ show: true, color: "success", content: "矛盾证据加载成功" });
+    };
+    const err = () => {
+      setNote({ show: true, color: "error", content: "非矛盾证据加载失败" });
+    };
+    Util.asyncHttpPost(url, param, succ, err);
+  };
+
   React.useEffect(() => {
     document.title = "质证采信";
-    setProsecutorDoc(JSON.parse(DocumentData.documents));
-    setDefendantDoc(JSON.parse(DocumentData.documents));
-    setContradiction(JSON.parse(DocumentData.contradictDocs));
+    setNoContradictData();
+    setContradictData();
+    // setProsecutorDoc(JSON.parse(DocumentData.documents));
+    // setDefendantDoc(JSON.parse(DocumentData.documents));
+    // setContradiction(JSON.parse(DocumentData.contradictDocs));
   }, []);
 
   return (
     <div className={classes.root}>
+      <Notification
+        color={note.color}
+        content={note.content}
+        open={note.show}
+        autoHide={3000}
+        onClose={handleCloseNote}
+      />
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <CustomTabs
@@ -300,10 +379,7 @@ export default function QuestionView() {
             <CardBody>
               <List>
                 {contradiction.map((item) => (
-                  <ContradictGroup
-                    item={item.documents}
-                    key={item.contradictId}
-                  />
+                  <ContradictGroup item={item.bodys} key={item.contradictId} />
                 ))}
               </List>
             </CardBody>
