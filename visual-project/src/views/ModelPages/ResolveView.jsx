@@ -185,6 +185,8 @@ function EvidenceTabContent(props) {
               props.handleClickDelete(item.documentId, props.prosecutor)
             }
           >
+
+              
             <DeleteIcon />
           </CustomButton>
         </Grid>
