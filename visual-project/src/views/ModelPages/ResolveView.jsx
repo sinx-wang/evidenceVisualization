@@ -10,12 +10,11 @@ import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 
-
 // import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import CropIcon from "@material-ui/icons/Crop";
-import EditIcon from "@material-ui/icons/Edit";
+// import EditIcon from "@material-ui/icons/Edit";
 import DocumentData from "../../util/data/DocumentData";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -36,8 +35,9 @@ import PersonOutlineIcon from "@material-ui/icons/PersonOutline";
 import Add from "@material-ui/icons/Add";
 import CustomTabs from "../../components/CustomTabs/CustomTabs";
 // import { CardTitle } from "assets/jss/material-kit-react.js";
-
+import Notification from "../../components/Notification/Notification";
 import * as Util from "../../util/Util";
+import CssBaseLine from "@material-ui/core/CssBaseline";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -96,19 +96,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function SelectEvidenceType(props) {
-  const [type, setType] = React.useState(props.evidenceType);
+  // const [type, setType] = React.useState(props.evidenceType);
 
   const handleSelectType = (event) => {
-    setType(event.target.value);
+    props.handleChangeType(event.target.value);
   };
 
   return (
     <FormControl fullWidth disabled={props.disabled}>
       <InputLabel>类型</InputLabel>
-      <Select value={type} onChange={handleSelectType}>
-        <MenuItem value={0}>书证</MenuItem>
-        <MenuItem value={1}>物证</MenuItem>
-        <MenuItem value={2}>证言</MenuItem>
+      <Select value={props.evidenceType} onChange={handleSelectType}>
+        <MenuItem value={0}>证人证言</MenuItem>
+        <MenuItem value={1}>被告人供述和辩解</MenuItem>
+        <MenuItem value={2}>书证</MenuItem>
+        <MenuItem value={3}>勘验</MenuItem>
+        <MenuItem value={4}>检查笔录</MenuItem>
+        <MenuItem value={5}>其他</MenuItem>
       </Select>
     </FormControl>
   );
@@ -146,13 +149,26 @@ function EvidenceTabContent(props) {
 
   const item = props.item;
 
-  const notEditing = item.documentId !== props.editing;
+  const notEditing = item.bodyId !== props.editing;
+
+  const [text, setText] = React.useState(item.body);
+
+  const [type, setType] = React.useState(item.type);
 
   const [heads, setHeads] = React.useState([]);
 
   React.useEffect(() => {
     setHeads(JSON.parse(DocumentData.heads));
+    setType(item.type);
   }, []);
+
+  const handleChangeText = (event) => {
+    setText(event.target.value);
+  };
+
+  const handleChangeType = (type) => {
+    setType(type);
+  };
 
   return (
     <ListItem>
@@ -160,19 +176,26 @@ function EvidenceTabContent(props) {
         <Grid item xs={7}>
           <TextField
             label="单条证据"
-            value={item.body}
+            value={text}
             fullWidth
             disabled={notEditing}
+            onChange={handleChangeText}
           />
         </Grid>
         <Grid item xs={3}>
-          <SelectEvidenceType evidenceType={item.type} disabled={notEditing} />
+          <SelectEvidenceType
+            evidenceType={type}
+            disabled={notEditing}
+            handleChangeType={handleChangeType}
+          />
         </Grid>
         <Grid item xs={1} className={classes.buttonAlign}>
           <CustomButton
             color={notEditing ? "info" : "success"}
             simple
-            onClick={() => props.handleClickEdit(item.documentId)}
+            onClick={() =>
+              props.handleClickEdit(item.bodyId, text, type, props.prosecutor)
+            }
           >
             {notEditing ? <Edit /> : <Save />}
           </CustomButton>
@@ -182,10 +205,9 @@ function EvidenceTabContent(props) {
             color="danger"
             simple
             onClick={() =>
-              props.handleClickDelete(item.documentId, props.prosecutor)
+              props.handleClickDelete(item.bodyId, props.prosecutor)
             }
           >
-
             <DeleteIcon />
           </CustomButton>
         </Grid>
@@ -197,158 +219,283 @@ function EvidenceTabContent(props) {
   );
 }
 
-
-
 // 函数式写法，无class
 export default function ResolveView() {
+  const [note, setNote] = React.useState({
+    show: false,
+    color: "",
+    content: "",
+  });
+
+  const handleCloseNote = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setNote({ ...note, show: false });
+  };
   // 原告证据
   const [prosecutorDoc, setProsecutorDoc] = React.useState([]);
   // 被告证据
   const [defendantDoc, setDefendantDoc] = React.useState([]);
 
   const [caseDetail, setCaseDetail] = React.useState({
-      caseNum : '（2015）浦刑初字第2978号',
-      caseName : '上海市浦东新区人民检察院以沪浦检刑诉（2015）2315号起诉书指控被告人王某某犯危险驾驶罪案',
-      userName : '孙志刚'
-  })
+    caseNum: "（2015）浦刑初字第2978号",
+    caseName:
+      "上海市浦东新区人民检察院以沪浦检刑诉（2015）2315号起诉书指控被告人王某某犯危险驾驶罪案",
+    userName: "孙志刚",
+  });
 
-  React.useEffect(() => {
-    document.title = "证据分解";
-    setProsecutorDoc(JSON.parse(DocumentData.documents));
-    setDefendantDoc(JSON.parse(DocumentData.documents));
+  const [editing, setEditing] = React.useState(-1);
+  //原告证据
+  const [prosecutorEvidence, setProsecutorEvidence] = React.useState("");
+  //被告证据
+  const [defendantEvidence, setDefendantEvidence] = React.useState("");
 
+  const setCaseBaseInfo = () => {
     //初始化得到案件的基本信息（案号，案件名称，承办人）
-    const url = '/evidence/getCaseDetail'
+    const url = "/case/getCaseDetail";
     let param = JSON.stringify({
-        username : sessionStorage.getItem("username"),
-        caseID   : 1
+      username: sessionStorage.getItem("username"),
+      caseId: sessionStorage.getItem("caseId"),
     });
 
     const succ = (response) => {
-        console.log(response)
+      setCaseDetail({
+        caseNum: response.caseNum,
+        caseName: response.caseName,
+        userName: sessionStorage.getItem("realName"),
+      });
     };
 
     const err = () => {
-        console.log('证据分解界面数据初始化异常')
+      console.log("证据分解界面数据初始化异常");
     };
 
-    Util.asyncHttpGet(url, param ,succ , err );
+    Util.asyncHttpPost(url, param, succ, err);
+  };
 
+  React.useEffect(() => {
+    document.title = "证据分解";
+    setCaseBaseInfo();
+    // setProsecutorDoc(JSON.parse(DocumentData.documents));
+    // setDefendantDoc(JSON.parse(DocumentData.documents));
   }, []);
 
-
-
-  const [editing, setEditing] = React.useState(-1);
-
-
-  //原告证据
-  const [prosecutorEvidence,setProsecutorEvidence] = React.useState('');
-
-  //被告证据
-  const [defendantEvidence,setDefendantEvidence] = React.useState('');
-
   //分解原告证据
-  const handleProsecutorResolve = ()=> {
-      alert(prosecutorEvidence)
-      const url = '/evidence/document'
-      let param = JSON.stringify({
-          caseId : sessionStorage.getItem('caseId'),
-          type : 0,
-          text : prosecutorEvidence
+  const handleProsecutorResolve = () => {
+    // alert(prosecutorEvidence);
+    const url = "/evidence/document";
+    let param = JSON.stringify({
+      caseId: sessionStorage.getItem("caseId"),
+      type: 0,
+      text: prosecutorEvidence,
+    });
+
+    const succ = (response) => {
+      //设置原告分解完证据列表
+      setProsecutorDoc(response);
+      console.log(response);
+      sessionStorage.setItem("proDocumentId", response[0].documentId);
+    };
+
+    const err = () => {
+      setNote({ show: true, content: "分解原告证据出现异常", color: "error" });
+    };
+
+    Util.asyncHttpPost(url, param, succ, err);
+  };
+
+  //分解被告证据
+  const handleDefendantResolve = () => {
+    // alert(defendantEvidence);
+    const url = "/evidence/document";
+    let param = JSON.stringify({
+      caseId: sessionStorage.getItem("caseId"),
+      type: 1,
+      text: defendantEvidence,
+    });
+
+    const succ = (response) => {
+      //设置被告分解完证据列表
+      setDefendantDoc(response);
+      sessionStorage.setItem("defDocumentId", response[0].documentId);
+    };
+
+    const err = () => {
+      setNote({ show: true, content: "分解被告证据出现异常", color: "error" });
+    };
+
+    Util.asyncHttpPost(url, param, succ, err);
+  };
+
+  const handleEvidenceChange = (field) => (event) => {
+    if (field === "prosecutor") {
+      setProsecutorEvidence(event.target.value);
+    } else {
+      setDefendantEvidence(event.target.value);
+    }
+  };
+
+  // 更新单条证据文本
+  const updateBodyById = (id, text) => {
+    console.log(id);
+    const url = "/evidence/updateBodyById";
+    let param = JSON.stringify({
+      bodyId: id,
+      body: text,
+    });
+    const succ = (response) => {
+      setNote({
+        show: true,
+        content: "更新单条证据文本成功",
+        color: "success",
       });
+    };
+    const err = () => {
+      setNote({ show: true, content: "更新单条证据失败", color: "error" });
+    };
+    Util.asyncHttpPost(url, param, succ, err);
+  };
 
-      const succ = (response) => {
-        //保存documentId
-        var documentId = response[0].documentId;
-        sessionStorage.setItem('documentId', documentId);
-        //设置原告分解完证据列表
-        setProsecutorDoc(response);
-      };
+  // 更新单条证据类型
+  const updateTypeById = (id, type) => {
+    const url = "/evidence/updateTypeById";
+    let param = JSON.stringify({
+      bodyId: id,
+      type: type,
+    });
+    const succ = (response) => {
+      setNote({
+        show: true,
+        content: "更新单条证据成功",
+        color: "success",
+      });
+    };
+    const err = () => {
+      setNote({ show: true, content: "更新单条证据失败", color: "error" });
+    };
+    Util.asyncHttpPost(url, param, succ, err);
+  };
 
-      const err = () => {
-          console.log('证据分解界面原告分解证据异常')
-      };
-
-      Util.asyncHttpPost(url, param ,succ , err );
-  }
-
-    //分解被告证据
-    const handleDefendantResolve = ()=> {
-        alert(defendantEvidence)
-        const url = '/evidence/document'
-        let param = JSON.stringify({
-            caseId : sessionStorage.getItem('caseId'),
-            type : 1,
-            text : defendantEvidence
-        });
-
-        const succ = (response) => {
-            //保存documentId
-            var documentId = response[0].documentId;
-            sessionStorage.setItem('documentId', documentId);
-            //设置被告分解完证据列表
-            setDefendantDoc(response)
-        };
-
-        const err = () => {
-            console.log('证据分解界面被告分解证据异常')
-        };
-
-        Util.asyncHttpPost(url, param ,succ , err );
-    }
-
-
-
-  const handleEvidenceChange = field => event =>{
-    if(field === 'prosecutor'){
-      setProsecutorEvidence(event.target.value)
-    }
-    else {
-      setDefendantEvidence(event.target.value)
-    }
-  }
-
-
-  const handleClickEdit = (id) => {
+  const handleClickEdit = (id, text, type, isProsecutor) => {
     console.log(id);
     if (id === editing) {
       setEditing(-1);
+      updateBodyById(id, text);
+      updateTypeById(id, type);
+      let tempArray;
+      if (isProsecutor) {
+        tempArray = [...prosecutorDoc];
+        for (let i = 0; i < tempArray.length; i++) {
+          if (tempArray[i].bodyId === id) {
+            tempArray[i].body = text;
+            tempArray[i].type = type;
+          }
+        }
+        // console.log(tempArray);
+        setProsecutorDoc(tempArray);
+      } else {
+        tempArray = [...defendantDoc];
+        for (let i = 0; i < tempArray.length; i++) {
+          if (tempArray[i].bodyId === id) {
+            tempArray[i].body = text;
+            tempArray[i].type = type;
+          }
+        }
+        setDefendantDoc(tempArray);
+      }
     } else {
       setEditing(id);
     }
   };
 
+  // 删除单条证据?
   const handleClickDelete = (id, prosecutor) => {
     console.log(id);
     console.log(prosecutor);
+    // let documentId;
     if (prosecutor) {
-      setProsecutorDoc((list) => list.filter((item) => item.documentId !== id));
+      setProsecutorDoc((list) => list.filter((item) => item.bodyId !== id));
+      // documentId = sessionStorage.getItem("proDocumentId");
       console.log(prosecutorDoc);
     } else {
-      setDefendantDoc((list) => list.filter((item) => item.documentId !== id));
+      setDefendantDoc((list) => list.filter((item) => item.bodyId !== id));
+      // documentId = sessionStorage.getItem("defDocumentId");
+    }
+    const url = "/evidence/deleteBody";
+    let param = JSON.stringify({
+      caseId: parseInt(sessionStorage.getItem("caseId")),
+      bodyId: id,
+    });
+    console.log(param);
+    const succ = (response) => {
+      setNote({ show: true, color: "success", content: "删除单条证据成功" });
+    };
+    const err = () => {
+      setNote({ show: true, color: "error", content: "删除单条证据失败" });
+    };
+    Util.asyncHttpPost(url, param, succ, err);
+  };
+
+  const addNewToState = (isProsecutor, documentId, bodyId) => {
+    if (isProsecutor) {
+      let tempArray = [...prosecutorDoc];
+      tempArray.push({
+        documentId,
+        bodyId,
+        type: 0,
+        body: "",
+        confirm: 0,
+      });
+      setProsecutorDoc(tempArray);
+    } else {
+      let tempArray = [...defendantDoc];
+      tempArray.push({
+        documentId,
+        bodyId,
+        type: 0,
+        body: "",
+        confirm: 0,
+      });
+      setDefendantDoc(tempArray);
     }
   };
 
-
-
-
-  //新增原告证据
-  const addNewProsecutorEvidence = () =>{
-    // let oldProsecutorDoc = prosecutorDoc;
-    // oldProsecutorDoc.push({
-    //     documentId : sessionStorage.getItem('documentId'),
-    //     type : '0',
-    //     body : '新证据内容',
-    //     agree : false
-    // });
-    // setProsecutorDoc(oldProsecutorDoc);
+  //新增证据
+  const addNewEvidence = (isProsecutor) => {
+    let documentId = isProsecutor
+      ? sessionStorage.getItem("proDocumentId")
+      : sessionStorage.getItem("defDocumentId");
+    const url = "/evidence/addBody";
+    let param = JSON.stringify({
+      documentId,
+      caseId: sessionStorage.getItem("caseId"),
+      type: 0,
+      body: "",
+    });
+    const succ = (response) => {
+      console.log(response);
+      addNewToState(isProsecutor, documentId, response.bodyId);
+      setNote({ show: true, color: "success", content: "添加单条证据成功" });
+    };
+    const err = () => {
+      setNote({ show: true, color: "error", content: "添加单条证据失败" });
+    };
+    Util.asyncHttpPost(url, param, succ, err);
   };
 
-
-    const classes = useStyles();
+  const classes = useStyles();
 
   return (
     <div className={classes.root}>
+      <CssBaseLine />
+      <Notification
+        color={note.color}
+        content={note.content}
+        open={note.show}
+        autoHide={3000}
+        onClose={handleCloseNote}
+      />
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Card>
@@ -364,9 +511,7 @@ export default function ResolveView() {
                 <TableBody>
                   <TableRow>
                     <TableCell>案件名称</TableCell>
-                    <TableCell>
-                        {caseDetail.caseName}
-                    </TableCell>
+                    <TableCell>{caseDetail.caseName}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>承办人</TableCell>
@@ -388,7 +533,7 @@ export default function ResolveView() {
                 rows={7}
                 variant="outlined"
                 className={classes.textFieldBlock}
-                onChange={handleEvidenceChange('prosecutor')}
+                onChange={handleEvidenceChange("prosecutor")}
               />
               <CustomButton
                 type="button"
@@ -400,10 +545,10 @@ export default function ResolveView() {
                 <CropIcon />
                 分解证据
               </CustomButton>
-              <CustomButton type="button" color="info" round>
-                <EditIcon />
-                编辑证据
-              </CustomButton>
+              {/*<CustomButton type="button" color="info" round>*/}
+              {/*  <EditIcon />*/}
+              {/*  编辑证据*/}
+              {/*</CustomButton>*/}
             </CardBody>
           </Card>
         </Grid>
@@ -418,7 +563,7 @@ export default function ResolveView() {
                 rows={7}
                 variant="outlined"
                 className={classes.textFieldBlock}
-                onChange={handleEvidenceChange('defendant')}
+                onChange={handleEvidenceChange("defendant")}
               />
               <CustomButton
                 type="button"
@@ -430,10 +575,10 @@ export default function ResolveView() {
                 <CropIcon />
                 分解证据
               </CustomButton>
-              <CustomButton type="button" color="info" round>
-                <EditIcon />
-                编辑证据
-              </CustomButton>
+              {/*<CustomButton type="button" color="info" round>*/}
+              {/*  <EditIcon />*/}
+              {/*  编辑证据*/}
+              {/*</CustomButton>*/}
             </CardBody>
           </Card>
         </Grid>
@@ -462,8 +607,8 @@ export default function ResolveView() {
                     </List>
                     <Paper elevation={0} className={classes.addButton}>
                       <CustomButton
-                          color="success"
-                          onClick={addNewProsecutorEvidence}
+                        color="success"
+                        onClick={() => addNewEvidence(true)}
                       >
                         <Add />
                         添加原告证据
@@ -492,8 +637,8 @@ export default function ResolveView() {
                     </List>
                     <Paper elevation={0} className={classes.addButton}>
                       <CustomButton
-                          color="success"
-
+                        color="success"
+                        onClick={() => addNewEvidence(false)}
                       >
                         <Add />
                         添加被告证据
@@ -513,6 +658,7 @@ export default function ResolveView() {
 SelectEvidenceType.propTypes = {
   disabled: PropTypes.bool,
   evidenceType: PropTypes.number,
+  handleChangeType: PropTypes.func,
 };
 
 EvidenceHeads.propTypes = {
