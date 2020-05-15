@@ -136,7 +136,7 @@ return = [
 ]
 ```
 
-3.新增单条证据document
+3.新增删除单条证据
 
 ```json
 path = "/addBody"
@@ -148,6 +148,16 @@ param = {
 }
 return = {
      “bodyId": 0
+}
+
+path = "/deleteBody"
+param = {
+    "caseId": 0,
+    "bodyId": 0
+}
+return = {
+    "success": true
+}
 ```
 
 4.新增链头
