@@ -186,7 +186,6 @@ function EvidenceTabContent(props) {
             }
           >
 
-              
             <DeleteIcon />
           </CustomButton>
         </Grid>
@@ -219,7 +218,7 @@ export default function ResolveView() {
     setDefendantDoc(JSON.parse(DocumentData.documents));
 
     //初始化得到案件的基本信息（案号，案件名称，承办人）
-    const url = '/evidence/getCaseDeatal'
+    const url = '/evidence/getCaseDetail'
     let param = JSON.stringify({
         username : sessionStorage.getItem("username"),
         caseID   : 1
@@ -270,7 +269,7 @@ export default function ResolveView() {
           console.log('证据分解界面原告分解证据异常')
       };
 
-      Util.asyncHttpGet(url, param ,succ , err );
+      Util.asyncHttpPost(url, param ,succ , err );
   }
 
     //分解被告证据
@@ -295,7 +294,7 @@ export default function ResolveView() {
             console.log('证据分解界面被告分解证据异常')
         };
 
-        Util.asyncHttpGet(url, param ,succ , err );
+        Util.asyncHttpPost(url, param ,succ , err );
     }
 
 
