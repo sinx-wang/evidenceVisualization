@@ -120,8 +120,7 @@ param = {
     "documentId": 0
 }
 return = {
-     0  //bodyId
-}
+     “bodyId": 0
 ```
 
 4.新增链头
@@ -134,6 +133,9 @@ param = {
     "documentId": 0,
     "bodyId": 0
 }
+return = {
+    "headId": 0
+}
 ```
 
 5.更新整段证据
@@ -144,6 +146,7 @@ data = {
     "bodyId": 0,
     "body": "string"
 }
+
 ```
 
 6.更换证据类型
