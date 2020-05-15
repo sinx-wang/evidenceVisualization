@@ -101,19 +101,32 @@ getData = [
 
 ```json
 path = "/createHead"
-data = {
+param = {
     "documentId": 0
 }
 return = [
     {
         "bodyId": 0,
         "headList": [
-            "headId": 0,
-            "head": "string"
-            ],
-            ...
+            {
+                "headId": 0,
+                "head": "string"
+            },...
+         ]
     }
     ...
+]
+
+path = "/createHeadByBodyId"
+param = {
+    "documentId": 0,
+    "bodyId": 0
+}
+return = [
+    {
+        "headId": 0,
+        "head": "string"
+    },...
 ]
 ```
 
