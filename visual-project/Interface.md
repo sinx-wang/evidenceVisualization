@@ -69,11 +69,13 @@ baseUrl = "/evidence"
 ```
 0. 得到案件的基本信息 （案号 案件名称 承办人）
 
+```json
 path = "/getCaseDetail"
 param = {
-     username : 'xxx',
-     caseID   : 1
+     "username" : 'xxx',
+     "caseId": 1
 }
+```
 
 
 1.分解证据
