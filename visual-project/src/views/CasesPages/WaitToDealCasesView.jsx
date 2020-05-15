@@ -119,6 +119,7 @@ export default function WaitToDealCasesView(props) {
                   <TableRow>
                     <TableCell>序号&nbsp;</TableCell>
                     <TableCell>案号&nbsp;</TableCell>
+                    <TableCell>案件类型&nbsp;</TableCell>
                     <TableCell>名称&nbsp;</TableCell>
                     <TableCell>立案日期&nbsp;</TableCell>
                     <TableCell>承办人&nbsp;</TableCell>
@@ -132,14 +133,17 @@ export default function WaitToDealCasesView(props) {
                         {row.cid}
                       </TableCell>
                       <TableCell>{row.cid}</TableCell>
+                      <TableCell>{row.type}</TableCell>
                       <TableCell>{row.cname}</TableCell>
                       <TableCell>{row.fillingDate}</TableCell>
-                      <TableCell>{row.manageJudge}</TableCell>
+                      <TableCell>
+                        {sessionStorage.getItem("realName")}
+                      </TableCell>
                       <TableCell>
                         <Tooltip title="证据链建模" placement="right">
                           <IconButton
                             color="primary"
-                            onClick={handleTableClick(row.id)}
+                            onClick={handleTableClick(row.cid)}
                           >
                             <AccountTree />
                           </IconButton>
