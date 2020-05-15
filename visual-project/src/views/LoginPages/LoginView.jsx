@@ -142,6 +142,7 @@ export default function LoginView(props) {
           color: "success",
           content: "登录成功: 用户" + realName + "认证成功!",
         });
+        sessionStorage.setItem("realName", realName);
         setButtonDisabled(true);
         setTimeout(() => {
           props.history.push("/cases/waitToDeal");

@@ -36,7 +36,15 @@ export default function WaitToDealCasesView(props) {
 
   // eslint-disable-next-line no-unused-vars
   const [values, setValues] = React.useState({
-    cases: [{ id: 1, caseName: "xxx法院", judgeName: "xxx", time: "2012-5-8" }],
+    cases: [
+      {
+        cid: 1,
+        cname: "xxx法院",
+        manageJudge: "xxx",
+        fillingDate: "2012-5-8",
+        type: "交通肇事案",
+      },
+    ],
   });
   const [note, setNote] = React.useState({
     show: false,
@@ -46,7 +54,7 @@ export default function WaitToDealCasesView(props) {
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   React.useEffect(() => {
-    const url = "/cases/getProcessingCases";
+    const url = "/case/getProcessingCases";
     let param = JSON.stringify({
       username: sessionStorage.getItem("username"),
     });
@@ -111,6 +119,7 @@ export default function WaitToDealCasesView(props) {
                   <TableRow>
                     <TableCell>序号&nbsp;</TableCell>
                     <TableCell>案号&nbsp;</TableCell>
+                    <TableCell>案件类型&nbsp;</TableCell>
                     <TableCell>名称&nbsp;</TableCell>
                     <TableCell>立案日期&nbsp;</TableCell>
                     <TableCell>承办人&nbsp;</TableCell>
@@ -119,19 +128,22 @@ export default function WaitToDealCasesView(props) {
                 </TableHead>
                 <TableBody>
                   {values.cases.map((row) => (
-                    <TableRow key={row.id}>
+                    <TableRow key={row.cid}>
                       <TableCell component="th" scope="row">
-                        {row.id}
+                        {row.cid}
                       </TableCell>
-                      <TableCell>{row.id}</TableCell>
-                      <TableCell>{row.caseName}</TableCell>
-                      <TableCell>{row.time}</TableCell>
-                      <TableCell>{row.judgeName}</TableCell>
+                      <TableCell>{row.cid}</TableCell>
+                      <TableCell>{row.type}</TableCell>
+                      <TableCell>{row.cname}</TableCell>
+                      <TableCell>{row.fillingDate}</TableCell>
+                      <TableCell>
+                        {sessionStorage.getItem("realName")}
+                      </TableCell>
                       <TableCell>
                         <Tooltip title="证据链建模" placement="right">
                           <IconButton
                             color="primary"
-                            onClick={handleTableClick(row.id)}
+                            onClick={handleTableClick(row.cid)}
                           >
                             <AccountTree />
                           </IconButton>
