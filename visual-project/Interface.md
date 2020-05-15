@@ -67,6 +67,20 @@ data = {
 ```json
 baseUrl = "/evidence"
 ```
+0. 得到案件的基本信息 （案号 案件名称 承办人）
+
+```json
+path = "/getCaseDetail"
+param = {
+     "username" : 'xxx',
+     "caseId": 1
+}
+return = {
+    caseNum: "(2015)浦刑",
+    caseName: "string"
+}
+```
+
 
 1.分解证据
 
@@ -93,19 +107,32 @@ getData = [
 
 ```json
 path = "/createHead"
-data = {
+param = {
     "documentId": 0
 }
 return = [
     {
         "bodyId": 0,
         "headList": [
-            "headId": 0,
-            "head": "string"
-            ],
-            ...
+            {
+                "headId": 0,
+                "head": "string"
+            },...
+         ]
     }
     ...
+]
+
+path = "/createHeadByBodyId"
+param = {
+    "documentId": 0,
+    "bodyId": 0
+}
+return = [
+    {
+        "headId": 0,
+        "head": "string"
+    },...
 ]
 ```
 
