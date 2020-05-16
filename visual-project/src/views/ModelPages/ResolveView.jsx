@@ -9,7 +9,7 @@ import TextField from "@material-ui/core/TextField";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
-
+import Tooltip from "@material-ui/core/Tooltip";
 // import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
@@ -28,6 +28,7 @@ import Edit from "@material-ui/icons/Edit";
 import Save from "@material-ui/icons/Save";
 // import Check from "@material-ui/icons/Check";
 // import Close from "@material-ui/icons/Close";
+import LowPriority from "@material-ui/icons/LowPriority";
 import DeleteIcon from "@material-ui/icons/HighlightOff";
 import PersonIcon from "@material-ui/icons/Person";
 import List from "@material-ui/core/List";
@@ -127,21 +128,36 @@ function EvidenceHeads(props) {
     console.log(chip.label);
   };
 
-  return (
-    <Paper component="ul" variant="outlined" className={classes.headPaper}>
-      {array.map((data) => (
-        <li key={data.key}>
-          <Chip
-            label={data.label}
-            variant="outlined"
-            color="primary"
-            className={classes.chip}
-            onDelete={() => handleDeleteChip(data)}
-          />
-        </li>
-      ))}
-    </Paper>
-  );
+  // 链头为空不渲染
+  console.log(array);
+  let hasContent = true;
+  if (array == null) {
+    hasContent = false;
+  } else {
+    if (array.length === 0) {
+      hasContent = false;
+    }
+  }
+
+  if (hasContent) {
+    return (
+      <Paper component="ul" variant="outlined" className={classes.headPaper}>
+        {array.map((data) => (
+          <li key={data.headId}>
+            <Chip
+              label={data.head}
+              variant="outlined"
+              color="primary"
+              className={classes.chip}
+              onDelete={() => handleDeleteChip(data)}
+            />
+          </li>
+        ))}
+      </Paper>
+    );
+  } else {
+    return null;
+  }
 }
 
 function EvidenceTabContent(props) {
@@ -158,7 +174,7 @@ function EvidenceTabContent(props) {
   const [heads, setHeads] = React.useState([]);
 
   React.useEffect(() => {
-    setHeads(JSON.parse(DocumentData.heads));
+    setHeads(null);
     setType(item.type);
   }, []);
 
@@ -170,10 +186,24 @@ function EvidenceTabContent(props) {
     setType(type);
   };
 
+  const createHeads = () => {
+    const url = "/evidence/createHeadByBodyId";
+    let param = JSON.stringify({
+      bodyId: item.bodyId,
+    });
+    const succ = (response) => {
+      setHeads(response);
+    };
+    const err = () => {
+      console.log("createHeads error");
+    };
+    Util.asyncHttpPost(url, param, succ, err);
+  };
+
   return (
     <ListItem>
       <Grid container spacing={2}>
-        <Grid item xs={7}>
+        <Grid item xs={6}>
           <TextField
             label="单条证据"
             value={text}
@@ -190,26 +220,37 @@ function EvidenceTabContent(props) {
           />
         </Grid>
         <Grid item xs={1} className={classes.buttonAlign}>
-          <CustomButton
-            color={notEditing ? "info" : "success"}
-            simple
-            onClick={() =>
-              props.handleClickEdit(item.bodyId, text, type, props.prosecutor)
-            }
-          >
-            {notEditing ? <Edit /> : <Save />}
-          </CustomButton>
+          <Tooltip title="分解链头" placement="right">
+            <CustomButton color="warning" simple onClick={createHeads}>
+              <LowPriority />
+            </CustomButton>
+          </Tooltip>
         </Grid>
         <Grid item xs={1} className={classes.buttonAlign}>
-          <CustomButton
-            color="danger"
-            simple
-            onClick={() =>
-              props.handleClickDelete(item.bodyId, props.prosecutor)
-            }
-          >
-            <DeleteIcon />
-          </CustomButton>
+          <Tooltip title={notEditing ? "编辑" : "保存"} placement="right">
+            <CustomButton
+              color={notEditing ? "info" : "success"}
+              simple
+              onClick={() =>
+                props.handleClickEdit(item.bodyId, text, type, props.prosecutor)
+              }
+            >
+              {notEditing ? <Edit /> : <Save />}
+            </CustomButton>
+          </Tooltip>
+        </Grid>
+        <Grid item xs={1} className={classes.buttonAlign}>
+          <Tooltip title="删除" placement="right">
+            <CustomButton
+              color="danger"
+              simple
+              onClick={() =>
+                props.handleClickDelete(item.bodyId, props.prosecutor)
+              }
+            >
+              <DeleteIcon />
+            </CustomButton>
+          </Tooltip>
         </Grid>
         <Grid item xs={12}>
           <EvidenceHeads heads={heads} />
@@ -274,11 +315,43 @@ export default function ResolveView() {
     Util.asyncHttpPost(url, param, succ, err);
   };
 
+  const initProsecutor = () => {
+    const url = "/case/initEvidenceByType";
+    let param = {
+      username: sessionStorage.getItem("username"),
+      caseId: sessionStorage.getItem("caseId"),
+      type: 0,
+    };
+    const succ = (response) => {
+      setProsecutorEvidence(response.documentBody);
+    };
+    const err = () => {
+      setNote({ show: true, color: "error", content: "原告证据初始化失败" });
+    };
+    Util.asyncHttpPost(url, param, succ, err);
+  };
+
+  const initDefendant = () => {
+    const url = "/case/initEvidenceByType";
+    let param = {
+      username: sessionStorage.getItem("username"),
+      caseId: sessionStorage.getItem("caseId"),
+      type: 1,
+    };
+    const succ = (response) => {
+      setProsecutorEvidence(response.documentBody);
+    };
+    const err = () => {
+      setNote({ show: true, color: "error", content: "被告证据初始化失败" });
+    };
+    Util.asyncHttpPost(url, param, succ, err);
+  };
+
   React.useEffect(() => {
     document.title = "证据分解";
     setCaseBaseInfo();
-    // setProsecutorDoc(JSON.parse(DocumentData.documents));
-    // setDefendantDoc(JSON.parse(DocumentData.documents));
+    initProsecutor();
+    initDefendant();
   }, []);
 
   //分解原告证据
@@ -494,7 +567,7 @@ export default function ResolveView() {
         color={note.color}
         content={note.content}
         open={note.show}
-        autoHide={3000}
+        autoHide={1500}
         onClose={handleCloseNote}
       />
       <Grid container spacing={2}>
