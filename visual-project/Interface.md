@@ -384,6 +384,18 @@ return = [
 ]
 ```
 
+
+8. 删除单条事实
+
+```json
+path = "/deleteFactByFactId"
+param = {
+    "factId": 0
+}
+```
+
+
+
 ## 证据链建模
 ```json
 baseUrl = "/model"
