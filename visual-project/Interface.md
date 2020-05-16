@@ -267,18 +267,6 @@ return = {
     }
 ```
 
-10. 删除单个链头
-```json
-path = "/deleteHead"
-data = {
-    "headId": 0,
-    
-}
-return = {
-    "success": true
-    }
-```
-
 
 ## 事实认定
 ```json
