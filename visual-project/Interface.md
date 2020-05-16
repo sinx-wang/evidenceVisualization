@@ -255,6 +255,19 @@ data = {
 }
 ```
 
+10. 删除单条证据
+```json
+path = "/deleteBody"
+data = {
+    "bodyId": 0,
+    
+}
+return = {
+    "success": true
+    }
+```
+
+
 ## 事实认定
 ```json
 baseUrl = "/facts"
@@ -383,6 +396,49 @@ return = [
      },
 ]
 ```
+
+
+8. 删除单条事实
+
+```json
+path = "/deleteFactByFactId"
+param = {
+    "factId": 0
+}
+return = {
+    "success": true
+    }
+```
+
+9. 删除单个联结点
+
+```json
+path = "/deleteJoint"
+param = {
+    "jointId": 0
+}
+return = {
+    "success": true
+    }
+```
+
+10. 根据factId得到联结点
+
+```json
+path = "/getJointByFactId"
+param = {
+    "factId": 0
+}
+return = [
+    {
+       "jointId": 0,
+       "content": "string"  
+    },
+    ...
+]
+```
+
+
 
 ## 证据链建模
 ```json

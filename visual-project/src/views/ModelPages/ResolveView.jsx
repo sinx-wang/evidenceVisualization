@@ -129,7 +129,6 @@ function EvidenceHeads(props) {
   };
 
   // 链头为空不渲染
-  console.log(array);
   let hasContent = true;
   if (array == null) {
     hasContent = false;
@@ -142,8 +141,8 @@ function EvidenceHeads(props) {
   if (hasContent) {
     return (
       <Paper component="ul" variant="outlined" className={classes.headPaper}>
-        {array.map((data) => (
-          <li key={data.headId}>
+        {array.map((data, index) => (
+          <li key={index}>
             <Chip
               label={data.head}
               variant="outlined"
@@ -317,11 +316,11 @@ export default function ResolveView() {
 
   const initProsecutor = () => {
     const url = "/case/initEvidenceByType";
-    let param = {
+    let param = JSON.stringify({
       username: sessionStorage.getItem("username"),
       caseId: sessionStorage.getItem("caseId"),
       type: 0,
-    };
+    });
     const succ = (response) => {
       setProsecutorEvidence(response.documentBody);
     };
@@ -333,13 +332,13 @@ export default function ResolveView() {
 
   const initDefendant = () => {
     const url = "/case/initEvidenceByType";
-    let param = {
+    let param = JSON.stringify({
       username: sessionStorage.getItem("username"),
       caseId: sessionStorage.getItem("caseId"),
       type: 1,
-    };
+    });
     const succ = (response) => {
-      setProsecutorEvidence(response.documentBody);
+      setDefendantEvidence(response.documentBody);
     };
     const err = () => {
       setNote({ show: true, color: "error", content: "被告证据初始化失败" });
@@ -607,6 +606,7 @@ export default function ResolveView() {
                 rows={7}
                 variant="outlined"
                 className={classes.textFieldBlock}
+                value={prosecutorEvidence}
                 onChange={handleEvidenceChange("prosecutor")}
               />
               <CustomButton
@@ -637,6 +637,7 @@ export default function ResolveView() {
                 rows={7}
                 variant="outlined"
                 className={classes.textFieldBlock}
+                value={defendantEvidence}
                 onChange={handleEvidenceChange("defendant")}
               />
               <CustomButton
