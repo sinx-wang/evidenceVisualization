@@ -323,7 +323,7 @@ export default function QuestionView() {
         color={note.color}
         content={note.content}
         open={note.show}
-        autoHide={3000}
+        autoHide={1500}
         onClose={handleCloseNote}
       />
       <Grid container spacing={2}>
