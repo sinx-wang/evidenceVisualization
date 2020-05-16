@@ -67,7 +67,7 @@ data = {
 ```json
 baseUrl = "/evidence"
 ```
-0. 得到案件的基本信息 （案号 案件名称 承办人）
+0. 得到案件的基本信息 （案号 案件名称 承办人）初始化证据
 
 ```json
 path = "/getCaseDetail"
@@ -78,6 +78,16 @@ param = {
 return = {
     caseNum: "(2015)浦刑",
     caseName: "string"
+}
+
+path = "/initEvidenceByType"
+param = {
+    "username": "string",
+    "caseId": 1,
+    "type": 0 //原告被告
+}
+return = {
+    "body": "string"
 }
 ```
 
