@@ -72,12 +72,12 @@ baseUrl = "/evidence"
 ```json
 path = "/getCaseDetail"
 param = {
-     "username" : 'xxx',
+     "username" : "xxx",
      "caseId": 1
 }
 return = {
-    caseNum: "(2015)浦刑",
-    caseName: "string"
+    "caseNum": "(2015)浦刑",
+    "caseName": "string"
 }
 
 path = "/initEvidenceByType"
@@ -96,12 +96,12 @@ return = {
 
 ```json
 path = "/document"
-data = {
+param = {
     "caseId": 0,
     "type": 0,
     "text": "string"
 }
-getData = [
+return = [
     {
         "documentId": 0,//这是要分解id
         "bodyId": 0,//这是单个证据的id
@@ -269,7 +269,8 @@ param = {
 }
 return = [
     {
-        "factId": 0,
+        "documentId": 0, //事实文本id
+        "factId": 0, //单条事实文本id
         "body": "string",
         "confirm": 0
     },
@@ -292,8 +293,19 @@ return = [
             "content": "string"
             ],
             ...
-    }
+    },
     ...
+]
+
+path = "/createJointByFactId"
+param = {
+    "facttId": 0
+}
+return = [
+    {
+        "jointId": 0,
+        "content": "string"
+    },...
 ]
 ```
 
@@ -318,7 +330,7 @@ param = {
     "caseId": 0,
     "joint": "string",
     "factId": 0
-    "bodyId": 0
+    "documentId": 0
 }
 return = {
     "jointId": 0
@@ -330,8 +342,8 @@ return = {
 ```json
 path = "/updateFactById"
 param = {
-    "bodyId": 0,
-    "body": "string"
+    "factId": 0,
+    "fact": "string"
 }
 ```
 
