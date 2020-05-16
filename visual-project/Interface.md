@@ -228,7 +228,7 @@ return = [
 ```json
 path = "/getContradictByDocumentId"
 param = {
-    "documentId": 0
+    "caseId": 0
 }
 return = [
     {
