@@ -71,9 +71,6 @@ function FactHeads(props) {
   );
 }
 
-
-
-
 function FactsCardContent(props) {
   const classes = useStyles();
   const item = props.item;
@@ -83,37 +80,32 @@ function FactsCardContent(props) {
   const [text, setText] = React.useState(item.body);
 
   const handleChangeText = (event) => {
-      setText(event.target.value);
+    setText(event.target.value);
   };
 
   React.useEffect(() => {
     setHeads(JSON.parse(DocumentData.heads));
+    console.log(item);
   }, []);
-
-
 
   //根据factId提取联结点
   const createHeads = () => {
+    const url = "/facts/getJointByFactId";
 
-      const url = "/facts/getJointByFactId";
+    let param = JSON.stringify({
+      factId: item.factId,
+    });
 
-      let param = JSON.stringify({
-          factId : item.factId
-      });
+    const succ = (response) => {
+      setHeads(response);
+    };
 
-      const succ = (response) => {
-        setHeads(response)
-      };
+    const err = () => {
+      console.log("提取联结点出现异常");
+    };
 
-      const err = () => {
-        console.log('提取联结点出现异常')
-      };
-
-      Util.asyncHttpPost(url, param, succ, err);
-
+    Util.asyncHttpPost(url, param, succ, err);
   };
-
-
 
   return (
     <ListItem>
@@ -128,33 +120,33 @@ function FactsCardContent(props) {
           />
         </Grid>
         <Grid item xs={1} className={classes.buttonAlign}>
-            <Tooltip title="提取联结点" placement="right">
-                <CustomButton color="warning" simple onClick={createHeads}>
-                    <LowPriority />
-                </CustomButton>
-            </Tooltip>
+          <Tooltip title="提取联结点" placement="right">
+            <CustomButton color="warning" simple onClick={createHeads}>
+              <LowPriority />
+            </CustomButton>
+          </Tooltip>
         </Grid>
         <Grid item xs={1} className={classes.buttonAlign}>
-            <Tooltip title={notEditing ? "编辑" : "保存"} placement="right">
-              <CustomButton
-                color={notEditing ? "info" : "success"}
-                simple
-                onClick={() => props.handleClickEdit(item.factId, text)}
-              >
-                {notEditing ? <Edit /> : <Save />}
-              </CustomButton>
-            </Tooltip>
+          <Tooltip title={notEditing ? "编辑" : "保存"} placement="right">
+            <CustomButton
+              color={notEditing ? "info" : "success"}
+              simple
+              onClick={() => props.handleClickEdit(item.factId, text)}
+            >
+              {notEditing ? <Edit /> : <Save />}
+            </CustomButton>
+          </Tooltip>
         </Grid>
         <Grid item xs={1} className={classes.buttonAlign}>
-            <Tooltip title="删除" placement="right">
-              <CustomButton
-                color="danger"
-                simple
-                onClick={() => props.handleClickDelete(item.factId)}
-              >
-                <DeleteIcon />
-              </CustomButton>
-            </Tooltip>
+          <Tooltip title="删除" placement="right">
+            <CustomButton
+              color="danger"
+              simple
+              onClick={() => props.handleClickDelete(item.factId)}
+            >
+              <DeleteIcon />
+            </CustomButton>
+          </Tooltip>
         </Grid>
         <Grid item xs={12}>
           <FactHeads heads={heads} />
@@ -205,42 +197,42 @@ FactsJudgeContent.propTypes = {
 export default function FactView() {
   const classes = useStyles();
 
-    const [note, setNote] = React.useState({
-        show: false,
-        color: "",
-        content: "",
-    });
+  const [note, setNote] = React.useState({
+    show: false,
+    color: "",
+    content: "",
+  });
 
   const [facts, setFacts] = React.useState([]);
   const [editing, setEditing] = React.useState(-1);
 
   const [factText, setFactText] = React.useState("");
 
-  const handleFactTextChange = (event)=> {
-    setFactText(event.target.value)
+  const handleFactTextChange = (event) => {
+    setFactText(event.target.value);
   };
 
   //分解事实
   const handleFactResolve = () => {
-      const url = "/facts/resolve";
+    const url = "/facts/resolve";
 
-      let param = JSON.stringify({
-          caseId: sessionStorage.getItem("caseId"),
-          text: factText,
-      });
+    let param = JSON.stringify({
+      caseId: sessionStorage.getItem("caseId"),
+      text: factText,
+    });
 
-      const succ = (response) => {
-          console.log(response);
-        //设置分解完的事实列表
-          setFacts(response);
-          sessionStorage.setItem("documentId",response[0].documentId)
-      };
+    const succ = (response) => {
+      console.log(response);
+      //设置分解完的事实列表
+      setFacts(response);
+      sessionStorage.setItem("documentId", response[0].documentId);
+    };
 
-      const err = () => {
-          setNote({ show: true, content: "分解事实出现异常", color: "error" });
-      };
+    const err = () => {
+      setNote({ show: true, content: "分解事实出现异常", color: "error" });
+    };
 
-      Util.asyncHttpPost(url, param, succ, err);
+    Util.asyncHttpPost(url, param, succ, err);
   };
 
   const handleClickSingleEdit = (id) => {
@@ -253,49 +245,48 @@ export default function FactView() {
   };
 
   //更新单条证据的body
-  const updateBodyById = (id,text) => {
-    console.log(id+text);
+  const updateBodyById = (id, text) => {
+    console.log(id + text);
     const url = "/facts/updateFactById";
 
     let param = JSON.stringify({
-        bodyId: id,
-        body: text,
+      bodyId: id,
+      body: text,
     });
 
     const succ = () => {
-        setNote({ show: true, content: "更新证据成功", color: "success" });
-
+      setNote({ show: true, content: "更新证据成功", color: "success" });
     };
     const err = () => {
-        setNote({ show: true, content: "更新证据出现异常", color: "error" });
+      setNote({ show: true, content: "更新证据出现异常", color: "error" });
     };
 
     Util.asyncHttpPost(url, param, succ, err);
-
-
   };
-
 
   //编辑证据
   const handleClickEdit = (id, text) => {
-      console.log(id);
-      if (id === editing) {
-          setEditing(-1);
-          updateBodyById(id, text);
-          let tempArray;
-          tempArray = [...facts];
-          for (let i = 0; i < tempArray.length; i++) {
-              if (tempArray[i].factId === id) {
-                  tempArray[i].body = text;
-              }
-          }
-          // console.log(tempArray);
-          setFacts(tempArray);
-      } else {
-          setEditing(id);
+    console.log(id);
+    if (id === editing) {
+      setEditing(-1);
+      updateBodyById(id, text);
+      let tempArray;
+      tempArray = [...facts];
+      for (let i = 0; i < tempArray.length; i++) {
+        if (tempArray[i].factId === id) {
+          tempArray[i].body = text;
+        }
       }
+      // console.log(tempArray);
+      setFacts(tempArray);
+    } else {
+      setEditing(id);
+    }
   };
 
+  React.useEffect(() => {
+    console.log(facts);
+  }, [facts]);
 
   //删除单条证据
   const handleClickDelete = (id) => {
@@ -330,9 +321,7 @@ export default function FactView() {
     // };
     //
     // Util.asyncHttpPost(url, param, succ, err);
-
   };
-
 
   //对单条事实进行认定不认定
   const handleClickAgree = (index) => {
@@ -345,63 +334,54 @@ export default function FactView() {
     const url = "/facts/updateTrustById";
 
     let param = JSON.stringify({
-        factId: factId,
-        confirm: comfirm,
+      factId: factId,
+      confirm: comfirm,
     });
 
     const succ = (response) => {
-        setNote({ show: true, content: "认定事实成功", color: "success" });
-
+      setNote({ show: true, content: "认定事实成功", color: "success" });
     };
 
     const err = () => {
-        setNote({ show: true, content: "认定事实出现异常", color: "error" });
+      setNote({ show: true, content: "认定事实出现异常", color: "error" });
     };
 
     Util.asyncHttpPost(url, param, succ, err);
-
-
   };
-
-
-
 
   //增加新的事实
   const addNewFact = () => {
-      const url = "/facts/addFact";
+    const url = "/facts/addFact";
 
-      let param = JSON.stringify({
-          caseId: sessionStorage.getItem('caseId'),
-          body: '',
-      });
+    let param = JSON.stringify({
+      caseId: sessionStorage.getItem("caseId"),
+      body: "",
+    });
 
-      const succ = (response) => {
-        console.log(response);
-        let documentId = sessionStorage.getItem("documentId");
-        addNewToState(response.factId, '', documentId ,0)
+    const succ = (response) => {
+      console.log(response);
+      let documentId = sessionStorage.getItem("documentId");
+      addNewToState(response.factId, "", documentId, 0);
+    };
 
-      };
+    const err = () => {
+      setNote({ show: true, content: "新增证据出现异常", color: "error" });
+    };
 
-      const err = () => {
-          setNote({ show: true, content: "新增证据出现异常", color: "error" });
-      };
-
-      Util.asyncHttpPost(url, param, succ, err);
-
+    Util.asyncHttpPost(url, param, succ, err);
   };
 
   //往事实集合里面添加新的事实
-  const addNewToState = (factId, body ,documentId, confirm) => {
+  const addNewToState = (factId, body, documentId, confirm) => {
     let tempArray = [...facts];
     tempArray.push({
-        factId: 5,
-        body: body,
-        confirm: confirm,
-        documentId: documentId
+      factId: 5,
+      body: body,
+      confirm: confirm,
+      documentId: documentId,
     });
     setFacts(tempArray);
-  }
-
+  };
 
   React.useEffect(() => {
     document.title = "事实分解与认定";
@@ -424,10 +404,11 @@ export default function FactView() {
                 className={classes.textFieldBlock}
                 onChange={handleFactTextChange}
               />
-              <CustomButton color="success"
-                            style={{ marginRight: 10 }}
-                            round
-                            onClick={handleFactResolve}
+              <CustomButton
+                color="success"
+                style={{ marginRight: 10 }}
+                round
+                onClick={handleFactResolve}
               >
                 <CropIcon />
                 分解事实
