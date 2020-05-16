@@ -124,7 +124,7 @@ function EvidenceHeads(props) {
   const array = props.heads;
 
   const handleDeleteChip = (chip) => {
-    console.log(chip.label);
+    props.deleteHead(chip.headId);
   };
 
   // 链头为空不渲染
@@ -203,6 +203,21 @@ function EvidenceTabContent(props) {
     Util.asyncHttpPost(url, param, succ, err);
   };
 
+  const deleteHead = (headId) => {
+    setHeads((list) => list.filter((head) => head.headId !== headId));
+    const url = "/evidence/deleteHead";
+    let param = JSON.stringify({
+      headId,
+    });
+    const succ = (response) => {
+      console.log(response);
+    };
+    const err = () => {
+      console.log("deleteHead Err");
+    };
+    Util.asyncHttpPost(url, param, succ, err);
+  };
+
   return (
     <ListItem>
       <Grid container spacing={2}>
@@ -254,7 +269,7 @@ function EvidenceTabContent(props) {
           </Tooltip>
         </Grid>
         <Grid item xs={12}>
-          <EvidenceHeads heads={heads} />
+          <EvidenceHeads heads={heads} deleteHead={deleteHead} />
         </Grid>
       </Grid>
     </ListItem>
@@ -737,6 +752,7 @@ SelectEvidenceType.propTypes = {
 
 EvidenceHeads.propTypes = {
   heads: PropTypes.array,
+  deleteHead: PropTypes.func
 };
 
 EvidenceTabContent.propTypes = {

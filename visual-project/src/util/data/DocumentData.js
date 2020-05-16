@@ -76,4 +76,14 @@ const facts = JSON.stringify(factsDataArray);
 
 DocumentData.facts = facts;
 
+// 事实节点
+const createFactNode = (id, logicNodeId, text) => {
+  return { id, logicNodeId, text };
+};
+
+const factNodeArray1 = [
+  createFactNode(1, 1, "事实文本一"),
+
+]
+
 export default DocumentData;
