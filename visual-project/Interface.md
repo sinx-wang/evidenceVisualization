@@ -444,7 +444,94 @@ return = [
 ```json
 baseUrl = "/model"
 ```
+1.得到所有事实节点
+```json
+GET
+url = "/getFacts"
+return = [
+    {
+        "confirm": 0,
+        "body": [
+            {
+                "id": 1,
+                "logicNodeId": 2,
+                "text": "xxx"
+            },
+            ...
+        ]
+    }
+]
+```
 
-1.
+2.得到所有证据节点
+```json
+GET
+url = "/getEvidences"
+return = [
+    {
+        "confirm": 0,
+        "body": [
+            {
+                "id": 1,
+                "logicNodeId": 2,
+                "text": "xxx",
+                "type": "xxx",
+                "role": "xxx",
+            },
+            ...
+        ]
+    }
+]
+```
+
+3.得到所有链头
+```json
+GET
+url = "/getHeads"
+param = [
+    {
+        "id": 1,
+        "logicNodeId": 1
+        "text": "xxx",
+    }
+]
+```
+
+4.得到所有联结点
+```json
+GET
+url = "/getJoints"
+param = [
+    {
+        "id": 1,
+        "logicNodeId": 1
+        "text": "xxx",
+    }
+]
+```
+
+5.得到所有虚线关系
+```json
+GET
+url = "/getDottedLines"
+param = [
+    {
+        "logicNodeId1": 1,
+        "logicNodeId2": 2
+    },...
+]
+```
+
+6.得到所有虚线关系
+```json
+GET
+url = "/getSolidLines"
+param = [
+    {
+        "logicNodeId1": 1,
+        "logicNodeId2": 2
+    },...
+]
+```
 
 ## 说理逻辑
