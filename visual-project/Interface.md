@@ -156,7 +156,7 @@ param = {
     "documentId": 0
 }
 return = {
-     “bodyId": 0
+     "bodyId": 0
 }
 
 path = "/deleteBody"
