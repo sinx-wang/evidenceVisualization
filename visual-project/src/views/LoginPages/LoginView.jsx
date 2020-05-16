@@ -146,7 +146,7 @@ export default function LoginView(props) {
         setButtonDisabled(true);
         setTimeout(() => {
           props.history.push("/cases/waitToDeal");
-        }, 1500);
+        }, 1000);
       } else {
         setNote({
           show: true,

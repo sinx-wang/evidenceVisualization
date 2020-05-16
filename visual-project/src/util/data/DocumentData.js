@@ -83,7 +83,83 @@ const createFactNode = (id, logicNodeId, text) => {
 
 const factNodeArray1 = [
   createFactNode(1, 1, "事实文本一"),
+  createFactNode(2, 2, "事实文本二"),
+  createFactNode(3, 3, "事实文本三"),
+];
 
-]
+const factNodeArray2 = [
+  createFactNode(4, 4, "事实文本四"),
+  createFactNode(5, 5, "事实文本五"),
+  createFactNode(6, 6, "事实文本六"),
+];
+
+const getFacts = [
+  {
+    confirm: 1,
+    body: factNodeArray1,
+  },
+  {
+    confirm: 0,
+    body: factNodeArray2,
+  },
+];
+
+DocumentData.getFacts = getFacts;
+
+// 证据节点
+const createEvidenceNode = (id, logicNodeId, text, type, role) => {
+  return { id, logicNodeId, text, type, role };
+};
+
+const evidenceNodeArray1 = [
+  createEvidenceNode(1, 7, "证据文本一", 2, 0),
+  createEvidenceNode(2, 8, "证据文本二", 3, 0),
+  createEvidenceNode(3, 9, "证据文本三", 2, 1),
+  createEvidenceNode(4, 10, "证据文本四", 4, 0),
+];
+
+const evidenceNodeArray2 = [
+  createEvidenceNode(5, 11, "证据文本五", 1, 1),
+  createEvidenceNode(6, 12, "证据文本六", 3, 0),
+  createEvidenceNode(7, 13, "证据文本七", 2, 1),
+];
+
+const getEvidences = [
+  {
+    confirm: 1,
+    body: evidenceNodeArray1,
+  },
+  {
+    confirm: 2,
+    body: evidenceNodeArray2,
+  },
+];
+DocumentData.getEvidences = getEvidences;
+
+// 链头节点
+const createHeadNode = (id, logicNodeId, text) => {
+  return { id, logicNodeId, text };
+};
+
+const headNodeArray1 = [
+  createHeadNode(1, 14, "链头一"),
+  createHeadNode(2, 15, "链头二"),
+  createHeadNode(3, 16, "链头三"),
+];
+
+DocumentData.getHeads = headNodeArray1;
+
+// 联结点节点
+const createJointNode = (id, logicNodeId, text) => {
+  return { id, logicNodeId, text };
+};
+
+const JointNodeArray1 = [
+  createJointNode(1, 14, "链头一"),
+  createJointNode(2, 15, "链头二"),
+  createJointNode(3, 16, "链头三"),
+];
+
+DocumentData.getJoint = JointNodeArray1;
 
 export default DocumentData;
