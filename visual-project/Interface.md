@@ -83,7 +83,7 @@ param = {
     "type": 0 //原告被告
 }
 return = {
-    "body": "string"
+    "documentBody": "string"
 }
 ```
 
@@ -268,7 +268,7 @@ param = {
     "caseId": 1
 }
 return = {
-    "body": "string"
+    "documentBody": "string"
 }
 ```
 
