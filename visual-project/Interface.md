@@ -214,17 +214,12 @@ param = {
 }
 return = [
     {
-        "role": 0,
-        "bodys": [
-            {
-                "bodyId": 0,
-                "type": 0,
-                "body": "string",
-                "confirm": 0
-            },
-            ...
-        ]
-    },...
+        "bodyId": 0,
+        "type": 0,
+        "body": "string",
+        "confirm": 0
+    },
+    ...
 ]
 ```
 
