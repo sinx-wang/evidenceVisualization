@@ -446,8 +446,11 @@ baseUrl = "/model"
 ```
 1.得到所有事实节点
 ```json
-GET
+
 url = "/getFacts"
+data = {
+    "caseId": 0
+    }
 return = [
     {
         "confirm": 0,
@@ -465,8 +468,11 @@ return = [
 
 2.得到所有证据节点
 ```json
-GET
+
 url = "/getEvidences"
+data = {
+    "caseId": 0
+    }
 return = [
     {
         "confirm": 0,
@@ -486,8 +492,12 @@ return = [
 
 3.得到所有链头
 ```json
-GET
+
 url = "/getHeads"
+
+data = {
+    "caseId": 0
+    }
 param = [
     {
         "id": 1,
@@ -499,8 +509,11 @@ param = [
 
 4.得到所有联结点
 ```json
-GET
+
 url = "/getJoints"
+data = {
+    "caseId": 0
+    }
 param = [
     {
         "id": 1,
@@ -512,8 +525,11 @@ param = [
 
 5.得到所有虚线关系
 ```json
-GET
+
 url = "/getDottedLines"
+data = {
+    "caseId": 0
+    }
 param = [
     {
         "logicNodeId1": 1,
@@ -524,8 +540,11 @@ param = [
 
 6.得到所有虚线关系
 ```json
-GET
+
 url = "/getSolidLines"
+data = {
+    "caseId": 0
+    }
 param = [
     {
         "logicNodeId1": 1,
