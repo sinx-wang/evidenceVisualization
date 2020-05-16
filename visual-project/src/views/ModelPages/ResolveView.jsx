@@ -461,7 +461,7 @@ export default function ResolveView() {
     }
   };
 
-  //新增证据
+  //新增单条证据
   const addNewEvidence = (isProsecutor) => {
     let documentId = isProsecutor
       ? sessionStorage.getItem("proDocumentId")
@@ -473,6 +473,7 @@ export default function ResolveView() {
       type: 0,
       body: "",
     });
+    // 必须先发请求，从后端获取bodyId，一并添加进去，否则编辑会出问题
     const succ = (response) => {
       console.log(response);
       addNewToState(isProsecutor, documentId, response.bodyId);
