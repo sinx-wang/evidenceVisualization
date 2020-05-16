@@ -184,6 +184,8 @@ return = {
 }
 ```
 
+
+
 5.更新整段证据
 
 ```json
@@ -202,6 +204,29 @@ path = "/updateTypeById"
 data = {
     "bodyId": 0,
     "type": 0
+}
+```
+
+```json
+path = "/addHead"
+param = {
+    "caseId": 0,
+    "head": "string",
+    "documentId": 0,
+    "bodyId": 0
+}
+return = {
+    "headId": 0
+}
+```
+
+```json
+path = "/deleteHead"
+param = {
+    "headId": 0
+}
+return = {
+    "success": true
 }
 ```
 
