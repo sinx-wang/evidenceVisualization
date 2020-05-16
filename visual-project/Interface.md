@@ -422,6 +422,22 @@ return = {
     }
 ```
 
+10. 根据factId得到联结点
+
+```json
+path = "/getJointByFactId"
+param = {
+    "factId": 0
+}
+return = [
+    {
+       "jointId": 0,
+       "content": "string"  
+    },
+    ...
+]
+```
+
 
 
 ## 证据链建模
