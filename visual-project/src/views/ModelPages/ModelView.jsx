@@ -8,9 +8,8 @@ import TextField from "@material-ui/core/TextField";
 import AddToQueue from "@material-ui/icons/AddToQueue";
 import Adjust from "@material-ui/icons/Adjust";
 import ImageIcon from "@material-ui/icons/Image";
-import Notification from "../../components/Notification/Notification";
-import * as Util from "../../util/Util";
 import DocumentData from "../../util/data/DocumentData";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -38,17 +37,35 @@ const useStyles = makeStyles((theme) => ({
 export default function ModelView() {
   const classes = useStyles();
 
-  React.useEffect(() => {
-    document.title = "建模";
-  });
-
   const canvasRef = React.useRef(null);
 
   const [values, setValues] = React.useState({
     nodeText: "", //点击节点信息
   });
 
+  const [realFacts, setRealFacts] = React.useState([]);
+
+  const [fakeFacts, setFakeFacts] = React.useState([]);
+
+  const [realEvidences, setRealEvidences] = React.useState([]);
+
+  const [fakeEvidences, setFakeEvidences] = React.useState([]);
+
+  const [heads, setHeads] = React.useState([]);
+
+  const [joints, setJoints] = React.useState([]);
+
   const [text, setText] = React.useState("空");
+
+  React.useEffect(() => {
+    document.title = "建模";
+    setRealFacts(DocumentData.getFacts[0].body);
+    setFakeFacts(DocumentData.getFacts[1].body);
+    setRealEvidences(DocumentData.getEvidences[0].body);
+    setFakeEvidences(DocumentData.getEvidences[1].body);
+    setHeads(DocumentData.getHeads);
+    setJoints(DocumentData.getJoint);
+  });
 
   const initCanvas = () => {
     let canvas = canvasRef.current;
@@ -64,7 +81,13 @@ export default function ModelView() {
     let scene = new JTopo.Scene(stage);
     scene.mode = "select";
     //scene.background= '1.png';
-    //
+    let yPosition = 20;
+    realEvidences.forEach((item) => {
+      let node = createEvidenceNode(item.text, 20, yPosition);
+      scene.add(node);
+      yPosition += 50;
+    });
+
     let node = createEvidenceNode("证据1", 20, 20);
     scene.add(node);
 
@@ -84,58 +107,40 @@ export default function ModelView() {
     scene.add(link2);
   };
 
-  const createEvidenceNode = (text, x, y) => {
-    let node = new JTopo.Node();
+  const createNode = (text, x, y, fillColor, fontColor, shape) => {
+    let node;
+    if (shape === "circle") {
+      node = new JTopo.CircleNode();
+    } else {
+      node = new JTopo.Node();
+    }
     node.text = text;
     node.setLocation(x, y);
-    node.dragable = false;
-    node.fontColor = "0,0,0";
-    //点击事件 显示具体的信息
-    node.mousedown(function () {
+    node.dragable = true;
+    if (!fontColor) fontColor = "0,0,0";
+    if (!fillColor) fillColor = "0,255,0";
+    node.fontColor = fontColor;
+    node.fillColor = fillColor;
+    node.mousedown(() => {
       setText(text);
     });
     return node;
+  };
+
+  const createEvidenceNode = (text, x, y) => {
+    return createNode(text, x, y, "106,27,154");
   };
 
   const createEvidenceLinkNode = (text, x, y) => {
-    let node = new JTopo.CircleNode();
-    node.text = text;
-    node.setLocation(x, y);
-    node.dragable = false;
-    node.fontColor = "0,0,0";
-    node.fillColor = "0,255,0";
-    //点击事件 显示具体的信息
-    node.mousedown(function () {
-      setText(text);
-    });
-    return node;
+    return createNode(text, x, y, "0,151,167", false, "circle");
   };
 
   const createFactNode = (text, x, y) => {
-    let node = new JTopo.Node();
-    node.text = text;
-    node.setLocation(x, y);
-    node.dragable = false;
-    node.fontColor = "0,0,0";
-    //点击事件 显示具体的信息
-    node.mousedown(function () {
-      setText(text);
-    });
-    return node;
+    return createNode(text, x, y, "173,20,87");
   };
 
   const createFactLinkNode = (text, x, y) => {
-    let node = new JTopo.CircleNode();
-    node.text = text;
-    node.setLocation(x, y);
-    node.dragable = false;
-    node.fontColor = "0,0,0";
-    node.fillColor = "0,255,0";
-    //点击事件 显示具体的信息
-    node.mousedown(function () {
-      setText(text);
-    });
-    return node;
+    return createNode(text, x, y, "21,101,192", false, "circle");
   };
 
   const _fixType = (type) => {
