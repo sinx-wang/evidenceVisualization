@@ -125,7 +125,6 @@ return = [
 
 path = "/createHeadByBodyId"
 param = {
-    "documentId": 0,
     "bodyId": 0
 }
 return = [
