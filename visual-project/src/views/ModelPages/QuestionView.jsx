@@ -20,7 +20,6 @@ import PersonOutlineIcon from "@material-ui/icons/PersonOutline";
 import Check from "@material-ui/icons/Check";
 import Close from "@material-ui/icons/Close";
 import { makeStyles } from "@material-ui/core/styles";
-import DocumentData from "../../util/data/DocumentData";
 import Notification from "../../components/Notification/Notification";
 import * as Util from "../../util/Util";
 
@@ -75,20 +74,33 @@ function EvidenceHeads(props) {
 
   const array = props.heads;
 
-  return (
-    <Paper component="ul" variant="outlined" className={classes.headPaper}>
-      {array.map((data) => (
-        <li key={data.headId}>
-          <Chip
-            label={data.head}
-            variant="outlined"
-            color="primary"
-            className={classes.chip}
-          />
-        </li>
-      ))}
-    </Paper>
-  );
+  let hasContent = true;
+  if (array == null) {
+    hasContent = false;
+  } else {
+    if (array.length === 0) {
+      hasContent = false;
+    }
+  }
+
+  if (hasContent) {
+    return (
+      <Paper component="ul" variant="outlined" className={classes.headPaper}>
+        {array.map((data, index) => (
+          <li key={index}>
+            <Chip
+              label={data.head}
+              variant="outlined"
+              color="primary"
+              className={classes.chip}
+            />
+          </li>
+        ))}
+      </Paper>
+    );
+  } else {
+    return null;
+  }
 }
 
 // 非矛盾证据
@@ -102,11 +114,16 @@ function EvidenceTabContent(props) {
   React.useEffect(() => {
     // setHeads(JSON.parse(DocumentData.heads));
     const url = "/evidence/createHeadByBodyId";
+    let param = JSON.stringify({
+      bodyId: item.bodyId,
+    });
     const succ = (response) => {
       setHeads(response);
     };
-    const err = () => {};
-    Util.asyncHttpPost(url, succ, err);
+    const err = () => {
+      console.log("headErr");
+    };
+    Util.asyncHttpPost(url, param, succ, err);
   }, []);
 
   return (
@@ -120,13 +137,13 @@ function EvidenceTabContent(props) {
         </Grid>
         <Grid item xs={2} className={classes.buttonAlign}>
           <CustomButton
-            color={item.agree ? "success" : "danger"}
+            color={item.confirm ? "success" : "danger"}
             onClick={() =>
-              props.handleClickAgree(props.position, props.prosecutor)
+              props.handleClickAgree(item.bodyId, props.prosecutor)
             }
           >
-            {item.agree ? <Check /> : <Close />}
-            {item.agree ? "已认定" : "未认定"}
+            {item.confirm ? <Check /> : <Close />}
+            {item.confirm ? "已认定" : "未认定"}
           </CustomButton>
         </Grid>
         <Grid item xs={12}>
@@ -137,7 +154,8 @@ function EvidenceTabContent(props) {
   );
 }
 
-// item.body, item.type, item.agree
+// 矛盾证据
+// item.bodyId, item.type, item.confirm, item.body, item.role
 function ContradictItem(props) {
   const classes = useStyles();
 
@@ -155,14 +173,21 @@ function ContradictItem(props) {
   }
 
   const handleClickAgree = () => {
-    setConfirm(!confirm);
+    let tempConfirm = confirm;
+    if (confirm === 0) {
+      tempConfirm = 1;
+    } else {
+      tempConfirm = 0;
+    }
+    console.log(tempConfirm);
     const url = "/evidence/updateTrustById";
     let param = JSON.stringify({
       bodyId: item.bodyId,
-      confirm: confirm,
+      confirm: tempConfirm,
     });
     const succ = (response) => {
       console.log(response);
+      setConfirm(tempConfirm);
     };
     const err = () => {
       console.log("bodyId: " + item.bodyId);
@@ -171,7 +196,17 @@ function ContradictItem(props) {
   };
 
   React.useEffect(() => {
-    setHeads(JSON.parse(DocumentData.heads));
+    const url = "/evidence/createHeadByBodyId";
+    let param = JSON.stringify({
+      bodyId: item.bodyId,
+    });
+    const succ = (response) => {
+      setHeads(response);
+    };
+    const err = () => {
+      console.log("headErr");
+    };
+    Util.asyncHttpPost(url, param, succ, err);
   }, []);
 
   return (
@@ -198,6 +233,7 @@ function ContradictItem(props) {
   );
 }
 
+// 矛盾证据组
 function ContradictGroup(props) {
   const classes = useStyles();
 
@@ -251,43 +287,94 @@ export default function QuestionView() {
     }
   };
 
-  const handleClickAgree = (index, isProsecutor) => {
+  // 是handleClickAgree的一部分
+  const updateConfirmById = (id, confirm) => {
+    const url = "/evidence/updateTrustById";
+    let param = JSON.stringify({
+      bodyId: id,
+      confirm,
+    });
+    const succ = (response) => {
+      console.log(response);
+      setNote({ show: true, content: "认证成功", color: "success" });
+    };
+    const err = () => {
+      setNote({ show: true, content: "认证失败", color: "error" });
+    };
+    Util.asyncHttpPost(url, param, succ, err);
+  };
+
+  // 是handleClickAgree的一部分
+  const changeConfirmInArray = (id, tempArray, isProsecutor) => {
+    let confirm = 0;
+    for (let i = 0; i < tempArray.length; i++) {
+      if (tempArray[i].bodyId === id) {
+        if (tempArray[i].confirm) {
+          tempArray[i].confirm--;
+        } else {
+          tempArray[i].confirm++;
+        }
+        confirm = tempArray[i].confirm;
+      }
+    }
+    if (isProsecutor) {
+      setProsecutorDoc(tempArray);
+    } else {
+      setDefendantDoc(tempArray);
+    }
+    return confirm;
+  };
+
+  // 点击认定按钮
+  const handleClickAgree = (bodyId, isProsecutor) => {
     let array;
+    let confirm;
     if (isProsecutor) {
       array = [...prosecutorDoc];
-      array[index].agree = !prosecutorDoc[index].agree;
-      console.log(array);
-      setProsecutorDoc(array);
+      confirm = changeConfirmInArray(bodyId, array, isProsecutor);
+      updateConfirmById(bodyId, confirm);
     } else {
       array = [...defendantDoc];
-      array[index].agree = !defendantDoc[index].agree;
-      setDefendantDoc(array);
+      confirm = changeConfirmInArray(bodyId, array, isProsecutor);
+      updateConfirmById(bodyId, confirm);
     }
   };
   // const handleProDocChange =
 
-  // 加载非矛盾证据
-  const setNoContradictData = () => {
+  // 原告方非矛盾证据
+  const setProNoContradictData = () => {
     const url = "/evidence/getNoContradictByDocumentId";
     let param = JSON.stringify({
-      documentId: sessionStorage.getItem("documentId"),
+      documentId: sessionStorage.getItem("proDocumentId"),
     });
     const succ = (response) => {
-      let document0 = { ...response[0] };
-      let document1 = { ...response[1] };
-      // role=0
-      if (!document0.role) {
-        setProsecutorDoc(document0.bodys);
-        setDefendantDoc(document1.bodys);
-      } else {
-        // role=1
-        setDefendantDoc(document0.bodys);
-        setProsecutorDoc(document1.bodys);
-      }
-      setNote({ show: true, color: "success", content: "非矛盾证据加载成功" });
+      setProsecutorDoc(response);
     };
     const err = () => {
-      setNote({ show: true, color: "error", content: "非矛盾证据加载失败" });
+      setNote({
+        show: true,
+        color: "error",
+        content: "原告非矛盾证据加载失败",
+      });
+    };
+    Util.asyncHttpPost(url, param, succ, err);
+  };
+
+  // 被告方非矛盾证据
+  const setDefNoContradictData = () => {
+    const url = "/evidence/getNoContradictByDocumentId";
+    let param = JSON.stringify({
+      documentId: sessionStorage.getItem("defDocumentId"),
+    });
+    const succ = (response) => {
+      setDefendantDoc(response);
+    };
+    const err = () => {
+      setNote({
+        show: true,
+        color: "error",
+        content: "被告非矛盾证据加载失败",
+      });
     };
     Util.asyncHttpPost(url, param, succ, err);
   };
@@ -296,7 +383,7 @@ export default function QuestionView() {
   const setContradictData = () => {
     const url = "/evidence/getContradictByDocumentId";
     let param = JSON.stringify({
-      documentId: sessionStorage.getItem("documentId"),
+      caseId: sessionStorage.getItem("caseId"),
     });
     const succ = (response) => {
       setContradiction(response);
@@ -310,11 +397,9 @@ export default function QuestionView() {
 
   React.useEffect(() => {
     document.title = "质证采信";
-    setNoContradictData();
+    setProNoContradictData();
+    setDefNoContradictData();
     setContradictData();
-    // setProsecutorDoc(JSON.parse(DocumentData.documents));
-    // setDefendantDoc(JSON.parse(DocumentData.documents));
-    // setContradiction(JSON.parse(DocumentData.contradictDocs));
   }, []);
 
   return (
