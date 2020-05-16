@@ -63,10 +63,6 @@ data = {
 }
 ```
 
-## 证据分解
-```json
-baseUrl = "/evidence"
-```
 0. 得到案件的基本信息 （案号 案件名称 承办人）初始化证据
 
 ```json
@@ -91,6 +87,10 @@ return = {
 }
 ```
 
+## 证据分解
+```json
+baseUrl = "/evidence"
+```
 
 1.分解证据
 
@@ -258,6 +258,18 @@ data = {
 ## 事实认定
 ```json
 baseUrl = "/facts"
+```
+
+0. 预加载事实
+```json
+path = "/initFact"
+param = {
+    "username": "string",
+    "caseId": 1
+}
+return = {
+    "body": "string"
+}
 ```
 
 1.分解事实
