@@ -15,7 +15,6 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import CropIcon from "@material-ui/icons/Crop";
 // import EditIcon from "@material-ui/icons/Edit";
-import DocumentData from "../../util/data/DocumentData";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
@@ -142,7 +141,7 @@ function EvidenceHeads(props) {
     return (
       <Paper component="ul" variant="outlined" className={classes.headPaper}>
         {array.map((data, index) => (
-          <li key={index}>
+          <li key={index + data.headId}>
             <Chip
               label={data.head}
               variant="outlined"
@@ -183,6 +182,11 @@ function EvidenceTabContent(props) {
 
   const handleChangeType = (type) => {
     setType(type);
+  };
+
+  const clickDelete = () => {
+    props.handleClickDelete(item.bodyId, props.prosecutor);
+    console.log(item.bodyId);
   };
 
   const createHeads = () => {
@@ -243,9 +247,7 @@ function EvidenceTabContent(props) {
             <CustomButton
               color="danger"
               simple
-              onClick={() =>
-                props.handleClickDelete(item.bodyId, props.prosecutor)
-              }
+              onClick={clickDelete}
             >
               <DeleteIcon />
             </CustomButton>
@@ -483,16 +485,11 @@ export default function ResolveView() {
 
   // 删除单条证据?
   const handleClickDelete = (id, prosecutor) => {
-    console.log(id);
-    console.log(prosecutor);
     // let documentId;
     if (prosecutor) {
       setProsecutorDoc((list) => list.filter((item) => item.bodyId !== id));
-      // documentId = sessionStorage.getItem("proDocumentId");
-      console.log(prosecutorDoc);
     } else {
       setDefendantDoc((list) => list.filter((item) => item.bodyId !== id));
-      // documentId = sessionStorage.getItem("defDocumentId");
     }
     const url = "/evidence/deleteBody";
     let param = JSON.stringify({
@@ -501,6 +498,7 @@ export default function ResolveView() {
     });
     console.log(param);
     const succ = (response) => {
+      // forceUpdate();
       setNote({ show: true, color: "success", content: "删除单条证据成功" });
     };
     const err = () => {
@@ -670,7 +668,7 @@ export default function ResolveView() {
                     <List>
                       {prosecutorDoc.map((item, index) => (
                         <EvidenceTabContent
-                          key={index}
+                          key={item.bodyId}
                           position={index}
                           item={item}
                           editing={editing}
@@ -688,6 +686,7 @@ export default function ResolveView() {
                         <Add />
                         添加原告证据
                       </CustomButton>
+                      {/*<CustomButton color="danger" onClick={() => handleClickDelete(209, true)}>删除2</CustomButton>*/}
                     </Paper>
                   </div>
                 ),
@@ -700,7 +699,7 @@ export default function ResolveView() {
                     <List>
                       {defendantDoc.map((item, index) => (
                         <EvidenceTabContent
-                          key={index}
+                          key={item.bodyId}
                           position={index}
                           item={item}
                           editing={editing}
