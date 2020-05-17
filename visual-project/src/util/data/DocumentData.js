@@ -155,11 +155,50 @@ const createJointNode = (id, logicNodeId, text) => {
 };
 
 const JointNodeArray1 = [
-  createJointNode(1, 14, "链头一"),
-  createJointNode(2, 15, "链头二"),
-  createJointNode(3, 16, "链头三"),
+  createJointNode(1, 17, "联结点一"),
+  createJointNode(2, 18, "联结点二"),
+  createJointNode(3, 19, "联结点三"),
 ];
 
 DocumentData.getJoint = JointNodeArray1;
+
+// 虚线
+const createDottedLine = (nodeId1, nodeId2) => {
+  return { nodeId1, nodeId2 };
+};
+
+const getDottedLines = [
+  createDottedLine(1, 4),
+  createDottedLine(1, 5),
+  createDottedLine(2, 6),
+  createDottedLine(7, 11),
+  createDottedLine(8, 11),
+  createDottedLine(9, 12),
+  createDottedLine(10, 13),
+];
+
+DocumentData.getDottedLines = getDottedLines;
+
+// 实线
+const createSolidLine = (nodeId1, nodeId2) => {
+  return { nodeId1, nodeId2 };
+};
+
+const getSolidLines = [
+  createSolidLine(1, 17),
+  createSolidLine(1, 18),
+  createSolidLine(2, 18),
+  createSolidLine(3, 19),
+  createSolidLine(17, 14),
+  createSolidLine(17, 15),
+  createSolidLine(18, 16),
+  createSolidLine(19, 15),
+  createSolidLine(14, 7),
+  createSolidLine(15, 8),
+  createSolidLine(15, 9),
+  createSolidLine(16, 10),
+];
+
+DocumentData.getSolidLines = getSolidLines;
 
 export default DocumentData;

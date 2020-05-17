@@ -31,6 +31,9 @@ const useStyles = makeStyles((theme) => ({
   button: {
     margin: theme.spacing(1),
   },
+  text: {
+    marginBottom: 10,
+  },
 }));
 
 // 函数式写法，无class
@@ -40,7 +43,11 @@ export default function ModelView() {
   const canvasRef = React.useRef(null);
 
   const [values, setValues] = React.useState({
+    logicNodeId: 0,
     nodeText: "", //点击节点信息
+    type: "",
+    role: "",
+    confirm: 0,
   });
 
   const [realFacts, setRealFacts] = React.useState([]);
@@ -55,7 +62,9 @@ export default function ModelView() {
 
   const [joints, setJoints] = React.useState([]);
 
-  const [text, setText] = React.useState("空");
+  const [solidLines, setSolidLines] = React.useState([]);
+
+  const [dottedLines, setDottedLines] = React.useState([]);
 
   React.useEffect(() => {
     document.title = "建模";
@@ -65,7 +74,9 @@ export default function ModelView() {
     setFakeEvidences(DocumentData.getEvidences[1].body);
     setHeads(DocumentData.getHeads);
     setJoints(DocumentData.getJoint);
-  });
+    setSolidLines(DocumentData.getSolidLines);
+    setDottedLines(DocumentData.getDottedLines);
+  }, []);
 
   const initCanvas = () => {
     let canvas = canvasRef.current;
@@ -81,39 +92,188 @@ export default function ModelView() {
     let scene = new JTopo.Scene(stage);
     scene.mode = "select";
     //scene.background= '1.png';
+
+    let xPosition = 20;
     let yPosition = 20;
-    realEvidences.forEach((item) => {
-      let node = createEvidenceNode(item.text, 20, yPosition);
+    let ySpacing = 100;
+    // 创建被否定事实
+    fakeFacts.forEach((item) => {
+      let node = createFactNode(
+        item.logicNodeId,
+        item.text,
+        xPosition,
+        yPosition,
+        true
+      );
+      node.confirm = false;
+      node.serializedProperties.push("confirm");
+      node.mousedown(() => {
+        setValues({
+          logicNodeId: node.logicNodeId,
+          nodeText: node.text,
+          confirm: false,
+        });
+      });
       scene.add(node);
-      yPosition += 50;
+      yPosition += ySpacing;
     });
 
-    let node = createEvidenceNode("证据1", 20, 20);
-    scene.add(node);
+    xPosition += 75;
+    yPosition = 50;
+    // 创建被认定事实
+    realFacts.forEach((item) => {
+      let node = createFactNode(
+        item.logicNodeId,
+        item.text,
+        xPosition,
+        yPosition
+      );
+      node.confirm = true;
+      node.serializedProperties.push("confirm");
+      node.mousedown(() => {
+        setValues({
+          logicNodeId: node.logicNodeId,
+          nodeText: node.text,
+          confirm: true,
+        });
+      });
+      scene.add(node);
+      yPosition += ySpacing;
+    });
 
-    let node1 = createEvidenceLinkNode("链头", 200, 100);
-    scene.add(node1);
+    xPosition = 250;
+    yPosition = 20;
+    // 创建联结点
+    joints.forEach((item) => {
+      let node = createFactLinkNode(
+        item.logicNodeId,
+        item.text,
+        xPosition,
+        yPosition
+      );
+      scene.add(node);
+      yPosition += ySpacing;
+    });
 
-    let node2 = createFactLinkNode("链接点", 400, 100);
-    scene.add(node2);
+    xPosition = 400;
+    yPosition = 20;
+    // 创建链头
+    heads.forEach((item) => {
+      let node = createEvidenceLinkNode(
+        item.logicNodeId,
+        item.text,
+        xPosition,
+        yPosition
+      );
+      scene.add(node);
+      yPosition += ySpacing;
+    });
 
-    let node3 = createFactNode("事实", 600, 100);
-    scene.add(node3);
+    xPosition = 600;
+    yPosition = 20;
+    // 创建认定证据
+    realEvidences.forEach((item) => {
+      let node = createEvidenceNode(
+        item.logicNodeId,
+        item.text,
+        xPosition,
+        yPosition
+      );
+      // 添加自定义属性
+      node.type = item.type;
+      node.serializedProperties.push("type");
+      node.role = item.role;
+      node.serializedProperties.push("role");
+      node.confirm = true;
+      node.serializedProperties.push("confirm");
+      node.mousedown(() => {
+        setValues({
+          logicNodeId: node.logicNodeId,
+          nodeText: node.text,
+          type: node.type,
+          role: node.role,
+          confirm: true,
+        });
+      });
+      scene.add(node);
+      yPosition += ySpacing;
+    });
 
-    let link = new JTopo.Link(node, node1);
-    scene.add(link);
+    xPosition += 75;
+    yPosition = 50;
+    // 创建被否定证据
+    fakeEvidences.forEach((item) => {
+      let node = createEvidenceNode(
+        item.logicNodeId,
+        item.text,
+        xPosition,
+        yPosition,
+        true
+      );
+      node.type = item.type;
+      node.serializedProperties.push("type");
+      node.role = item.role;
+      node.serializedProperties.push("role");
+      node.confirm = false;
+      node.serializedProperties.push("confirm");
+      node.mousedown(() => {
+        setValues({
+          logicNodeId: node.logicNodeId,
+          nodeText: node.text,
+          type: node.type,
+          role: node.role,
+          confirm: false,
+        });
+      });
+      scene.add(node);
+      yPosition += ySpacing;
+    });
 
-    let link2 = new JTopo.Link(node2, node3);
-    scene.add(link2);
+    let allNode = stage.find("node");
+    // 创建实线
+    solidLines.forEach((line) => {
+      let node1;
+      allNode.forEach((singleNode) => {
+        if (line.nodeId1 === singleNode.logicNodeId) {
+          node1 = singleNode;
+        }
+      });
+      let node2;
+      allNode.forEach((singleNode) => {
+        if (line.nodeId2 === singleNode.logicNodeId) {
+          node2 = singleNode;
+        }
+      });
+      let link = createLink(node1, node2, false);
+      scene.add(link);
+    });
+
+    // 创建虚线
+    dottedLines.forEach((line) => {
+      let node1;
+      allNode.forEach((singleNode) => {
+        if (line.nodeId1 === singleNode.logicNodeId) node1 = singleNode;
+      });
+      let node2;
+      allNode.forEach((singleNode) => {
+        if (line.nodeId2 === singleNode.logicNodeId) node2 = singleNode;
+      });
+      let link = createLink(node1, node2, true);
+      scene.add(link);
+    });
   };
 
-  const createNode = (text, x, y, fillColor, fontColor, shape) => {
+  const createNode = (logicNodeId, text, x, y, fillColor, fontColor, shape) => {
     let node;
     if (shape === "circle") {
       node = new JTopo.CircleNode();
     } else {
       node = new JTopo.Node();
     }
+    //添加自定义属性
+    node.logicNodeId = logicNodeId;
+    node.serializedProperties.push("logicNodeId");
+
     node.text = text;
     node.setLocation(x, y);
     node.dragable = true;
@@ -121,26 +281,31 @@ export default function ModelView() {
     if (!fillColor) fillColor = "0,255,0";
     node.fontColor = fontColor;
     node.fillColor = fillColor;
-    node.mousedown(() => {
-      setText(text);
-    });
     return node;
   };
 
-  const createEvidenceNode = (text, x, y) => {
-    return createNode(text, x, y, "106,27,154");
+  const createEvidenceNode = (logicNodeId, text, x, y, fake) => {
+    let color = fake ? "149,117,205" : "106,27,154";
+    return createNode(logicNodeId, text, x, y, color);
   };
 
-  const createEvidenceLinkNode = (text, x, y) => {
-    return createNode(text, x, y, "0,151,167", false, "circle");
+  const createEvidenceLinkNode = (logicNodeId, text, x, y) => {
+    return createNode(logicNodeId, text, x, y, "0,151,167", false, "circle");
   };
 
-  const createFactNode = (text, x, y) => {
-    return createNode(text, x, y, "173,20,87");
+  const createFactNode = (logicNodeId, text, x, y, fake) => {
+    let color = fake ? "236,64,122" : "173,20,87";
+    return createNode(logicNodeId, text, x, y, color);
   };
 
-  const createFactLinkNode = (text, x, y) => {
-    return createNode(text, x, y, "21,101,192", false, "circle");
+  const createFactLinkNode = (logicNodeId, text, x, y) => {
+    return createNode(logicNodeId, text, x, y, "21,101,192", false, "circle");
+  };
+
+  const createLink = (nodeA, nodeZ, dotted, text) => {
+    let link = new JTopo.Link(nodeA, nodeZ, text);
+    if (dotted) link.dashedPattern = 5;
+    return link;
   };
 
   const _fixType = (type) => {
@@ -231,7 +396,39 @@ export default function ModelView() {
         </Grid>
         <Grid item xs={3}>
           <Paper className={classes.paper}>
-            <TextField id="standard-basic" label="节点信息:" value={text} />
+            <TextField
+              label="节点图形ID"
+              disabled
+              value={values.logicNodeId}
+              className={classes.text}
+            />
+            <TextField
+              label="节点信息:"
+              value={values.nodeText}
+              className={classes.text}
+            />
+            {values.confirm != null ? (
+              <TextField
+                label="认定:"
+                error={!values.confirm}
+                value={values.confirm ? "被认定" : "被否定"}
+                className={classes.text}
+              />
+            ) : null}
+            {values.role ? (
+              <TextField
+                label="来源:"
+                value={values.role ? "被告" : "原告"}
+                className={classes.text}
+              />
+            ) : null}
+            {values.type ? (
+              <TextField
+                label="类型:"
+                value={values.type}
+                className={classes.text}
+              />
+            ) : null}
           </Paper>
         </Grid>
       </Grid>
