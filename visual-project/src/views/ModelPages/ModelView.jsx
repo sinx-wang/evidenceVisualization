@@ -48,7 +48,7 @@ export default function ModelView() {
     nodeText: "", //点击节点信息
     type: "",
     role: "",
-    confirm: 0,
+    confirm: null,
   });
 
   const [realFacts, setRealFacts] = React.useState([]);
@@ -69,65 +69,46 @@ export default function ModelView() {
 
   React.useEffect(() => {
     document.title = "建模";
-    initData()
-    // setRealFacts(DocumentData.getFacts[0].body);
-    // setFakeFacts(DocumentData.getFacts[1].body);
-    // setRealEvidences(DocumentData.getEvidences[0].body);
-    // setFakeEvidences(DocumentData.getEvidences[1].body);
-    // setHeads(DocumentData.getHeads);
-    // setJoints(DocumentData.getJoint);
-    // setSolidLines(DocumentData.getSolidLines);
-    // setDottedLines(DocumentData.getDottedLines);
+    initData();
   }, []);
 
   //初始化数据 此处硬编码caseId为2 后期需要修改
   const initData = () => {
-
     const url = "/model/getInfo";
 
     let param = JSON.stringify({
-        //caseId: sessionStorage.getItem("caseId"),
-        caseId: 3,
+      //caseId: sessionStorage.getItem("caseId"),
+      caseId: 3,
     });
 
-    const succ = (response) =>{
+    const succ = (response) => {
       let realFacts = [];
       let fakeFacts = [];
       let realEvidences = [];
       let fakeEvidences = [];
       let facts = response.facts;
-      for(let i=0; i<facts.length; i++){
-        if(facts[i].confirm === 0){
-          fakeFacts = facts[i].body
-        }
-        else{
-          realFacts = facts[i].body
+      for (let i = 0; i < facts.length; i++) {
+        if (facts[i].confirm === 0) {
+          fakeFacts = facts[i].body;
+        } else {
+          realFacts = facts[i].body;
         }
       }
 
-        let evidences = response.evidences;
-        for(let i=0; i<evidences.length; i++){
-            if(evidences[i].confirm === 0){
-                fakeEvidences = evidences[i].body
-            }
-            else{
-                realEvidences = evidences[i].body
-            }
+      let evidences = response.evidences;
+      for (let i = 0; i < evidences.length; i++) {
+        if (evidences[i].confirm === 0) {
+          fakeEvidences = evidences[i].body;
+        } else {
+          realEvidences = evidences[i].body;
         }
+      }
       let heads = response.heads;
       let joints = response.joints;
       let solidLines = response.solideLines;
       let dottedLines = response.dottedLines;
-      console.log('heads:'+JSON.stringify(heads));
-      console.log('joints:'+JSON.stringify(joints));
-      console.log('realFacts :'+JSON.stringify(realFacts));
-      console.log('fakeFacts :'+JSON.stringify(fakeFacts));
-      console.log('realEvidence :'+JSON.stringify(realEvidences));
-      console.log('fakeEvidence :'+JSON.stringify(fakeEvidences));
-      console.log('solidLines :'+JSON.stringify(solidLines));
-      console.log('dottedLines :'+JSON.stringify(dottedLines));
 
-      setRealEvidences(realEvidences);
+      setRealFacts(realFacts);
       setFakeFacts(fakeFacts);
       setRealEvidences(realEvidences);
       setFakeEvidences(fakeEvidences);
@@ -135,20 +116,19 @@ export default function ModelView() {
       setJoints(joints);
       setSolidLines(solidLines);
       setDottedLines(dottedLines);
-        };
+    };
 
     const err = () => {
-       console.log("获取数据出错");
+      console.log("获取数据出错");
     };
 
     Util.asyncHttpPost(url, param, succ, err);
   };
 
-
   const initCanvas = () => {
     let canvas = canvasRef.current;
     canvas.width = window.innerWidth * 0.55;
-    canvas.height = window.innerHeight * 0.5;
+    canvas.height = window.innerHeight;
   };
 
   const drawCanvas = () => {
@@ -163,7 +143,14 @@ export default function ModelView() {
     let xPosition = 20;
     let yPosition = 20;
     let ySpacing = 100;
+    let ySpacing2 = 70;
     // 创建被否定事实
+    let num = fakeFacts.length;
+    if (num > 1) {
+      yPosition = (window.innerHeight - (num - 1) * ySpacing) / 2 - 70;
+    } else {
+      yPosition = window.innerHeight / 2 - 70;
+    }
     fakeFacts.forEach((item) => {
       let node = createFactNode(
         item.logicNodeId,
@@ -172,7 +159,7 @@ export default function ModelView() {
         yPosition,
         true
       );
-      let text = item.text
+      let text = item.text;
       node.confirm = false;
       node.serializedProperties.push("confirm");
       node.mousedown(() => {
@@ -189,6 +176,12 @@ export default function ModelView() {
     xPosition += 75;
     yPosition = 50;
     // 创建被认定事实
+    num = realFacts.length;
+    if (num > 1) {
+      yPosition = (window.innerHeight - (num - 1) * ySpacing) / 2;
+    } else {
+      yPosition = window.innerHeight / 2;
+    }
     realFacts.forEach((item) => {
       let node = createFactNode(
         item.logicNodeId,
@@ -196,7 +189,7 @@ export default function ModelView() {
         xPosition,
         yPosition
       );
-      let text = item.text
+      let text = item.text;
       node.confirm = true;
       node.serializedProperties.push("confirm");
       node.mousedown(() => {
@@ -213,34 +206,94 @@ export default function ModelView() {
     xPosition = 250;
     yPosition = 20;
     // 创建联结点
-    joints.forEach((item) => {
+    num = joints.length;
+    let tooLong = false;
+    if (num * ySpacing2 >= window.innerHeight - 20) {
+      ySpacing2 = (window.innerHeight - 20) / num;
+      tooLong = true;
+    }
+    if (!tooLong) {
+      num = joints.length;
+      if (num > 1) {
+        yPosition = (window.innerHeight - (num - 1) * ySpacing) / 2;
+      } else {
+        yPosition = window.innerHeight / 2;
+      }
+    }
+    joints.forEach((item, index) => {
       let node = createFactLinkNode(
         item.logicNodeId,
         item.text,
         xPosition,
         yPosition
       );
+      node.mousedown(() => {
+        setValues({
+          logicNodeId: node.logicNodeId,
+          nodeText: item.text,
+        });
+      });
       scene.add(node);
-      yPosition += ySpacing;
+      yPosition += ySpacing2;
+      if (tooLong) {
+        if (index % 2 === 0) {
+          xPosition += 35;
+        } else {
+          xPosition -= 35;
+        }
+      }
     });
 
     xPosition = 400;
     yPosition = 20;
     // 创建链头
-    heads.forEach((item) => {
+    num = heads.length;
+    tooLong = false;
+    if (num * ySpacing2 >= window.innerHeight - 20) {
+      ySpacing2 = (window.innerHeight - 20) / num;
+      tooLong = true;
+    }
+    if (!tooLong) {
+      num = heads.length;
+      if (num > 1) {
+        yPosition = (window.innerHeight - (num - 1) * ySpacing) / 2;
+      } else {
+        yPosition = window.innerHeight / 2;
+      }
+    }
+    heads.forEach((item, index) => {
       let node = createEvidenceLinkNode(
         item.logicNodeId,
         item.text,
         xPosition,
         yPosition
       );
+      node.mousedown(() => {
+        setValues({
+          logicNodeId: node.logicNodeId,
+          nodeText: item.text,
+        });
+      });
       scene.add(node);
-      yPosition += ySpacing;
+      yPosition += ySpacing2;
+      if (tooLong) {
+        if (index % 2 === 0) {
+          xPosition += 35;
+        } else {
+          xPosition -= 35;
+        }
+      }
     });
 
     xPosition = 600;
     yPosition = 20;
     // 创建认定证据
+    num = realEvidences.length;
+    if (num > 1) {
+      yPosition = (window.innerHeight - (num - 1) * ySpacing) / 2;
+    } else {
+      yPosition = window.innerHeight / 2;
+    }
     realEvidences.forEach((item) => {
       let node = createEvidenceNode(
         item.logicNodeId,
@@ -248,7 +301,7 @@ export default function ModelView() {
         xPosition,
         yPosition
       );
-      let text = item.text
+      let text = item.text;
       // 添加自定义属性
       node.type = item.type;
       node.serializedProperties.push("type");
@@ -272,6 +325,12 @@ export default function ModelView() {
     xPosition += 75;
     yPosition = 50;
     // 创建被否定证据
+    fakeEvidences.length;
+    if (num > 1) {
+      yPosition = (window.innerHeight - (num - 1) * ySpacing) / 2 + 70;
+    } else {
+      yPosition = window.innerHeight / 2 + 70;
+    }
     fakeEvidences.forEach((item) => {
       let node = createEvidenceNode(
         item.logicNodeId,
@@ -281,7 +340,7 @@ export default function ModelView() {
         true
       );
 
-      let text = item.text
+      let text = item.text;
       node.type = item.type;
       node.serializedProperties.push("type");
       node.role = item.role;
@@ -306,13 +365,13 @@ export default function ModelView() {
     solidLines.forEach((line) => {
       let node1;
       allNode.forEach((singleNode) => {
-        if (line.nodeId1 === singleNode.logicNodeId) {
+        if (line.logicNodeId1 === singleNode.logicNodeId) {
           node1 = singleNode;
         }
       });
       let node2;
       allNode.forEach((singleNode) => {
-        if (line.nodeId2 === singleNode.logicNodeId) {
+        if (line.logicNodeId2 === singleNode.logicNodeId) {
           node2 = singleNode;
         }
       });
@@ -324,11 +383,11 @@ export default function ModelView() {
     dottedLines.forEach((line) => {
       let node1;
       allNode.forEach((singleNode) => {
-        if (line.nodeId1 === singleNode.logicNodeId) node1 = singleNode;
+        if (line.logicNodeId1 === singleNode.logicNodeId) node1 = singleNode;
       });
       let node2;
       allNode.forEach((singleNode) => {
-        if (line.nodeId2 === singleNode.logicNodeId) node2 = singleNode;
+        if (line.logicNodeId2 === singleNode.logicNodeId) node2 = singleNode;
       });
       let link = createLink(node1, node2, true);
       scene.add(link);
@@ -346,7 +405,7 @@ export default function ModelView() {
     node.logicNodeId = logicNodeId;
     node.serializedProperties.push("logicNodeId");
 
-    node.text = text.substring(0,7);
+    node.text = text.substring(0, 7);
     node.setLocation(x, y);
     node.dragable = true;
     if (!fontColor) fontColor = "0,0,0";
