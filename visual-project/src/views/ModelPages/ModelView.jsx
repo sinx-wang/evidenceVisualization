@@ -325,7 +325,7 @@ export default function ModelView() {
     xPosition += 75;
     yPosition = 50;
     // 创建被否定证据
-    fakeEvidences.length;
+    num = fakeEvidences.length;
     if (num > 1) {
       yPosition = (window.innerHeight - (num - 1) * ySpacing) / 2 + 70;
     } else {
