@@ -13,6 +13,7 @@ data = {
 ```
 
 ## 案件列表
+
 ```json
 baseUrl = "/case"
 ```
@@ -63,7 +64,7 @@ data = {
 }
 ```
 
-0. 得到案件的基本信息 （案号 案件名称 承办人）初始化证据
+5.得到案件的基本信息 （案号 案件名称 承办人）初始化证据
 
 ```json
 path = "/getCaseDetail"
@@ -88,6 +89,7 @@ return = {
 ```
 
 ## 证据分解
+
 ```json
 baseUrl = "/evidence"
 ```
@@ -184,8 +186,6 @@ return = {
 }
 ```
 
-
-
 5.更新整段证据
 
 ```json
@@ -230,7 +230,7 @@ return = {
 }
 ```
 
-7. 获取非矛盾证据
+7.获取非矛盾证据
 
 ```json
 path = "/getNoContradictByDocumentId"
@@ -248,7 +248,7 @@ return = [
 ]
 ```
 
-8. 获取矛盾证据
+8.获取矛盾证据
 
 ```json
 path = "/getContradictByDocumentId"
@@ -271,7 +271,8 @@ return = [
 ]
 ```
 
-9. 认定证据
+9.认定证据
+
 ```json
 path = "/updateTrustById"
 data = {
@@ -280,25 +281,26 @@ data = {
 }
 ```
 
-10. 删除单条证据
+10.删除单条证据
+
 ```json
 path = "/deleteBody"
 data = {
     "bodyId": 0,
-    
 }
 return = {
     "success": true
     }
 ```
 
-
 ## 事实认定
+
 ```json
 baseUrl = "/facts"
 ```
 
-0. 预加载事实
+0.预加载事实
+
 ```json
 path = "/initFact"
 param = {
@@ -311,6 +313,7 @@ return = {
 ```
 
 1.分解事实
+
 ```json
 path = "/resolve"
 param = {
@@ -397,7 +400,8 @@ param = {
 }
 ```
 
-6. 认定事实
+6.认定事实
+
 ```json
 path = "/updateTrustById"
 data = {
@@ -406,7 +410,7 @@ data = {
 }
 ```
 
-7. 获取待认定事实
+7.获取待认定事实
 
 ```json
 path = "/getToConfirmByCaseId"
@@ -422,8 +426,7 @@ return = [
 ]
 ```
 
-
-8. 删除单条事实
+8.删除单条事实
 
 ```json
 path = "/deleteFactByFactId"
@@ -435,7 +438,7 @@ return = {
     }
 ```
 
-9. 删除单个联结点
+9.删除单个联结点
 
 ```json
 path = "/deleteJoint"
@@ -447,7 +450,7 @@ return = {
     }
 ```
 
-10. 根据factId得到联结点
+10.根据factId得到联结点
 
 ```json
 path = "/getJointByFactId"
@@ -463,119 +466,73 @@ return = [
 ]
 ```
 
-
-
 ## 证据链建模
+
 ```json
 baseUrl = "/model"
 ```
-1.得到所有事实节点
+
+0.得到所有信息
+
 ```json
-
-url = "/getFacts"
-data = {
-    "caseId": 0
-    }
-return = [
-    {
-        "confirm": 0,
-        "body": [
-            {
-                "id": 1,
-                "logicNodeId": 2,
-                "text": "xxx"
-            },
-            ...
-        ]
-    }
-]
-```
-
-2.得到所有证据节点
-```json
-
-url = "/getEvidences"
-data = {
-    "caseId": 0
-    }
-return = [
-    {
-        "confirm": 0,
-        "body": [
-            {
-                "id": 1,
-                "logicNodeId": 2,
-                "text": "xxx",
-                "type": "xxx",
-                "role": "xxx",
-            },
-            ...
-        ]
-    }
-]
-```
-
-3.得到所有链头
-```json
-
-url = "/getHeads"
-
-data = {
-    "caseId": 0
-    }
-param = [
-    {
-        "id": 1,
-        "logicNodeId": 1
-        "text": "xxx",
-    }
-]
-```
-
-4.得到所有联结点
-```json
-
-url = "/getJoints"
-data = {
-    "caseId": 0
-    }
-param = [
-    {
-        "id": 1,
-        "logicNodeId": 1
-        "text": "xxx",
-    }
-]
-```
-
-5.得到所有虚线关系
-```json
-
-url = "/getDottedLines"
-data = {
-    "caseId": 0
-    }
-param = [
-    {
-        "logicNodeId1": 1,
-        "logicNodeId2": 2
-    },...
-]
-```
-
-6.得到所有实线关系
-```json
-
-url = "/getSolidLines"
-data = {
-    "caseId": 0
-    }
-param = [
-    {
-        "logicNodeId1": 1,
-        "logicNodeId2": 2
-    },...
-]
+url = "/getInfo"
+param = {
+    "caseId": 1
+}
+return = {
+    facts: [
+        {
+            "confirm": 0, // 认定与否
+            "body": [
+                {
+                    "id": 1,
+                    "logicNodeId": 2,
+                    "text": "xxx"
+                },...
+            ]
+        },...
+    ],
+    evidences: [
+        {
+            "confirm": 0,
+            "body": [
+                {
+                    "id": 1,
+                    "logicNodeId": 2,
+                    "text": "xxx",
+                    "type": "xxx",
+                    "role": "xxx",
+                },...
+           ]
+        },...
+    ],
+    heads: [
+        {
+            "id": 1,
+            "logicNodeId": 1
+            "text": "xxx",
+        },...
+    ],
+    joints: [
+        {
+            "id": 1,
+            "logicNodeId": 1
+            "text": "xxx",
+        },...
+    ],
+    dottedLines: [
+        {
+            "logicNodeId1": 1,
+            "logicNodeId2": 2
+        },...
+    ],
+    solidLines: [
+        {
+            "logicNodeId1": 1,
+            "logicNodeId2": 2
+        },...
+    ]
+}
 ```
 
 ## 说理逻辑
