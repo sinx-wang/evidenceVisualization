@@ -563,7 +563,7 @@ param = [
 ]
 ```
 
-6.得到所有虚线关系
+6.得到所有实线关系
 ```json
 
 url = "/getSolidLines"
