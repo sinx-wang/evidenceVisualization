@@ -480,7 +480,7 @@ param = {
     "caseId": 1
 }
 return = {
-    facts: [
+    "facts": [
         {
             "confirm": 0, // 认定与否
             "body": [
@@ -492,7 +492,7 @@ return = {
             ]
         },...
     ],
-    evidences: [
+    "evidences": [
         {
             "confirm": 0,
             "body": [
@@ -506,27 +506,27 @@ return = {
            ]
         },...
     ],
-    heads: [
+    "heads": [
         {
             "id": 1,
             "logicNodeId": 1
             "text": "xxx",
         },...
     ],
-    joints: [
+    "joints": [
         {
             "id": 1,
             "logicNodeId": 1
             "text": "xxx",
         },...
     ],
-    dottedLines: [
+    "dottedLines": [
         {
             "logicNodeId1": 1,
             "logicNodeId2": 2
         },...
     ],
-    solidLines: [
+    "solidLines": [
         {
             "logicNodeId1": 1,
             "logicNodeId2": 2
