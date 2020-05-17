@@ -9,6 +9,7 @@ import AddToQueue from "@material-ui/icons/AddToQueue";
 import Adjust from "@material-ui/icons/Adjust";
 import ImageIcon from "@material-ui/icons/Image";
 import DocumentData from "../../util/data/DocumentData";
+import * as Util from "../../util/Util";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -68,15 +69,81 @@ export default function ModelView() {
 
   React.useEffect(() => {
     document.title = "建模";
-    setRealFacts(DocumentData.getFacts[0].body);
-    setFakeFacts(DocumentData.getFacts[1].body);
-    setRealEvidences(DocumentData.getEvidences[0].body);
-    setFakeEvidences(DocumentData.getEvidences[1].body);
-    setHeads(DocumentData.getHeads);
-    setJoints(DocumentData.getJoint);
-    setSolidLines(DocumentData.getSolidLines);
-    setDottedLines(DocumentData.getDottedLines);
+    initData()
+    // setRealFacts(DocumentData.getFacts[0].body);
+    // setFakeFacts(DocumentData.getFacts[1].body);
+    // setRealEvidences(DocumentData.getEvidences[0].body);
+    // setFakeEvidences(DocumentData.getEvidences[1].body);
+    // setHeads(DocumentData.getHeads);
+    // setJoints(DocumentData.getJoint);
+    // setSolidLines(DocumentData.getSolidLines);
+    // setDottedLines(DocumentData.getDottedLines);
   }, []);
+
+  //初始化数据 此处硬编码caseId为2 后期需要修改
+  const initData = () => {
+
+    const url = "/model/getInfo";
+
+    let param = JSON.stringify({
+        //caseId: sessionStorage.getItem("caseId"),
+        caseId: 3,
+    });
+
+    const succ = (response) =>{
+      let realFacts = [];
+      let fakeFacts = [];
+      let realEvidences = [];
+      let fakeEvidences = [];
+      let facts = response.facts;
+      for(let i=0; i<facts.length; i++){
+        if(facts[i].confirm === 0){
+          fakeFacts = facts[i].body
+        }
+        else{
+          realFacts = facts[i].body
+        }
+      }
+
+        let evidences = response.evidences;
+        for(let i=0; i<evidences.length; i++){
+            if(evidences[i].confirm === 0){
+                fakeEvidences = evidences[i].body
+            }
+            else{
+                realEvidences = evidences[i].body
+            }
+        }
+      let heads = response.heads;
+      let joints = response.joints;
+      let solidLines = response.solideLines;
+      let dottedLines = response.dottedLines;
+      console.log('heads:'+JSON.stringify(heads));
+      console.log('joints:'+JSON.stringify(joints));
+      console.log('realFacts :'+JSON.stringify(realFacts));
+      console.log('fakeFacts :'+JSON.stringify(fakeFacts));
+      console.log('realEvidence :'+JSON.stringify(realEvidences));
+      console.log('fakeEvidence :'+JSON.stringify(fakeEvidences));
+      console.log('solidLines :'+JSON.stringify(solidLines));
+      console.log('dottedLines :'+JSON.stringify(dottedLines));
+
+      setRealEvidences(realEvidences);
+      setFakeFacts(fakeFacts);
+      setRealEvidences(realEvidences);
+      setFakeEvidences(fakeEvidences);
+      setHeads(heads);
+      setJoints(joints);
+      setSolidLines(solidLines);
+      setDottedLines(dottedLines);
+        };
+
+    const err = () => {
+       console.log("获取数据出错");
+    };
+
+    Util.asyncHttpPost(url, param, succ, err);
+  };
+
 
   const initCanvas = () => {
     let canvas = canvasRef.current;
@@ -105,12 +172,13 @@ export default function ModelView() {
         yPosition,
         true
       );
+      let text = item.text
       node.confirm = false;
       node.serializedProperties.push("confirm");
       node.mousedown(() => {
         setValues({
           logicNodeId: node.logicNodeId,
-          nodeText: node.text,
+          nodeText: text,
           confirm: false,
         });
       });
@@ -128,12 +196,13 @@ export default function ModelView() {
         xPosition,
         yPosition
       );
+      let text = item.text
       node.confirm = true;
       node.serializedProperties.push("confirm");
       node.mousedown(() => {
         setValues({
           logicNodeId: node.logicNodeId,
-          nodeText: node.text,
+          nodeText: text,
           confirm: true,
         });
       });
@@ -179,6 +248,7 @@ export default function ModelView() {
         xPosition,
         yPosition
       );
+      let text = item.text
       // 添加自定义属性
       node.type = item.type;
       node.serializedProperties.push("type");
@@ -189,7 +259,7 @@ export default function ModelView() {
       node.mousedown(() => {
         setValues({
           logicNodeId: node.logicNodeId,
-          nodeText: node.text,
+          nodeText: text,
           type: node.type,
           role: node.role,
           confirm: true,
@@ -210,6 +280,8 @@ export default function ModelView() {
         yPosition,
         true
       );
+
+      let text = item.text
       node.type = item.type;
       node.serializedProperties.push("type");
       node.role = item.role;
@@ -219,7 +291,7 @@ export default function ModelView() {
       node.mousedown(() => {
         setValues({
           logicNodeId: node.logicNodeId,
-          nodeText: node.text,
+          nodeText: text,
           type: node.type,
           role: node.role,
           confirm: false,
@@ -274,7 +346,7 @@ export default function ModelView() {
     node.logicNodeId = logicNodeId;
     node.serializedProperties.push("logicNodeId");
 
-    node.text = text;
+    node.text = text.substring(0,7);
     node.setLocation(x, y);
     node.dragable = true;
     if (!fontColor) fontColor = "0,0,0";
