@@ -11,9 +11,12 @@ import NotificationIcon from "@material-ui/icons/Notifications";
 import MenuIcon from "@material-ui/icons/Menu";
 import Person from "@material-ui/icons/Person";
 import ExitToApp from "@material-ui/icons/ExitToApp";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 import AlertDialog from "../Dialog/AlertDialog";
 import { pink } from "@material-ui/core/colors";
 import { makeStyles } from "@material-ui/core";
+// import CustomDropdown from "../CustomDropdown/CustomDropdown";
 
 const drawerWidth = 240;
 
@@ -63,6 +66,12 @@ const useStyles = makeStyles((theme) => ({
 function TitleBar(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [notesNum, setNotesNum] = React.useState(0);
+  React.useEffect(() => {
+    setNotesNum(parseInt(sessionStorage.getItem("notesNum")));
+  }, []);
+
   const handleClickDrawer = () => {
     props.handleClickMenuButton();
   };
@@ -74,6 +83,16 @@ function TitleBar(props) {
   const handleIndeedExit = () => {
     sessionStorage.clear();
     props.history.push("/login");
+  };
+
+  const handleClickBadge = (event) => {
+    setNotesNum(0);
+    sessionStorage.setItem("notesNum", "0");
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   return (
@@ -116,11 +135,28 @@ function TitleBar(props) {
         <Avatar className={classes.pink}>
           <Person />
         </Avatar>
-        <IconButton color="inherit">
-          <Badge badgeContent={4} color="secondary">
+        <IconButton color="inherit" onClick={handleClickBadge}>
+          <Badge badgeContent={notesNum} color="secondary">
             <NotificationIcon />
           </Badge>
         </IconButton>
+        <Menu
+          id="simple-menu"
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem onClick={handleClose}>
+            案件（2015）津刑初字第00015号已加入待处理列表
+          </MenuItem>
+          <MenuItem onClick={handleClose}>
+            案件（2015）津刑初字第00014号已加入待处理列表
+          </MenuItem>
+          <MenuItem onClick={handleClose}>
+            案件（2015）津刑初字第00036号已加入待处理列表
+          </MenuItem>
+        </Menu>
         <IconButton color="inherit" onClick={handleClickExit}>
           <ExitToApp />
         </IconButton>

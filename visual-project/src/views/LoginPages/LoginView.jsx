@@ -143,6 +143,7 @@ export default function LoginView(props) {
           content: "登录成功: 用户" + realName + "认证成功!",
         });
         sessionStorage.setItem("realName", realName);
+        sessionStorage.setItem("notesNum", "3");
         setButtonDisabled(true);
         setTimeout(() => {
           props.history.push("/cases/waitToDeal");

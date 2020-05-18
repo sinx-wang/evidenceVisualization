@@ -8,7 +8,6 @@ import TextField from "@material-ui/core/TextField";
 import AddToQueue from "@material-ui/icons/AddToQueue";
 import Adjust from "@material-ui/icons/Adjust";
 import ImageIcon from "@material-ui/icons/Image";
-import DocumentData from "../../util/data/DocumentData";
 import * as Util from "../../util/Util";
 
 const useStyles = makeStyles((theme) => ({
