@@ -259,11 +259,7 @@ function EvidenceTabContent(props) {
         </Grid>
         <Grid item xs={1} className={classes.buttonAlign}>
           <Tooltip title="删除" placement="right">
-            <CustomButton
-              color="danger"
-              simple
-              onClick={clickDelete}
-            >
+            <CustomButton color="danger" simple onClick={clickDelete}>
               <DeleteIcon />
             </CustomButton>
           </Tooltip>
@@ -752,7 +748,7 @@ SelectEvidenceType.propTypes = {
 
 EvidenceHeads.propTypes = {
   heads: PropTypes.array,
-  deleteHead: PropTypes.func
+  deleteHead: PropTypes.func,
 };
 
 EvidenceTabContent.propTypes = {

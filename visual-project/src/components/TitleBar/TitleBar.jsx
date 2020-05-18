@@ -11,6 +11,7 @@ import NotificationIcon from "@material-ui/icons/Notifications";
 import MenuIcon from "@material-ui/icons/Menu";
 import Person from "@material-ui/icons/Person";
 import ExitToApp from "@material-ui/icons/ExitToApp";
+import AlertDialog from "../Dialog/AlertDialog";
 import { pink } from "@material-ui/core/colors";
 import { makeStyles } from "@material-ui/core";
 
@@ -61,13 +62,17 @@ const useStyles = makeStyles((theme) => ({
 
 function TitleBar(props) {
   const classes = useStyles();
-  // const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const handleClickDrawer = () => {
     props.handleClickMenuButton();
-    // setOpen(!open);
   };
 
   const handleClickExit = () => {
+    setOpen(true);
+  };
+
+  const handleIndeedExit = () => {
+    sessionStorage.clear();
     props.history.push("/login");
   };
 
@@ -76,6 +81,17 @@ function TitleBar(props) {
       position="absolute"
       className={clsx(classes.appBar, props.open && classes.appBarShift)}
     >
+      <AlertDialog
+        open={open}
+        title="是否退出登录?"
+        content="这意味着未保存的数据将丢失"
+        colorLeft="secondary"
+        textLeft="退出登录"
+        colorRight="primary"
+        textRight="取消"
+        closeDialog1={handleIndeedExit}
+        closeDialog2={() => setOpen(false)}
+      />
       <Toolbar className={classes.toolBar}>
         <IconButton
           edge="start"
