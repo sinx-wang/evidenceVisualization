@@ -41,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(0.5),
   },
   contradictPaper: {
+    width: "100%",
     display: "flex",
     flexWrap: "wrap",
     listStyle: "none",

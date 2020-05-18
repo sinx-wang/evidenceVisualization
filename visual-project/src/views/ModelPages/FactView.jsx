@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
   },
   headPaper: {
+    width: "100%",
     display: "flex",
     flexWrap: "wrap",
     listStyle: "none",
