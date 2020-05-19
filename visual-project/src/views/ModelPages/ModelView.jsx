@@ -8,7 +8,14 @@ import TextField from "@material-ui/core/TextField";
 import AddToQueue from "@material-ui/icons/AddToQueue";
 import Adjust from "@material-ui/icons/Adjust";
 import ImageIcon from "@material-ui/icons/Image";
+import DeleteForever from "@material-ui/icons/DeleteForever";
+import CustomButton from "components/CustomButtons/Button";
 import * as Util from "../../util/Util";
+import AlertDialog from "../../components/Dialog/AlertDialog";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormControl from "@material-ui/core/FormControl";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -66,6 +73,8 @@ export default function ModelView() {
 
   const [dottedLines, setDottedLines] = React.useState([]);
 
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+
   React.useEffect(() => {
     document.title = "建模";
     initData();
@@ -115,6 +124,7 @@ export default function ModelView() {
       setJoints(joints);
       setSolidLines(solidLines);
       setDottedLines(dottedLines);
+      initCanvas();
     };
 
     const err = () => {
@@ -482,8 +492,23 @@ export default function ModelView() {
     saveFile(imgData, filename);
   };
 
+  const handleIndeedDelete = () => {
+    setDialogOpen(false);
+  };
+
   return (
     <div>
+      <AlertDialog
+        open={dialogOpen}
+        title="是否删除该节点?"
+        content={values.nodeText}
+        colorLeft="secondary"
+        textLeft="确认删除"
+        colorRight="primary"
+        textRight="取消"
+        closeDialog1={handleIndeedDelete}
+        closeDialog2={() => setDialogOpen(false)}
+      />
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Paper className={classes.paper} elevation={0}>
@@ -527,18 +552,23 @@ export default function ModelView() {
         <Grid item xs={3}>
           <Paper className={classes.paper}>
             <TextField
+              fullWidth
               label="节点图形ID"
               disabled
               value={values.logicNodeId}
               className={classes.text}
             />
             <TextField
+              fullWidth
               label="节点信息:"
               value={values.nodeText}
               className={classes.text}
+              multiline={values.nodeText.length > 14}
+              rows={values.nodeText.length / 14 + 1}
             />
             {values.confirm != null ? (
               <TextField
+                fullWidth
                 label="认定:"
                 error={!values.confirm}
                 value={values.confirm ? "被认定" : "被否定"}
@@ -547,17 +577,40 @@ export default function ModelView() {
             ) : null}
             {values.role ? (
               <TextField
+                fullWidth
                 label="来源:"
                 value={values.role ? "被告" : "原告"}
                 className={classes.text}
               />
             ) : null}
             {values.type ? (
-              <TextField
-                label="类型:"
-                value={values.type}
-                className={classes.text}
-              />
+              // <TextField
+              //   fullWidth
+              //   label="类型:"
+              //   value={values.type}
+              //   className={classes.text}
+              // />
+              <FormControl fullWidth style={{ marginBottom: 10 }}>
+                <InputLabel>类型</InputLabel>
+                <Select value={values.type}>
+                  <MenuItem value={0}>证人证言</MenuItem>
+                  <MenuItem value={1}>被告人供述和辩解</MenuItem>
+                  <MenuItem value={2}>书证</MenuItem>
+                  <MenuItem value={3}>勘验</MenuItem>
+                  <MenuItem value={4}>检查笔录</MenuItem>
+                  <MenuItem value={5}>其他</MenuItem>
+                </Select>
+              </FormControl>
+            ) : null}
+            {values.logicNodeId ? (
+              <CustomButton
+                color="danger"
+                fullWidth
+                onClick={() => setDialogOpen(true)}
+              >
+                <DeleteForever />
+                删除节点
+              </CustomButton>
             ) : null}
           </Paper>
         </Grid>
