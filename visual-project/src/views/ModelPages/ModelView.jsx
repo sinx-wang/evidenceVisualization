@@ -16,6 +16,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
+import Notification from "../../components/Notification/Notification";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -74,6 +75,19 @@ export default function ModelView() {
   const [dottedLines, setDottedLines] = React.useState([]);
 
   const [dialogOpen, setDialogOpen] = React.useState(false);
+
+  const [note, setNote] = React.useState({
+    show: false,
+    color: "",
+    content: "",
+  });
+
+  const handleCloseNote = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setNote({ ...note, show: false });
+  };
 
   React.useEffect(() => {
     document.title = "建模";
@@ -180,6 +194,11 @@ export default function ModelView() {
       });
       scene.add(node);
       yPosition += ySpacing;
+      setNote({
+        show: true,
+        color: "success",
+        content: "Canvas已初始化成功！可以显示节点",
+      });
     });
 
     xPosition += 75;
@@ -508,6 +527,13 @@ export default function ModelView() {
         textRight="取消"
         closeDialog1={handleIndeedDelete}
         closeDialog2={() => setDialogOpen(false)}
+      />
+      <Notification
+        color={note.color}
+        content={note.content}
+        open={note.show}
+        autoHide={3000}
+        onClose={handleCloseNote}
       />
       <Grid container spacing={2}>
         <Grid item xs={12}>
