@@ -2,7 +2,7 @@ import LooksOneIcon from "@material-ui/icons/LooksOne";
 import LooksTwoIcon from "@material-ui/icons/LooksTwo";
 import Looks3Icon from "@material-ui/icons/Looks3";
 import Looks4Icon from "@material-ui/icons/Looks4";
-// import Looks5Icon from '@material-ui/icons/Looks5';
+import Looks5Icon from "@material-ui/icons/Looks5";
 // import Looks6Icon from '@material-ui/icons/Looks6';
 // import DeveloperMode from "@material-ui/icons/DeveloperMode";
 
@@ -11,6 +11,7 @@ import Question from "../views/ModelPages/QuestionView";
 // import Develop from "../views/ModelPages/DevelopView";
 import Model from "../views/ModelPages/ModelView";
 import Fact from "../views/ModelPages/FactView";
+import LogicModelView from "../views/ModelPages/LogicModelView";
 
 let modelRoutes = [
   {
@@ -40,6 +41,13 @@ let modelRoutes = [
     icon: Looks4Icon,
     layout: "/model",
     component: Model,
+  },
+  {
+    path: "/logicModel",
+    name: "说理逻辑",
+    icon: Looks5Icon,
+    layout: "/model",
+    component: LogicModelView,
   },
   // {
   //   path: "/developing",

@@ -162,9 +162,28 @@ const JointNodeArray1 = [
 
 DocumentData.getJoint = JointNodeArray1;
 
+// 法条
+const createRuleNode = (id, logicNodeId, name, text, referLogicNodeId) => {
+  return { id, logicNodeId, name, text, referLogicNodeId };
+};
+
+const rulesNodeArray = [
+  createRuleNode(1, 20, "法条一", "法条一具体内容", 22),
+  createRuleNode(2, 21, "法条二", "法条二具体内容", 22),
+];
+
+DocumentData.rulesNodeArray = rulesNodeArray;
+
+// 结论
+const createResultNode = (id, logicNodeId, text) => {
+  return { id, logicNodeId, text };
+};
+
+DocumentData.getResult = createResultNode(1, 22, "结论");
+
 // 虚线
-const createDottedLine = (nodeId1, nodeId2) => {
-  return { nodeId1, nodeId2 };
+const createDottedLine = (logicNodeId1, logicNodeId2) => {
+  return { logicNodeId1, logicNodeId2 };
 };
 
 const getDottedLines = [
@@ -180,25 +199,101 @@ const getDottedLines = [
 DocumentData.getDottedLines = getDottedLines;
 
 // 实线
-const createSolidLine = (nodeId1, nodeId2) => {
-  return { nodeId1, nodeId2 };
+const createSolidLine = (logicNodeId1, logicNodeId2) => {
+  return { logicNodeId1, logicNodeId2 };
 };
 
 const getSolidLines = [
-  createSolidLine(1, 17),
-  createSolidLine(1, 18),
-  createSolidLine(2, 18),
-  createSolidLine(3, 19),
-  createSolidLine(17, 14),
-  createSolidLine(17, 15),
-  createSolidLine(18, 16),
-  createSolidLine(19, 15),
-  createSolidLine(14, 7),
-  createSolidLine(15, 8),
-  createSolidLine(15, 9),
-  createSolidLine(16, 10),
+  // createSolidLine(1, 17),
+  // createSolidLine(1, 707),
+  createSolidLine(1, 818),
+  createSolidLine(2, 817),
+  createSolidLine(2, 714),
+  createSolidLine(3, 715),
+  createSolidLine(3, 716),
+  createDottedLine(1, 22),
+  createDottedLine(2, 22),
+  createDottedLine(3, 22),
+  // createSolidLine(19, 15),
+  // createSolidLine(14, 7),
+  // createSolidLine(15, 8),
+  // createSolidLine(15, 9),
+  // createSolidLine(16, 10),
 ];
 
 DocumentData.getSolidLines = getSolidLines;
+
+const createRules = (name, content) => {
+  return { name, content };
+};
+
+const getRules = [
+  createRules(
+    "中华人民共和国刑事诉讼法第一条",
+    "为了惩罚犯罪，保护人民，根据宪法，结合我国同犯罪作斗争的具体经验及实际情况，制定本法。"
+  ),
+  createRules(
+    "中华人民共和国刑事诉讼法第二条",
+    "中华人民共和国刑法的任务，是用刑罚同一切犯罪行为作斗争，以保卫国家安全，保卫人民民主专政的政权和社会主义制度，保护国有财产和劳动群众集体所有的财产，保护公民私人所有的财产，保护公民的人身权利、民主权利和其他权利，维护社会秩序、经济秩序，保障社会主义建设事业的顺利进行。"
+  ),
+  createRules(
+    "中华人民共和国刑事诉讼法第三条",
+    "为了惩罚犯罪，保护人民，根据宪法，结合我国同犯罪作斗争的具体经验及实际情况，制定本法。"
+  ),
+  createRules(
+    "中华人民共和国刑事诉讼法第四条",
+    "为了惩罚犯罪，保护人民，根据宪法，结合我国同犯罪作斗争的具体经验及实际情况，制定本法。"
+  ),
+  createRules(
+    "中华人民共和国刑事诉讼法第五条",
+    "为了惩罚犯罪，保护人民，根据宪法，结合我国同犯罪作斗争的具体经验及实际情况，制定本法。"
+  ),
+  createRules(
+    "中华人民共和国刑事诉讼法第六条",
+    "为了惩罚犯罪，保护人民，根据宪法，结合我国同犯罪作斗争的具体经验及实际情况，制定本法。"
+  ),
+  createRules(
+    "中华人民共和国刑事诉讼法第七条",
+    "为了惩罚犯罪，保护人民，根据宪法，结合我国同犯罪作斗争的具体经验及实际情况，制定本法。"
+  ),
+  createRules(
+    "中华人民共和国刑事诉讼法第八条",
+    "为了惩罚犯罪，保护人民，根据宪法，结合我国同犯罪作斗争的具体经验及实际情况，制定本法。"
+  ),
+  createRules(
+    "中华人民共和国刑事诉讼法第九条",
+    "为了惩罚犯罪，保护人民，根据宪法，结合我国同犯罪作斗争的具体经验及实际情况，制定本法。"
+  ),
+  createRules(
+    "中华人民共和国刑事诉讼法第十条",
+    "为了惩罚犯罪，保护人民，根据宪法，结合我国同犯罪作斗争的具体经验及实际情况，制定本法。"
+  ),
+  createRules(
+    "中华人民共和国刑事诉讼法第十一条",
+    "为了惩罚犯罪，保护人民，根据宪法，结合我国同犯罪作斗争的具体经验及实际情况，制定本法。"
+  ),
+  createRules(
+    "中华人民共和国刑事诉讼法第十二条",
+    "为了惩罚犯罪，保护人民，根据宪法，结合我国同犯罪作斗争的具体经验及实际情况，制定本法。"
+  ),
+  createRules(
+    "中华人民共和国刑事诉讼法第十三条",
+    "为了惩罚犯罪，保护人民，根据宪法，结合我国同犯罪作斗争的具体经验及实际情况，制定本法。"
+  ),
+  createRules(
+    "中华人民共和国刑事诉讼法第十四条",
+    "为了惩罚犯罪，保护人民，根据宪法，结合我国同犯罪作斗争的具体经验及实际情况，制定本法。"
+  ),
+  createRules(
+    "中华人民共和国刑事诉讼法第十五条",
+    "为了惩罚犯罪，保护人民，根据宪法，结合我国同犯罪作斗争的具体经验及实际情况，制定本法。"
+  ),
+  createRules(
+    "中华人民共和国刑事诉讼法第十六条",
+    "为了惩罚犯罪，保护人民，根据宪法，结合我国同犯罪作斗争的具体经验及实际情况，制定本法。"
+  ),
+];
+
+DocumentData.getRules = getRules;
 
 export default DocumentData;

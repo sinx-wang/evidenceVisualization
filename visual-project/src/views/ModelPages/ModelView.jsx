@@ -91,6 +91,7 @@ export default function ModelView() {
 
   React.useEffect(() => {
     document.title = "建模";
+    initCanvas();
     initData();
   }, []);
 
@@ -138,7 +139,6 @@ export default function ModelView() {
       setJoints(joints);
       setSolidLines(solidLines);
       setDottedLines(dottedLines);
-      initCanvas();
     };
 
     const err = () => {
@@ -152,6 +152,11 @@ export default function ModelView() {
     let canvas = canvasRef.current;
     canvas.width = window.innerWidth * 0.55;
     canvas.height = window.innerHeight;
+    setNote({
+      show: true,
+      color: "success",
+      content: "Canvas已初始化成功！可以显示节点",
+    });
   };
 
   const drawCanvas = () => {
@@ -194,11 +199,6 @@ export default function ModelView() {
       });
       scene.add(node);
       yPosition += ySpacing;
-      setNote({
-        show: true,
-        color: "success",
-        content: "Canvas已初始化成功！可以显示节点",
-      });
     });
 
     xPosition += 75;
