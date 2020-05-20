@@ -112,10 +112,34 @@ const createEvidenceNode = (id, logicNodeId, text, type, role) => {
 };
 
 const evidenceNodeArray1 = [
-  createEvidenceNode(1, 7, "证据文本一", 2, 0),
-  createEvidenceNode(2, 8, "证据文本二", 3, 0),
-  createEvidenceNode(3, 9, "证据文本三", 2, 1),
-  createEvidenceNode(4, 10, "证据文本四", 4, 0),
+  createEvidenceNode(
+    1,
+    7,
+    "2012年冬天的一天，王燕给其打电话说塘沽卫生所负责检查非法行医的刘谨钊查到他们诊所了",
+    2,
+    0
+  ),
+  createEvidenceNode(
+    2,
+    8,
+    "内容刘林举报证言证实内容基本一致，能互相印证，其证言还证实了 2014年5月21曰、2014年6月间接群众举报对王燕非法行医的地点进行了查处，王燕因涉嫌非法行医被移送到了公安机关。",
+    3,
+    0
+  ),
+  createEvidenceNode(
+    3,
+    9,
+    "其是张某行医从2012年开始行医的，在塘沽开办了一个叫天津市塘沽华仁中医药门诊部的个体诊所，诊所有执照，是合法经营。",
+    2,
+    1
+  ),
+  createEvidenceNode(
+    4,
+    10,
+    "后来检查刘宏找了一个卫生所姓刘的，那人负责医疗卫生检查，每次都是他带人来查，王燕请他吃了饭并先后一共给了4000元钱，目的是为了不交罚款或少交罚款。",
+    4,
+    0
+  ),
 ];
 
 const evidenceNodeArray2 = [
@@ -126,11 +150,11 @@ const evidenceNodeArray2 = [
 
 const getEvidences = [
   {
-    confirm: 1,
+    confirm: 0,
     body: evidenceNodeArray1,
   },
   {
-    confirm: 2,
+    confirm: 1,
     body: evidenceNodeArray2,
   },
 ];
@@ -206,11 +230,11 @@ const createSolidLine = (logicNodeId1, logicNodeId2) => {
 const getSolidLines = [
   // createSolidLine(1, 17),
   // createSolidLine(1, 707),
-  createSolidLine(1, 818),
-  createSolidLine(2, 817),
-  createSolidLine(2, 714),
-  createSolidLine(3, 715),
-  createSolidLine(3, 716),
+  createSolidLine(1, 7),
+  createSolidLine(2, 8),
+  createSolidLine(2, 9),
+  createSolidLine(3, 9),
+  createSolidLine(3, 10),
   createDottedLine(1, 22),
   createDottedLine(2, 22),
   createDottedLine(3, 22),

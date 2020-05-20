@@ -178,30 +178,11 @@ export default function LogicModelView() {
   };
 
   const initData = () => {
-    const url = "/model/getInfo";
-
-    let param = JSON.stringify({
-      caseId: 3,
-    });
-
-    const succ = (response) => {
-      let realEvidences = [];
-      let evidences = response.evidences;
-      for (let i = 0; i < evidences.length; i++) {
-        if (evidences[i].confirm) realEvidences = evidences[i].body;
-      }
-      setRealEvidences(realEvidences);
-      setRealFacts(DocumentData.getFacts[0].body);
-      setRules(DocumentData.rulesNodeArray);
-      setResult(DocumentData.getResult);
-      setSolidLines(DocumentData.getSolidLines);
-    };
-
-    const err = () => {
-      console.log("获取数据出错");
-    };
-
-    Util.asyncHttpPost(url, param, succ, err);
+    setRealEvidences(DocumentData.getEvidences[0].body);
+    setRealFacts(DocumentData.getFacts[0].body);
+    setRules(DocumentData.rulesNodeArray);
+    setResult(DocumentData.getResult);
+    setSolidLines(DocumentData.getSolidLines);
   };
 
   const drawCanvas = () => {
