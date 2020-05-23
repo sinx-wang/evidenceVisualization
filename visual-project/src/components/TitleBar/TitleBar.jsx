@@ -16,6 +16,13 @@ import MenuItem from "@material-ui/core/MenuItem";
 import AlertDialog from "../Dialog/AlertDialog";
 import { pink } from "@material-ui/core/colors";
 import { makeStyles } from "@material-ui/core";
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 // import CustomDropdown from "../CustomDropdown/CustomDropdown";
 
 const drawerWidth = 240;
@@ -111,6 +118,30 @@ function TitleBar(props) {
         closeDialog1={handleIndeedExit}
         closeDialog2={() => setOpen(false)}
       />
+      {/* <Dialog open={open} onClose={() => setOpen(false)} aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth>
+        <DialogTitle id="form-dialog-title">更改链头</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            请在下方对要更改的链头内容进行编辑
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="链头"
+            value="塘沽"
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)} color="default">
+            取消
+          </Button>
+          <Button onClick={() => setOpen(false)} color="primary">
+            更改
+          </Button>
+        </DialogActions>
+      </Dialog> */}
       <Toolbar className={classes.toolBar}>
         <IconButton
           edge="start"

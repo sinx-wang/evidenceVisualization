@@ -148,6 +148,7 @@ function EvidenceHeads(props) {
               color="primary"
               className={classes.chip}
               onDelete={() => handleDeleteChip(data)}
+              clickable
             />
           </li>
         ))}
@@ -494,7 +495,7 @@ export default function ResolveView() {
     }
   };
 
-  // 删除单条证据?
+  // 删除单条证据
   const handleClickDelete = (id, prosecutor) => {
     // let documentId;
     if (prosecutor) {

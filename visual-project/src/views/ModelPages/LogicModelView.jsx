@@ -488,17 +488,17 @@ export default function LogicModelView() {
             color="rose"
             tabs={[
               {
-                tabButton: "智能算法推荐",
+                tabButton: "法条推荐",
                 tabContent: <RulesRecommend />,
               },
               {
-                tabButton: "法合推荐",
+                tabButton: "类案推荐",
                 tabContent: <RulesRecommend />,
               },
-              {
-                tabButton: "频次推荐",
-                tabContent: <RulesRecommend />,
-              },
+              // {
+              //   tabButton: "频次推荐",
+              //   tabContent: <RulesRecommend />,
+              // },
             ]}
           />
         </DialogContent>
