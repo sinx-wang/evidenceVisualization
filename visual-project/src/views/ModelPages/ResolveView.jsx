@@ -430,7 +430,7 @@ export default function ResolveView() {
       bodyId: id,
       body: text,
     });
-    const succ = (response) => {
+    const succ = () => {
       setNote({
         show: true,
         content: "更新单条证据文本成功",
@@ -450,7 +450,7 @@ export default function ResolveView() {
       bodyId: id,
       type: type,
     });
-    const succ = (response) => {
+    const succ = () => {
       setNote({
         show: true,
         content: "更新单条证据成功",
@@ -509,7 +509,7 @@ export default function ResolveView() {
       bodyId: id,
     });
     console.log(param);
-    const succ = (response) => {
+    const succ = () => {
       // forceUpdate();
       setNote({ show: true, color: "success", content: "删除单条证据成功" });
     };

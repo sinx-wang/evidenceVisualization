@@ -118,6 +118,7 @@ export default function ModelView() {
         }
       }
 
+      response.evidences = Array;
       let evidences = response.evidences;
       for (let i = 0; i < evidences.length; i++) {
         if (evidences[i].confirm === 0) {
@@ -173,12 +174,8 @@ export default function ModelView() {
     let ySpacing = 100;
     let ySpacing2 = 70;
     // 创建被否定事实
-    let num = fakeFacts.length;
-    if (num > 1) {
-      yPosition = (window.innerHeight - (num - 1) * ySpacing) / 2 - 70;
-    } else {
-      yPosition = window.innerHeight / 2 - 70;
-    }
+    [yPosition, ySpacing] = calculateY(fakeFacts.length, ySpacing);
+    yPosition -= 70;
     fakeFacts.forEach((item) => {
       let node = createFactNode(
         item.logicNodeId,
@@ -204,12 +201,7 @@ export default function ModelView() {
     xPosition += 75;
     yPosition = 50;
     // 创建被认定事实
-    num = realFacts.length;
-    if (num > 1) {
-      yPosition = (window.innerHeight - (num - 1) * ySpacing) / 2;
-    } else {
-      yPosition = window.innerHeight / 2;
-    }
+    [yPosition, ySpacing] = calculateY(realFacts.length, ySpacing);
     realFacts.forEach((item) => {
       let node = createFactNode(
         item.logicNodeId,
@@ -234,20 +226,8 @@ export default function ModelView() {
     xPosition = 250;
     yPosition = 20;
     // 创建联结点
-    num = joints.length;
     let tooLong = false;
-    if (num * ySpacing2 >= window.innerHeight - 20) {
-      ySpacing2 = (window.innerHeight - 20) / num;
-      tooLong = true;
-    }
-    if (!tooLong) {
-      num = joints.length;
-      if (num > 1) {
-        yPosition = (window.innerHeight - (num - 1) * ySpacing) / 2;
-      } else {
-        yPosition = window.innerHeight / 2;
-      }
-    }
+    [yPosition, ySpacing2, tooLong] = calculateY(joints.length, ySpacing2);
     joints.forEach((item, index) => {
       let node = createFactLinkNode(
         item.logicNodeId,
@@ -275,20 +255,7 @@ export default function ModelView() {
     xPosition = 400;
     yPosition = 20;
     // 创建链头
-    num = heads.length;
-    tooLong = false;
-    if (num * ySpacing2 >= window.innerHeight - 20) {
-      ySpacing2 = (window.innerHeight - 20) / num;
-      tooLong = true;
-    }
-    if (!tooLong) {
-      num = heads.length;
-      if (num > 1) {
-        yPosition = (window.innerHeight - (num - 1) * ySpacing) / 2;
-      } else {
-        yPosition = window.innerHeight / 2;
-      }
-    }
+    [yPosition, ySpacing2, tooLong] = calculateY(heads.length, ySpacing2);
     heads.forEach((item, index) => {
       let node = createEvidenceLinkNode(
         item.logicNodeId,
@@ -316,12 +283,7 @@ export default function ModelView() {
     xPosition = 600;
     yPosition = 20;
     // 创建认定证据
-    num = realEvidences.length;
-    if (num > 1) {
-      yPosition = (window.innerHeight - (num - 1) * ySpacing) / 2;
-    } else {
-      yPosition = window.innerHeight / 2;
-    }
+    [yPosition, ySpacing] = calculateY(realEvidences.length, ySpacing);
     realEvidences.forEach((item) => {
       let node = createEvidenceNode(
         item.logicNodeId,
@@ -353,12 +315,8 @@ export default function ModelView() {
     xPosition += 75;
     yPosition = 50;
     // 创建被否定证据
-    num = fakeEvidences.length;
-    if (num > 1) {
-      yPosition = (window.innerHeight - (num - 1) * ySpacing) / 2 + 70;
-    } else {
-      yPosition = window.innerHeight / 2 + 70;
-    }
+    [yPosition, ySpacing] = calculateY(fakeEvidences, ySpacing);
+    yPosition += 70;
     fakeEvidences.forEach((item) => {
       let node = createEvidenceNode(
         item.logicNodeId,
@@ -420,6 +378,24 @@ export default function ModelView() {
       let link = createLink(node1, node2, true);
       scene.add(link);
     });
+  };
+
+  // 根据节点数量和画布大小确定节点位置，平均分布
+  const calculateY = (nodesNum, spacing) => {
+    let tooLang;
+    let yPosition = 20;
+    if (nodesNum * spacing >= window.innerHeight - 20) {
+      spacing = (window.innerHeight - 20) / nodesNum;
+      tooLang = true;
+    } else {
+      if (nodesNum > 1) {
+        yPosition = (window.innerHeight - (nodesNum - 1) * spacing) / 2;
+      } else {
+        yPosition = window.innerHeight / 2;
+      }
+      tooLang = false;
+    }
+    return [yPosition, spacing, tooLang];
   };
 
   const createNode = (logicNodeId, text, x, y, fillColor, fontColor, shape) => {
