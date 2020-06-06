@@ -171,7 +171,7 @@ return = {
 }
 ```
 
-4.新增链头
+4.新增链头 更新链头
 
 ```json
 path = "/addHead"
@@ -183,6 +183,15 @@ param = {
 }
 return = {
     "headId": 0
+}
+
+path = "/updateHead"
+param = {
+    "id": 0,
+    "head": "string"
+}
+return = {
+    "success": true
 }
 ```
 
@@ -536,3 +545,149 @@ return = {
 ```
 
 ## 说理逻辑
+
+```json
+baseUrl = "/model"
+```
+
+1.展示说理界面
+
+```json
+url = "/getLogicInfo"
+param = {
+    "caseId": 1
+}
+return = {
+    "facts": [
+        {
+            "confirm": 0,
+            "body": [
+                {
+                    "id": 1,
+                    "logicNodeId": 2,
+                    "text": "string"
+                },...
+            ]
+        },...
+    ],
+    "evidences": [
+        {
+            "confirm": 0,
+            "body": [
+                {
+                    "id": 1,
+                    "logicNodeId": 2,
+                    "text": "xxx",
+                    "type": "xxx",
+                    "role": "xxx",
+                },...
+           ]
+        },...
+    ],
+    "results": [
+        {
+            "id": 1,
+            "logicNodeId": 1
+            "text": "xxx",
+        },...
+    ],
+    "laws": [
+        {
+            "id": 1,
+            "logicNodeId": 1
+            "text": "xxx",
+        },...
+    ],
+    "dottedLines": [
+        {
+            "logicNodeId1": 1,
+            "logicNodeId2": 2
+        },...
+    ],
+    "solidLines": [
+        {
+            "logicNodeId1": 1,
+            "logicNodeId2": 2
+        },...
+    ]
+}
+```
+
+2.删除结论
+
+```json
+path = "/deleteResult"
+param = {
+    "resultId": 0
+}
+return = {
+    "success": true
+}
+```
+
+3.修改结论
+
+```json
+path = "/updateResultById"
+param = {
+    "resultId": 0,
+    "content": "string"
+}
+return = {
+    "success": true
+}
+```
+
+4.删除法条
+
+```json
+path = "/deleteLawById"
+param = {
+    "lawId": 0
+}
+return = {
+    "success": true
+}
+```
+
+5.修改法条
+
+```json
+path = "/updateLawById"
+param = {
+    "lawId": 0,
+    "content": "string"
+}
+return = {
+    "success": true
+}
+```
+
+6.法条推荐
+
+```json
+path = "/recommendLaw"
+method = "GET"
+return = [
+    {
+        "name"："第一百条"
+        "content": "string"
+    },...
+]
+```
+
+7.保存法条
+
+```json
+path = "/addLaw"
+param = {
+    "caseId":0,
+    "factId":0,
+    "lawId": 0,
+    "name"："第一百条"
+    "content": "string"
+}
+return = {
+    "success": true
+}
+```
