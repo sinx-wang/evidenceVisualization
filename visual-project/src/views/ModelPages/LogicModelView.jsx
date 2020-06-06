@@ -17,7 +17,8 @@ import EditIcon from "@material-ui/icons/Edit";
 import DeleteForever from "@material-ui/icons/DeleteForever";
 import CustomButton from "components/CustomButtons/Button";
 import Typography from "@material-ui/core/Typography";
-import * as Util from "../../util/Util";
+// import * as Util from "../../util/Util";
+import * as ModelUtil from "../../util/ModelUtil";
 import NavPills from "components/NavPills/NavPills.js";
 import AddCircleOutline from "@material-ui/icons/AddCircleOutline";
 import FormGroup from "@material-ui/core/FormGroup";
@@ -171,10 +172,7 @@ export default function LogicModelView() {
   }, []);
 
   const initCanvas = () => {
-    let canvas = canvasRef.current;
-    console.log(window.innerWidth);
-    canvas.width = 1363 * 0.55;
-    canvas.height = window.innerHeight;
+    ModelUtil.initCanvas(canvasRef);
   };
 
   const initData = () => {
@@ -186,24 +184,19 @@ export default function LogicModelView() {
   };
 
   const drawCanvas = () => {
-    let canvas = canvasRef.current;
-    let stage = new JTopo.Stage(canvas);
-    stage.eagleEye.visible = null;
-
-    let scene = new JTopo.Scene(stage);
-    scene.mode = "select";
+    let stageState = ModelUtil.initScene(canvasRef);
+    let scene = stageState[1];
+    let stage = stageState[0];
     //scene.background= '1.png';
 
     let xPosition = 100;
     let yPosition = 20;
     let ySpacing = 100;
 
-    let num = realEvidences.length;
-    if (num > 1) {
-      yPosition = (window.innerHeight - (num - 1) * ySpacing) / 2;
-    } else {
-      yPosition = window.innerHeight / 2;
-    }
+    [yPosition, ySpacing] = ModelUtil.calculateY(
+      realEvidences.length,
+      ySpacing
+    );
     realEvidences.forEach((item) => {
       let node = createEvidenceNode(
         item.logicNodeId,
@@ -231,12 +224,7 @@ export default function LogicModelView() {
 
     xPosition += 150;
     yPosition = 50;
-    num = realFacts.length;
-    if (num > 1) {
-      yPosition = (window.innerHeight - (num - 1) * ySpacing) / 2;
-    } else {
-      yPosition = window.innerHeight / 2;
-    }
+    [yPosition, ySpacing] = ModelUtil.calculateY(realFacts.length, ySpacing);
     realFacts.forEach((item) => {
       let node = createFactNode(
         item.logicNodeId,
@@ -257,12 +245,7 @@ export default function LogicModelView() {
 
     xPosition += 150;
     yPosition = 50;
-    num = rules.length;
-    if (num > 1) {
-      yPosition = (window.innerHeight - (num - 1) * ySpacing) / 2;
-    } else {
-      yPosition = window.innerHeight / 2;
-    }
+    [yPosition, ySpacing] = ModelUtil.calculateY(rules.length, ySpacing);
     rules.forEach((item) => {
       let node = createRuleNode(
         item.logicNodeId,
@@ -314,100 +297,29 @@ export default function LogicModelView() {
           node2 = singleNode;
         }
       });
-      let link = createLink(node1, node2, false);
+      let link = ModelUtil.createLink(node1, node2, false);
       scene.add(link);
     });
   };
 
-  const createNode = (logicNodeId, text, x, y, fillColor, fontColor, shape) => {
-    let node;
-    if (shape === "circle") {
-      node = new JTopo.CircleNode();
-    } else {
-      node = new JTopo.Node();
-    }
-    //添加自定义属性
-    node.logicNodeId = logicNodeId;
-    node.serializedProperties.push("logicNodeId");
-
-    node.text = text.substring(0, 7);
-    node.setLocation(x, y);
-    node.dragable = true;
-    if (!fontColor) fontColor = "0,0,0";
-    if (!fillColor) fillColor = "0,255,0";
-    node.fontColor = fontColor;
-    node.fillColor = fillColor;
-    return node;
-  };
-
   const createEvidenceNode = (logicNodeId, text, x, y, fake) => {
     let color = fake ? "149,117,205" : "106,27,154";
-    return createNode(logicNodeId, text, x, y, color);
+    return ModelUtil.createNode(logicNodeId, text, x, y, color);
   };
 
   const createFactNode = (logicNodeId, text, x, y, fake) => {
     let color = fake ? "236,64,122" : "173,20,87";
-    return createNode(logicNodeId, text, x, y, color);
+    return ModelUtil.createNode(logicNodeId, text, x, y, color);
   };
 
   const createRuleNode = (logicNodeId, name, text, x, y) => {
-    let node = createNode(logicNodeId, text, x, y, "255,152,0");
+    let node = ModelUtil.createNode(logicNodeId, text, x, y, "255,152,0");
     node.title = name;
     return node;
   };
 
   const createResultNode = (logicNodeId, text, x, y) => {
-    return createNode(logicNodeId, text, x, y, "76,175,80");
-  };
-
-  const createLink = (nodeA, nodeZ, dotted, text) => {
-    let link = new JTopo.Link(nodeA, nodeZ, text);
-    if (dotted) link.dashedPattern = 5;
-    return link;
-  };
-
-  const _fixType = (type) => {
-    type = type.toLowerCase().replace(/jpg/i, "jpeg");
-    const r = type.match(/png|jpeg|bmp|gif/)[0];
-    return "image/" + r;
-  };
-
-  const saveFile = (data, filename) => {
-    let save_link = document.createElementNS(
-      "http://www.w3.org/1999/xhtml",
-      "a"
-    );
-    save_link.href = data;
-    save_link.download = filename;
-    let event = document.createEvent("MouseEvents");
-    event.initMouseEvent(
-      "click",
-      true,
-      false,
-      window,
-      0,
-      0,
-      0,
-      0,
-      0,
-      false,
-      false,
-      false,
-      false,
-      0,
-      null
-    );
-    save_link.dispatchEvent(event);
-  };
-
-  const exportToPng = () => {
-    // var canvas = document.getElementById("canvas");
-    let canvas = canvasRef.current;
-    const type = "png";
-    let imgData = canvas.toDataURL(type);
-    imgData = imgData.replace(_fixType(type), "image/octet-stream");
-    let filename = "picture." + type;
-    saveFile(imgData, filename);
+    return ModelUtil.createNode(logicNodeId, text, x, y, "76,175,80");
   };
 
   const handleIndeedDelete = () => {
@@ -540,7 +452,7 @@ export default function LogicModelView() {
               className={classes.button}
               startIcon={<ImageIcon />}
               color="default"
-              onClick={exportToPng}
+              onClick={() => ModelUtil.exportToPng(canvasRef)}
             >
               导出图片
             </Button>

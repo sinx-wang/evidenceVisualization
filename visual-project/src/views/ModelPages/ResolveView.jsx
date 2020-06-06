@@ -25,6 +25,12 @@ import Chip from "@material-ui/core/Chip";
 import ListItem from "@material-ui/core/ListItem";
 import Edit from "@material-ui/icons/Edit";
 import Save from "@material-ui/icons/Save";
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 // import Check from "@material-ui/icons/Check";
 // import Close from "@material-ui/icons/Close";
 import LowPriority from "@material-ui/icons/LowPriority";
@@ -123,8 +129,42 @@ function EvidenceHeads(props) {
 
   const array = props.heads;
 
+  // 控制对话框开关
+  const [open, setOpen] = React.useState(false);
+
+  // 点击chip组件选中的chip
+  const [selectedChip, setSelectedChip] = React.useState({
+    headId: 0,
+    head: "",
+  });
+
   const handleDeleteChip = (chip) => {
     props.deleteHead(chip.headId);
+  };
+
+  // 点击chip
+  const handleClick = (chip) => {
+    setSelectedChip(chip);
+    setOpen(true);
+  };
+
+  // 对话框关闭
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  // 对话框里的文本框
+  const handleChange = (event) => {
+    setSelectedChip({
+      ...selectedChip,
+      head: event.target.value,
+    });
+  };
+
+  // 从上一级更新数据
+  const handleUpdate = () => {
+    props.updateHead(selectedChip.headId, selectedChip.head);
+    setOpen(false);
   };
 
   // 链头为空不渲染
@@ -139,20 +179,48 @@ function EvidenceHeads(props) {
 
   if (hasContent) {
     return (
-      <Paper component="ul" variant="outlined" className={classes.headPaper}>
-        {array.map((data, index) => (
-          <li key={index + data.headId}>
-            <Chip
-              label={data.head}
-              variant="outlined"
-              color="primary"
-              className={classes.chip}
-              onDelete={() => handleDeleteChip(data)}
-              clickable
+      <div>
+        <Paper component="ul" variant="outlined" className={classes.headPaper}>
+          {array.map((data, index) => (
+            <li key={index + data.headId}>
+              <Chip
+                label={data.head}
+                variant="outlined"
+                color="primary"
+                className={classes.chip}
+                onDelete={() => handleDeleteChip(data)}
+                clickable
+                onClick={() => handleClick(data)}
+              />
+            </li>
+          ))}
+        </Paper>
+        {/*添加对话框组件*/}
+        <Dialog open={open} onClose={handleClose} maxWidth="sm">
+          <DialogTitle>修改链头</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              请在下方对要更改的链头内容进行编辑
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="链头"
+              value={selectedChip.head}
+              onChange={handleChange}
+              fullWidth
             />
-          </li>
-        ))}
-      </Paper>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="inherit">
+              取消
+            </Button>
+            <Button onClick={handleUpdate} color="primary">
+              确认
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
     );
   } else {
     return null;
@@ -202,6 +270,28 @@ function EvidenceTabContent(props) {
       console.log("createHeads error");
     };
     Util.asyncHttpPost(url, param, succ, err);
+  };
+
+  // 更新链头
+  const updateHead = (headId, headText) => {
+    let tempHead = [...heads];
+    for (let head of tempHead) {
+      if (head.headId === headId) {
+        head.head = headText;
+      }
+    }
+
+    const url = "/evidence/updateHead";
+    let param = JSON.stringify({
+      id: headId,
+      head: headText,
+    });
+    const succ = () => {};
+    const err = () => {
+      console.log("updateHead error");
+    };
+    Util.asyncHttpPost(url, param, succ, err);
+    setHeads(tempHead);
   };
 
   const deleteHead = (headId) => {
@@ -266,7 +356,12 @@ function EvidenceTabContent(props) {
           </Tooltip>
         </Grid>
         <Grid item xs={12}>
-          <EvidenceHeads heads={heads} deleteHead={deleteHead} />
+          {/*添加更新链头的回调函数*/}
+          <EvidenceHeads
+            heads={heads}
+            deleteHead={deleteHead}
+            updateHead={updateHead}
+          />
         </Grid>
       </Grid>
     </ListItem>
