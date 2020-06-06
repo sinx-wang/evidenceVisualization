@@ -688,7 +688,6 @@ path = "/addLaw"
 param = {
     "caseId":0,
     "factId":0,
-    "lawId": 0,
     "name":"第一百条",
     "content":"string"
 }
