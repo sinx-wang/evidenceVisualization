@@ -1,6 +1,5 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import JTopo from "jtopo-in-node";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
@@ -11,6 +10,7 @@ import ImageIcon from "@material-ui/icons/Image";
 import DeleteForever from "@material-ui/icons/DeleteForever";
 import CustomButton from "components/CustomButtons/Button";
 import * as Util from "../../util/Util";
+import * as ModelUtil from "../../util/ModelUtil";
 import AlertDialog from "../../components/Dialog/AlertDialog";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
@@ -95,7 +95,7 @@ export default function ModelView() {
     initData();
   }, []);
 
-  //初始化数据 此处硬编码caseId为2 后期需要修改
+  //初始化数据 此处硬编码caseId为3 后期需要修改
   const initData = () => {
     const url = "/model/getInfo";
 
@@ -118,7 +118,6 @@ export default function ModelView() {
         }
       }
 
-      response.evidences = Array;
       let evidences = response.evidences;
       for (let i = 0; i < evidences.length; i++) {
         if (evidences[i].confirm === 0) {
@@ -150,9 +149,7 @@ export default function ModelView() {
   };
 
   const initCanvas = () => {
-    let canvas = canvasRef.current;
-    canvas.width = window.innerWidth * 0.55;
-    canvas.height = window.innerHeight;
+    ModelUtil.initCanvas(canvasRef);
     setNote({
       show: true,
       color: "success",
@@ -161,12 +158,9 @@ export default function ModelView() {
   };
 
   const drawCanvas = () => {
-    let canvas = canvasRef.current;
-    let stage = new JTopo.Stage(canvas);
-    stage.eagleEye.visible = null;
-
-    let scene = new JTopo.Scene(stage);
-    scene.mode = "select";
+    let stageState = ModelUtil.initScene(canvasRef);
+    let scene = stageState[1];
+    let stage = stageState[0];
     //scene.background= '1.png';
 
     let xPosition = 20;
@@ -174,7 +168,7 @@ export default function ModelView() {
     let ySpacing = 100;
     let ySpacing2 = 70;
     // 创建被否定事实
-    [yPosition, ySpacing] = calculateY(fakeFacts.length, ySpacing);
+    [yPosition, ySpacing] = ModelUtil.calculateY(fakeFacts.length, ySpacing);
     yPosition -= 70;
     fakeFacts.forEach((item) => {
       let node = createFactNode(
@@ -187,13 +181,7 @@ export default function ModelView() {
       let text = item.text;
       node.confirm = false;
       node.serializedProperties.push("confirm");
-      node.mousedown(() => {
-        setValues({
-          logicNodeId: node.logicNodeId,
-          nodeText: text,
-          confirm: false,
-        });
-      });
+      node = setNodeState(node, node.logicNodeId, text, false);
       scene.add(node);
       yPosition += ySpacing;
     });
@@ -201,7 +189,7 @@ export default function ModelView() {
     xPosition += 75;
     yPosition = 50;
     // 创建被认定事实
-    [yPosition, ySpacing] = calculateY(realFacts.length, ySpacing);
+    [yPosition, ySpacing] = ModelUtil.calculateY(realFacts.length, ySpacing);
     realFacts.forEach((item) => {
       let node = createFactNode(
         item.logicNodeId,
@@ -212,13 +200,7 @@ export default function ModelView() {
       let text = item.text;
       node.confirm = true;
       node.serializedProperties.push("confirm");
-      node.mousedown(() => {
-        setValues({
-          logicNodeId: node.logicNodeId,
-          nodeText: text,
-          confirm: true,
-        });
-      });
+      node = setNodeState(node, node.logicNodeId, text, true);
       scene.add(node);
       yPosition += ySpacing;
     });
@@ -227,7 +209,10 @@ export default function ModelView() {
     yPosition = 20;
     // 创建联结点
     let tooLong = false;
-    [yPosition, ySpacing2, tooLong] = calculateY(joints.length, ySpacing2);
+    [yPosition, ySpacing2, tooLong] = ModelUtil.calculateY(
+      joints.length,
+      ySpacing2
+    );
     joints.forEach((item, index) => {
       let node = createFactLinkNode(
         item.logicNodeId,
@@ -235,12 +220,7 @@ export default function ModelView() {
         xPosition,
         yPosition
       );
-      node.mousedown(() => {
-        setValues({
-          logicNodeId: node.logicNodeId,
-          nodeText: item.text,
-        });
-      });
+      node = setNodeState(node, node.logicNodeId, item.text);
       scene.add(node);
       yPosition += ySpacing2;
       if (tooLong) {
@@ -255,7 +235,10 @@ export default function ModelView() {
     xPosition = 400;
     yPosition = 20;
     // 创建链头
-    [yPosition, ySpacing2, tooLong] = calculateY(heads.length, ySpacing2);
+    [yPosition, ySpacing2, tooLong] = ModelUtil.calculateY(
+      heads.length,
+      ySpacing2
+    );
     heads.forEach((item, index) => {
       let node = createEvidenceLinkNode(
         item.logicNodeId,
@@ -263,12 +246,7 @@ export default function ModelView() {
         xPosition,
         yPosition
       );
-      node.mousedown(() => {
-        setValues({
-          logicNodeId: node.logicNodeId,
-          nodeText: item.text,
-        });
-      });
+      node = setNodeState(node, node.logicNodeId, item.text);
       scene.add(node);
       yPosition += ySpacing2;
       if (tooLong) {
@@ -283,7 +261,10 @@ export default function ModelView() {
     xPosition = 600;
     yPosition = 20;
     // 创建认定证据
-    [yPosition, ySpacing] = calculateY(realEvidences.length, ySpacing);
+    [yPosition, ySpacing] = ModelUtil.calculateY(
+      realEvidences.length,
+      ySpacing
+    );
     realEvidences.forEach((item) => {
       let node = createEvidenceNode(
         item.logicNodeId,
@@ -299,15 +280,14 @@ export default function ModelView() {
       node.serializedProperties.push("role");
       node.confirm = true;
       node.serializedProperties.push("confirm");
-      node.mousedown(() => {
-        setValues({
-          logicNodeId: node.logicNodeId,
-          nodeText: text,
-          type: node.type,
-          role: node.role,
-          confirm: true,
-        });
-      });
+      node = setNodeState(
+        node,
+        node.logicNodeId,
+        text,
+        true,
+        node.type,
+        node.role
+      );
       scene.add(node);
       yPosition += ySpacing;
     });
@@ -315,7 +295,7 @@ export default function ModelView() {
     xPosition += 75;
     yPosition = 50;
     // 创建被否定证据
-    [yPosition, ySpacing] = calculateY(fakeEvidences, ySpacing);
+    [yPosition, ySpacing] = ModelUtil.calculateY(fakeEvidences, ySpacing);
     yPosition += 70;
     fakeEvidences.forEach((item) => {
       let node = createEvidenceNode(
@@ -333,15 +313,14 @@ export default function ModelView() {
       node.serializedProperties.push("role");
       node.confirm = false;
       node.serializedProperties.push("confirm");
-      node.mousedown(() => {
-        setValues({
-          logicNodeId: node.logicNodeId,
-          nodeText: text,
-          type: node.type,
-          role: node.role,
-          confirm: false,
-        });
-      });
+      node = setNodeState(
+        node,
+        node.logicNodeId,
+        text,
+        false,
+        node.type,
+        node.role
+      );
       scene.add(node);
       yPosition += ySpacing;
     });
@@ -361,7 +340,7 @@ export default function ModelView() {
           node2 = singleNode;
         }
       });
-      let link = createLink(node1, node2, false);
+      let link = ModelUtil.createLink(node1, node2, false);
       scene.add(link);
     });
 
@@ -375,116 +354,63 @@ export default function ModelView() {
       allNode.forEach((singleNode) => {
         if (line.logicNodeId2 === singleNode.logicNodeId) node2 = singleNode;
       });
-      let link = createLink(node1, node2, true);
+      let link = ModelUtil.createLink(node1, node2, true);
       scene.add(link);
     });
   };
 
-  // 根据节点数量和画布大小确定节点位置，平均分布
-  const calculateY = (nodesNum, spacing) => {
-    let tooLang;
-    let yPosition = 20;
-    if (nodesNum * spacing >= window.innerHeight - 20) {
-      spacing = (window.innerHeight - 20) / nodesNum;
-      tooLang = true;
-    } else {
-      if (nodesNum > 1) {
-        yPosition = (window.innerHeight - (nodesNum - 1) * spacing) / 2;
-      } else {
-        yPosition = window.innerHeight / 2;
-      }
-      tooLang = false;
-    }
-    return [yPosition, spacing, tooLang];
-  };
-
-  const createNode = (logicNodeId, text, x, y, fillColor, fontColor, shape) => {
-    let node;
-    if (shape === "circle") {
-      node = new JTopo.CircleNode();
-    } else {
-      node = new JTopo.Node();
-    }
-    //添加自定义属性
-    node.logicNodeId = logicNodeId;
-    node.serializedProperties.push("logicNodeId");
-
-    node.text = text.substring(0, 7);
-    node.setLocation(x, y);
-    node.dragable = true;
-    if (!fontColor) fontColor = "0,0,0";
-    if (!fillColor) fillColor = "0,255,0";
-    node.fontColor = fontColor;
-    node.fillColor = fillColor;
+  const setNodeState = (
+    node,
+    logicNodeId,
+    nodeText,
+    confirm = null,
+    type = null,
+    role = null
+  ) => {
+    node.mousedown(() => {
+      setValues({
+        logicNodeId,
+        nodeText,
+        type,
+        role,
+        confirm,
+      });
+    });
     return node;
   };
 
   const createEvidenceNode = (logicNodeId, text, x, y, fake) => {
     let color = fake ? "149,117,205" : "106,27,154";
-    return createNode(logicNodeId, text, x, y, color);
+    return ModelUtil.createNode(logicNodeId, text, x, y, color);
   };
 
   const createEvidenceLinkNode = (logicNodeId, text, x, y) => {
-    return createNode(logicNodeId, text, x, y, "0,151,167", false, "circle");
+    return ModelUtil.createNode(
+      logicNodeId,
+      text,
+      x,
+      y,
+      "0,151,167",
+      false,
+      "circle"
+    );
   };
 
   const createFactNode = (logicNodeId, text, x, y, fake) => {
     let color = fake ? "236,64,122" : "173,20,87";
-    return createNode(logicNodeId, text, x, y, color);
+    return ModelUtil.createNode(logicNodeId, text, x, y, color);
   };
 
   const createFactLinkNode = (logicNodeId, text, x, y) => {
-    return createNode(logicNodeId, text, x, y, "21,101,192", false, "circle");
-  };
-
-  const createLink = (nodeA, nodeZ, dotted, text) => {
-    let link = new JTopo.Link(nodeA, nodeZ, text);
-    if (dotted) link.dashedPattern = 5;
-    return link;
-  };
-
-  const _fixType = (type) => {
-    type = type.toLowerCase().replace(/jpg/i, "jpeg");
-    const r = type.match(/png|jpeg|bmp|gif/)[0];
-    return "image/" + r;
-  };
-
-  const saveFile = (data, filename) => {
-    let save_link = document.createElementNS(
-      "http://www.w3.org/1999/xhtml",
-      "a"
+    return ModelUtil.createNode(
+      logicNodeId,
+      text,
+      x,
+      y,
+      "21,101,192",
+      false,
+      "circle"
     );
-    save_link.href = data;
-    save_link.download = filename;
-    let event = document.createEvent("MouseEvents");
-    event.initMouseEvent(
-      "click",
-      true,
-      false,
-      window,
-      0,
-      0,
-      0,
-      0,
-      0,
-      false,
-      false,
-      false,
-      false,
-      0,
-      null
-    );
-    save_link.dispatchEvent(event);
-  };
-
-  const exportToPng = () => {
-    // var canvas = document.getElementById("canvas");
-    let canvas = canvasRef.current;
-    const type = "png";
-    let imgData = canvas.toDataURL(type);
-    imgData = imgData.replace(_fixType(type), "image/octet-stream");
-    let filename = "picture." + type;
-    saveFile(imgData, filename);
   };
 
   const handleIndeedDelete = () => {
@@ -540,7 +466,7 @@ export default function ModelView() {
               className={classes.button}
               startIcon={<ImageIcon />}
               color="default"
-              onClick={exportToPng}
+              onClick={() => ModelUtil.exportToPng(canvasRef)}
             >
               导出图片
             </Button>
