@@ -518,14 +518,14 @@ return = {
     "heads": [
         {
             "id": 1,
-            "logicNodeId": 1
+            "logicNodeId": 1,
             "text": "xxx",
         },...
     ],
     "joints": [
         {
             "id": 1,
-            "logicNodeId": 1
+            "logicNodeId": 1,
             "text": "xxx",
         },...
     ],
@@ -587,14 +587,14 @@ return = {
     "results": [
         {
             "id": 1,
-            "logicNodeId": 1
+            "logicNodeId": 1,
             "text": "xxx",
         },...
     ],
     "laws": [
         {
             "id": 1,
-            "logicNodeId": 1
+            "logicNodeId": 1,
             "text": "xxx",
         },...
     ],
@@ -670,7 +670,7 @@ path = "/recommendLaw"
 method = "GET"
 return = [
     {
-        "name"："第一百条"
+        "name":"第一百条",
         "content": "string"
     },...
 ]
@@ -684,8 +684,8 @@ param = {
     "caseId":0,
     "factId":0,
     "lawId": 0,
-    "name"："第一百条"
-    "content": "string"
+    "name":"第一百条",
+    "content":"string"
 }
 return = {
     "success": true
