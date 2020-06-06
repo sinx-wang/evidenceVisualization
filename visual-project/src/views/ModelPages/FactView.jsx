@@ -208,7 +208,7 @@ function FactsCardContent(props) {
 
         const url = "/facts/updateJoint";
         let param = JSON.stringify({
-            jointId: jointId,
+            id: jointId,
             content: content,
         });
         const succ = () => {};
