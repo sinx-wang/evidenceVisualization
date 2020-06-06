@@ -402,7 +402,7 @@ return = {
 ```json
 path = "/updateJoint"
 param = {
-    "id": 0,
+    "jointId": 0,
     "content": "string"
 }
 return = {
