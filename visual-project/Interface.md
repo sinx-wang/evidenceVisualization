@@ -609,13 +609,7 @@ return = {
             "text": "xxx",
         },...
     ],
-    "dottedLines": [
-        {
-            "logicNodeId1": 1,
-            "logicNodeId2": 2
-        },...
-    ],
-    "solidLines": [
+    "lines": [
         {
             "logicNodeId1": 1,
             "logicNodeId2": 2
