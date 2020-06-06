@@ -384,7 +384,7 @@ return = {
 }
 ```
 
-4.新增联结点
+4.新增联结点 修改联结点
 
 ```json
 path = "/addJoint"
@@ -396,6 +396,17 @@ param = {
 }
 return = {
     "jointId": 0
+}
+```
+
+```json
+path = "/updateJoint"
+param = {
+    "id": 0,
+    "content": "string"
+}
+return = {
+    "success": true
 }
 ```
 
