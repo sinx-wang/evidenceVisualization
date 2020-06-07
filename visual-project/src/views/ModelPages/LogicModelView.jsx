@@ -273,7 +273,7 @@ export default function LogicModelView() {
 
     xPosition += 150;
     yPosition = 50;
-    [yPosition, ySpacing] = ModelUtil.calculateY(laws.length, ySpacing);
+    [yPosition, ySpacing] = ModelUtil.calculateY(citedLaws.length, ySpacing);
     citedLaws.forEach((item) => {
       let node = createRuleNode(
         item.logicNodeId,
