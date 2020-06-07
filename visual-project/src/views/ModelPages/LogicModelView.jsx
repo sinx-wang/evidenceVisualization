@@ -318,7 +318,7 @@ export default function LogicModelView() {
         setValues({
           id: node.contentId,
           logicNodeId: node.logicNodeId,
-          nodeText: node.text,
+          nodeText: item.text,
           nodeType: "result",
         });
       });
