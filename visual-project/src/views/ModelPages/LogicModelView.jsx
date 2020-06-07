@@ -13,6 +13,7 @@ import AddToQueue from "@material-ui/icons/AddToQueue";
 import Adjust from "@material-ui/icons/Adjust";
 import ImageIcon from "@material-ui/icons/Image";
 import EditIcon from "@material-ui/icons/Edit";
+import SaveIcon from "@material-ui/icons/Save";
 import DeleteForever from "@material-ui/icons/DeleteForever";
 import CustomButton from "components/CustomButtons/Button";
 import Typography from "@material-ui/core/Typography";
@@ -24,10 +25,10 @@ import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 // import Autocomplete from "@material-ui/lab/Autocomplete";
-// import InputLabel from "@material-ui/core/InputLabel";
-// import Select from "@material-ui/core/Select";
-// import MenuItem from "@material-ui/core/MenuItem";
-// import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormControl from "@material-ui/core/FormControl";
 import Notification from "../../components/Notification/Notification";
 // import DocumentData from "../../util/data/DocumentData";
 
@@ -157,12 +158,16 @@ export default function LogicModelView() {
   const [solidLines, setSolidLines] = React.useState([]);
 
   const [values, setValues] = React.useState({
+    id: 0,
     logicNodeId: 0,
     name: "",
     nodeText: "", //点击节点信息
     type: "", // 原告被告
     role: "",
+    nodeType: "", // 节点类型，证据/事实/法条等
   });
+
+  const [editing, setEditing] = React.useState(false);
 
   const [note, setNote] = React.useState({
     show: false,
@@ -242,14 +247,20 @@ export default function LogicModelView() {
       );
       let text = item.text;
       // 添加自定义属性
+      node.contentId = item.id;
+      node.serializedProperties.push("contentId");
+      node.nodeType = "evidence";
+      node.serializedProperties.push("nodeType");
       node.type = item.type;
       node.serializedProperties.push("type");
       node.role = item.role;
       node.serializedProperties.push("role");
       node.mousedown(() => {
         setValues({
+          id: node.contentId,
           logicNodeId: node.logicNodeId,
           nodeText: text,
+          nodeType: "evidence",
           type: node.type,
           role: node.role,
         });
@@ -269,10 +280,16 @@ export default function LogicModelView() {
         yPosition
       );
       let text = item.text;
+      node.contentId = item.id;
+      node.serializedProperties.push("contentId");
+      node.nodeType = "fact";
+      node.serializedProperties.push("nodeType");
       node.mousedown(() => {
         setValues({
+          id: node.contentId,
           logicNodeId: node.logicNodeId,
           nodeText: text,
+          nodeType: "fact",
         });
       });
       scene.add(node);
@@ -290,13 +307,19 @@ export default function LogicModelView() {
         xPosition,
         yPosition
       );
+      node.contentId = item.id;
+      node.serializedProperties.push("contentId");
+      node.nodeType = "law";
+      node.serializedProperties.push("nodeType");
       node.name = item.name;
       node.serializedProperties.push("name");
       node.mousedown(() => {
         setValues({
+          id: node.contentId,
           logicNodeId: node.logicNodeId,
           name: node.name,
           nodeText: item.text,
+          nodeType: "law",
         });
       });
       scene.add(node);
@@ -312,10 +335,16 @@ export default function LogicModelView() {
         xPosition,
         yPosition
       );
+      node.contentId = item.id;
+      node.serializedProperties.push("contentId");
+      node.nodeType = "result";
+      node.serializedProperties.push("nodeType");
       node.mousedown(() => {
         setValues({
+          id: node.contentId,
           logicNodeId: node.logicNodeId,
           nodeText: node.text,
+          nodeType: "result",
         });
       });
       scene.add(node);
@@ -364,6 +393,81 @@ export default function LogicModelView() {
 
   const handleIndeedDelete = () => {
     setDialogOpen(false);
+  };
+
+  const updateValueInArray = (id, content, array) => {
+    for (let item of array) {
+      if (item.id === id) {
+        item.text = content;
+      }
+    }
+    return array;
+  };
+
+  const handleClickEdit = () => {
+    if (editing) {
+      let url = "";
+      let param = {};
+      switch (values.nodeType) {
+        case "evidence":
+          url = "/evidence/updateBodyById";
+          param = JSON.stringify({
+            bodyId: values.id,
+            body: values.nodeText,
+          });
+          break;
+        case "fact":
+          url = "/facts/updateFactById";
+          param = JSON.stringify({
+            factId: values.id,
+            fact: values.nodeText,
+          });
+          break;
+        case "law":
+          url = "/model/updateLawById";
+          param = JSON.stringify({
+            lawId: values.id,
+            content: values.nodeText,
+          });
+          break;
+        case "result":
+          url = "/model/updateResultById";
+          param = JSON.stringify({
+            resultId: values.id,
+            content: values.nodeText,
+          });
+          break;
+      }
+      const succ = () => {
+        setNote({ show: true, color: "success", content: "更新节点成功!" });
+        switch (values.nodeType) {
+          case "evidence":
+            setRealEvidences(
+              updateValueInArray(values.id, values.nodeText, [...realEvidences])
+            );
+            break;
+          case "fact":
+            setRealFacts(
+              updateValueInArray(values.id, values.nodeText, [...realFacts])
+            );
+            break;
+          case "law":
+            setLaws(updateValueInArray(values.id, values.nodeText, [...laws]));
+            break;
+          case "result":
+            setResults(
+              updateValueInArray(values.id, values.nodeText, [...results])
+            );
+            break;
+        }
+        drawCanvas();
+      };
+      const err = () => {
+        setNote({ show: true, color: "error", content: "更新节点失败!" });
+      };
+      Util.asyncHttpPost(url, param, succ, err);
+    }
+    setEditing(!editing);
   };
 
   return (
@@ -508,15 +612,15 @@ export default function LogicModelView() {
               value={values.logicNodeId}
               className={classes.text}
             />
-            <TextField
-              fullWidth
-              label="摘要"
-              value={values.name}
-              onChange={(event) =>
-                setValues({ ...values, name: event.target.value })
-              }
-              className={classes.text}
-            />
+            <FormControl className={classes.text} fullWidth disabled>
+              <InputLabel>节点类型</InputLabel>
+              <Select value={values.nodeType}>
+                <MenuItem value={"evidence"}>证据</MenuItem>
+                <MenuItem value={"fact"}>事实</MenuItem>
+                <MenuItem value={"law"}>法条</MenuItem>
+                <MenuItem value={"result"}>结论</MenuItem>
+              </Select>
+            </FormControl>
             <TextField
               fullWidth
               label="节点信息:"
@@ -524,15 +628,20 @@ export default function LogicModelView() {
               className={classes.text}
               multiline={values.nodeText.length > 14}
               rows={values.nodeText.length / 14 + 1}
+              disabled={!editing}
+              onChange={(event) =>
+                setValues({ ...values, nodeText: event.target.value })
+              }
             />
             {values.logicNodeId ? (
               <CustomButton
-                color="info"
+                color={editing ? "success" : "info"}
                 fullWidth
                 // onClick={() => setDialogOpen(true)}
+                onClick={handleClickEdit}
               >
-                <EditIcon />
-                编辑节点
+                {editing ? <SaveIcon /> : <EditIcon />}
+                {editing ? "保存节点" : "编辑节点"}
               </CustomButton>
             ) : null}
             {values.logicNodeId ? (
