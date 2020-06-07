@@ -507,18 +507,11 @@ export default function LogicModelView() {
           <DialogContentText>
             <Typography color="primary">LogicNodeId:</Typography>
             {values.logicNodeId}
-            <Typography color="primary">类型:</Typography>
-            证据
             <Typography color="primary">详细信息:</Typography>
             {values.nodeText}
-            <Typography color="primary">指向:</Typography>
-            22
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleIndeedDelete} color="secondary">
-            删除节点，子节点连接到上级
-          </Button>
           <Button onClick={handleIndeedDelete} color="secondary">
             删除节点及子节点
           </Button>
