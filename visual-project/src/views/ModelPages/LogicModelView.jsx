@@ -1,6 +1,5 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import JTopo from "jtopo-in-node";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
@@ -17,7 +16,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import DeleteForever from "@material-ui/icons/DeleteForever";
 import CustomButton from "components/CustomButtons/Button";
 import Typography from "@material-ui/core/Typography";
-// import * as Util from "../../util/Util";
+import * as Util from "../../util/Util";
 import * as ModelUtil from "../../util/ModelUtil";
 import NavPills from "components/NavPills/NavPills.js";
 import AddCircleOutline from "@material-ui/icons/AddCircleOutline";
@@ -29,8 +28,8 @@ import Checkbox from "@material-ui/core/Checkbox";
 // import Select from "@material-ui/core/Select";
 // import MenuItem from "@material-ui/core/MenuItem";
 // import FormControl from "@material-ui/core/FormControl";
-// import Notification from "../../components/Notification/Notification";
-import DocumentData from "../../util/data/DocumentData";
+import Notification from "../../components/Notification/Notification";
+// import DocumentData from "../../util/data/DocumentData";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -146,10 +145,10 @@ export default function LogicModelView() {
   const [realFacts, setRealFacts] = React.useState([]);
 
   // 法条
-  const [rules, setRules] = React.useState([]);
+  const [laws, setLaws] = React.useState([]);
 
   // 结论
-  const [result, setResult] = React.useState(null);
+  const [results, setResults] = React.useState([]);
 
   const [dialogOpen, setDialogOpen] = React.useState(false);
 
@@ -165,6 +164,19 @@ export default function LogicModelView() {
     role: "",
   });
 
+  const [note, setNote] = React.useState({
+    show: false,
+    color: "",
+    content: "",
+  });
+
+  const handleCloseNote = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setNote({ ...note, show: false });
+  };
+
   React.useEffect(() => {
     document.title = "说理逻辑";
     initCanvas();
@@ -176,11 +188,35 @@ export default function LogicModelView() {
   };
 
   const initData = () => {
-    setRealEvidences(DocumentData.getEvidences[0].body);
-    setRealFacts(DocumentData.getFacts[0].body);
-    setRules(DocumentData.rulesNodeArray);
-    setResult(DocumentData.getResult);
-    setSolidLines(DocumentData.getSolidLines);
+    const url = "/model/getLogicInfo";
+    let param = JSON.stringify({
+      caseId: 3,
+    });
+    const succ = (response) => {
+      let facts = response.facts;
+      for (let part of facts) {
+        if (part.confirm === 1) {
+          setRealFacts(part.body);
+        }
+      }
+      let evidences = response.evidences;
+      for (let part of evidences) {
+        if (part.confirm === 1) {
+          setRealEvidences(part.body);
+        }
+      }
+      setLaws(response.laws);
+      setResults(response.results);
+      setSolidLines(response.lines);
+    };
+    const err = () => {
+      setNote({
+        show: true,
+        color: "error",
+        content: "获取数据失败，请稍后重试！",
+      });
+    };
+    Util.asyncHttpPost(url, param, succ, err);
   };
 
   const drawCanvas = () => {
@@ -245,8 +281,8 @@ export default function LogicModelView() {
 
     xPosition += 150;
     yPosition = 50;
-    [yPosition, ySpacing] = ModelUtil.calculateY(rules.length, ySpacing);
-    rules.forEach((item) => {
+    [yPosition, ySpacing] = ModelUtil.calculateY(laws.length, ySpacing);
+    laws.forEach((item) => {
       let node = createRuleNode(
         item.logicNodeId,
         item.name,
@@ -268,20 +304,22 @@ export default function LogicModelView() {
     });
 
     xPosition += 150;
-    yPosition = window.innerHeight / 2;
-    let node = createResultNode(
-      result.logicNodeId,
-      result.text,
-      xPosition,
-      yPosition
-    );
-    node.mousedown(() => {
-      setValues({
-        logicNodeId: node.logicNodeId,
-        nodeText: node.text,
+    [yPosition, ySpacing] = ModelUtil.calculateY(results.length, ySpacing);
+    results.forEach((item) => {
+      let node = createResultNode(
+        item.logicNodeId,
+        item.text,
+        xPosition,
+        yPosition
+      );
+      node.mousedown(() => {
+        setValues({
+          logicNodeId: node.logicNodeId,
+          nodeText: node.text,
+        });
       });
+      scene.add(node);
     });
-    scene.add(node);
 
     let allNode = stage.find("node");
     solidLines.forEach((line) => {
@@ -297,8 +335,10 @@ export default function LogicModelView() {
           node2 = singleNode;
         }
       });
-      let link = ModelUtil.createLink(node1, node2, false);
-      scene.add(link);
+      if (node1 && node2) {
+        let link = ModelUtil.createLink(node1, node2, false);
+        scene.add(link);
+      }
     });
   };
 
@@ -328,17 +368,13 @@ export default function LogicModelView() {
 
   return (
     <div>
-      {/*<AlertDialog*/}
-      {/*  open={dialogOpen}*/}
-      {/*  title="是否删除该节点?"*/}
-      {/*  content={values.nodeText}*/}
-      {/*  colorLeft="secondary"*/}
-      {/*  textLeft="确认删除"*/}
-      {/*  colorRight="primary"*/}
-      {/*  textRight="取消"*/}
-      {/*  closeDialog1={handleIndeedDelete}*/}
-      {/*  closeDialog2={() => setDialogOpen(false)}*/}
-      {/*/>*/}
+      <Notification
+        color={note.color}
+        content={note.content}
+        open={note.show}
+        autoHide={3000}
+        onClose={handleCloseNote}
+      />
       <Dialog
         maxWidth="sm"
         fullWidth
