@@ -15,21 +15,25 @@ import ImageIcon from "@material-ui/icons/Image";
 import EditIcon from "@material-ui/icons/Edit";
 import SaveIcon from "@material-ui/icons/Save";
 import DeleteForever from "@material-ui/icons/DeleteForever";
+import AccountBalance from "@material-ui/icons/AccountBalance";
 import CustomButton from "components/CustomButtons/Button";
 import Typography from "@material-ui/core/Typography";
 import * as Util from "../../util/Util";
 import * as ModelUtil from "../../util/ModelUtil";
 import NavPills from "components/NavPills/NavPills.js";
-import AddCircleOutline from "@material-ui/icons/AddCircleOutline";
-import FormGroup from "@material-ui/core/FormGroup";
+// import AddCircleOutline from "@material-ui/icons/AddCircleOutline";
+// import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
+// import Checkbox from "@material-ui/core/Checkbox";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
 // import Autocomplete from "@material-ui/lab/Autocomplete";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Notification from "../../components/Notification/Notification";
+import PropTypes from "prop-types";
 // import DocumentData from "../../util/data/DocumentData";
 
 const useStyles = makeStyles((theme) => ({
@@ -59,78 +63,43 @@ const useStyles = makeStyles((theme) => ({
 
 function RulesRecommend(props) {
   const classes = useStyles();
-  const [values, setValues] = React.useState({
-    checkedA: true,
-    checkedB: false,
-    checkedC: false,
-    checkedD: false,
-  });
+  const [value, setValue] = React.useState("");
+  const [content, setContent] = React.useState("");
 
   const handleChange = (event) => {
-    setValues({ ...values, [event.target.name]: event.target.checked });
+    setValue(event.target.value);
+    let name = event.target.value;
+    for (let item of props.laws) {
+      if (item.name === name) {
+        setContent(item.content);
+        props.selectLaw(name);
+      }
+    }
   };
 
   return (
     <div className={classes.root}>
-      <FormGroup>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={values.checkedA}
-              onChange={handleChange}
-              name="checkedA"
-              color="primary"
+      <FormControl component="fieldset">
+        <RadioGroup value={value} onChange={handleChange}>
+          {props.laws.map((item) => (
+            <FormControlLabel
+              control={<Radio />}
+              label={item.name}
+              value={item.name}
+              key={item.name}
             />
-          }
-          label="中华人民共和国刑法第113条"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={values.checkedB}
-              onChange={handleChange}
-              name="checkedB"
-              color="primary"
-            />
-          }
-          label="中华人民共和国刑法第67条"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={values.checkedC}
-              onChange={handleChange}
-              name="checkedC"
-              color="primary"
-            />
-          }
-          label="中华人民共和国刑法第72条"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={values.checkedD}
-              onChange={handleChange}
-              name="checkedD"
-              color="primary"
-            />
-          }
-          label="中华人民共和国刑法第73条"
-        />
-      </FormGroup>
-      {/*<Paper square elevation={5}>*/}
-      {/*  <Typography>*/}
-      {/*    违反交通运输管理法规，因而发生重大事故，致人重伤、死亡或者使公私财产遭受重大损失的，处三年以下有期徒刑或者拘役；交通运输肇事后逃逸或者有其他特别恶劣情节的，处三年以上七年以下有期徒刑；因逃逸致人死亡的，处七年以上有期徒刑。*/}
-      {/*  </Typography>*/}
-      {/*</Paper>*/}
+          ))}
+        </RadioGroup>
+      </FormControl>
+
       <TextField
         disabled
         fullWidth
-        multiline
-        rows={4}
+        multiline={content.length > 35}
+        rows={content.length / 35 + 1}
         variant="outlined"
         label="详细内容"
-        value="违反交通运输管理法规，因而发生重大事故，致人重伤、死亡或者使公私财产遭受重大损失的，处三年以下有期徒刑或者拘役；交通运输肇事后逃逸或者有其他特别恶劣情节的，处三年以上七年以下有期徒刑；因逃逸致人死亡的，处七年以上有期徒刑。"
+        value={content}
       />
     </div>
   );
@@ -145,7 +114,7 @@ export default function LogicModelView() {
 
   const [realFacts, setRealFacts] = React.useState([]);
 
-  // 法条
+  // 所有法条
   const [laws, setLaws] = React.useState([]);
 
   // 结论
@@ -168,6 +137,12 @@ export default function LogicModelView() {
   });
 
   const [editing, setEditing] = React.useState(false);
+
+  // 发条推荐子组件中选中的法条
+  const [selectedLaw, setSelectedLaw] = React.useState("");
+
+  // 可以显示在界面上的法条
+  const [citedLaws, setCitedLaws] = React.useState([]);
 
   const [note, setNote] = React.useState({
     show: false,
@@ -210,7 +185,7 @@ export default function LogicModelView() {
           setRealEvidences(part.body);
         }
       }
-      setLaws(response.laws);
+      setCitedLaws(response.laws);
       setResults(response.results);
       setSolidLines(response.lines);
     };
@@ -299,7 +274,7 @@ export default function LogicModelView() {
     xPosition += 150;
     yPosition = 50;
     [yPosition, ySpacing] = ModelUtil.calculateY(laws.length, ySpacing);
-    laws.forEach((item) => {
+    citedLaws.forEach((item) => {
       let node = createRuleNode(
         item.logicNodeId,
         item.name,
@@ -470,6 +445,47 @@ export default function LogicModelView() {
     setEditing(!editing);
   };
 
+  const recommendLaw = () => {
+    const url = "/model/recommendLaw";
+    let param = JSON.stringify({});
+    const succ = (response) => {
+      setLaws(response);
+      setRuleDialogOpen(true);
+    };
+    const err = () => {
+      setNote({ show: true, color: "error", content: "法条推荐失败!" });
+    };
+    Util.asyncHttpPost(url, param, succ, err);
+  };
+
+  const citeLaw = () => {
+    // console.log(selectedLaw);
+    let content = "";
+    for (let item of laws) {
+      if (item.name === selectedLaw) {
+        content = item.content;
+      }
+    }
+    const url = "/model/addLaw";
+    let param = JSON.stringify({
+      caseId: 3,
+      factId: values.id,
+      name: selectedLaw,
+      content,
+    });
+    const succ = () => {
+      setNote({ show: true, color: "success", content: "添加法条成功!" });
+      setRuleDialogOpen(false);
+      initData();
+      initCanvas();
+      drawCanvas();
+    };
+    const err = () => {
+      setNote({ show: true, color: "error", content: "添加法条失败!" });
+    };
+    Util.asyncHttpPost(url, param, succ, err);
+  };
+
   return (
     <div>
       <Notification
@@ -524,16 +540,17 @@ export default function LogicModelView() {
         <DialogContent dividers>
           <TextField
             label="ID"
-            value="1023"
+            value={values.id}
             disabled
             fullWidth
             margin="normal"
           />
-          <TextField label="摘要" value="事实三" fullWidth margin="normal" />
           <TextField
-            label="详细信息"
-            value="张某塘沽罚款卫生监督所刘谨钊等人，给其送达了行政处罚决定书，内容是两项，第一是没收先行保存的药品、器械，并处以五千元的罚款，第二是改正违法行为。"
+            label="事实详细信息"
+            value={values.nodeText}
             fullWidth
+            multiline={values.nodeText.length > 35}
+            rows={values.nodeText.length / 35 + 1}
             margin="normal"
           />
           <NavPills
@@ -541,11 +558,25 @@ export default function LogicModelView() {
             tabs={[
               {
                 tabButton: "法条推荐",
-                tabContent: <RulesRecommend />,
+                tabContent: (
+                  <RulesRecommend
+                    laws={laws}
+                    selectLaw={(name) => {
+                      setSelectedLaw(name);
+                    }}
+                  />
+                ),
               },
               {
                 tabButton: "类案推荐",
-                tabContent: <RulesRecommend />,
+                tabContent: (
+                  <RulesRecommend
+                    laws={laws}
+                    selectLaw={(name) => {
+                      setSelectedLaw(name);
+                    }}
+                  />
+                ),
               },
               // {
               //   tabButton: "频次推荐",
@@ -555,10 +586,10 @@ export default function LogicModelView() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setRuleDialogOpen(false)} color="primary">
+          <Button onClick={citeLaw} color="primary">
             引用
           </Button>
-          <Button onClick={handleIndeedDelete} color="default">
+          <Button onClick={() => setRuleDialogOpen(false)} color="default">
             取消
           </Button>
         </DialogActions>
@@ -644,14 +675,20 @@ export default function LogicModelView() {
                 {editing ? "保存节点" : "编辑节点"}
               </CustomButton>
             ) : null}
-            {values.logicNodeId ? (
-              <CustomButton
-                color="success"
-                fullWidth
-                onClick={() => setRuleDialogOpen(true)}
-              >
-                <AddCircleOutline />
-                添加节点
+            {/*{values.logicNodeId ? (*/}
+            {/*  <CustomButton*/}
+            {/*    color="success"*/}
+            {/*    fullWidth*/}
+            {/*    // onClick={() => setRuleDialogOpen(true)}*/}
+            {/*  >*/}
+            {/*    <AddCircleOutline />*/}
+            {/*    添加节点*/}
+            {/*  </CustomButton>*/}
+            {/*) : null}*/}
+            {values.nodeType === "fact" ? (
+              <CustomButton color="warning" fullWidth onClick={recommendLaw}>
+                <AccountBalance />
+                法条推荐
               </CustomButton>
             ) : null}
             {values.logicNodeId ? (
@@ -670,3 +707,8 @@ export default function LogicModelView() {
     </div>
   );
 }
+
+RulesRecommend.propTypes = {
+  laws: PropTypes.array,
+  selectLaw: PropTypes.func,
+};
