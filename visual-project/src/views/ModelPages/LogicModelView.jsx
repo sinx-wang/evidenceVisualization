@@ -323,6 +323,7 @@ export default function LogicModelView() {
         });
       });
       scene.add(node);
+      yPosition += ySpacing;
     });
 
     let allNode = stage.find("node");
